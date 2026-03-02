@@ -1,0 +1,16 @@
+Esta carpeta contiene COMPONENTES reutilizables de la interfaz.
+
+Aquí van fragmentos que se repiten en varias páginas, por ejemplo:
+- Navbar
+- Footer
+- Sidebar
+- Modales
+- Formularios reutilizables
+
+No son páginas completas.
+No contienen HTML final.
+Normalmente son funciones JS que devuelven HTML.
+
+Ejemplo:
+- navbar.js
+- footer.js

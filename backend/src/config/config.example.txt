@@ -1,0 +1,174 @@
+================================================================================
+    GUÍA DE INSTALACIÓN - MedHistory
+    Para: Yousra
+    De: Claudia
+================================================================================
+
+Hola Yousra!
+
+Este proyecto NO se puso en htdocs de XAMPP. Se hizo algo mejor: configurar 
+un VirtualHost para que Apache sirva el proyecto desde cualquier carpeta.
+
+Así es como debes configurarlo en tu equipo:
+
+================================================================================
+PASO 1: UBICACIÓN DEL PROYECTO
+================================================================================
+
+Mi proyecto está en: C:\web\medHistory
+
+NO lo copies a C:\xampp\htdocs\
+Déjalo en C:\web\medHistory (o donde tú quieras, fuera de htdocs)
+
+================================================================================
+PASO 2: CONFIGURAR VIRTUALHOST EN APACHE
+================================================================================
+
+1. Abre XAMPP Control Panel y detén Apache si está corriendo
+
+2. Abre con un editor de texto (como Notepad++) este archivo:
+   C:\xampp\apache\conf\extra\httpd-vhosts.conf
+
+3. Al final del archivo, añade esto (copia y pega):
+
+# VirtualHost para MedHistory
+<VirtualHost *:80>
+    ServerName medhistory.local
+    DocumentRoot "C:/web/medHistory"
+    
+    <Directory "C:/web/medHistory">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog "logs/medhistory-error.log"
+    CustomLog "logs/medhistory-access.log" common
+</VirtualHost>
+
+   IMPORTANTE: Si tu proyecto está en otra ruta, cambia "C:/web/medHistory"
+   por tu ruta (usa / en lugar de \)
+
+4. Guarda el archivo
+
+================================================================================
+PASO 3: EDITAR EL ARCHIVO HOSTS DE WINDOWS
+================================================================================
+
+1. Abre el Bloc de notas como ADMINISTRADOR:
+   - Busca "Bloc de notas" en el menú inicio
+   - Clic derecho → "Ejecutar como administrador"
+
+2. Desde el Bloc de notas, abre este archivo:
+   C:\Windows\System32\drivers\etc\hosts
+
+3. Al final del archivo, añade esta línea:
+
+127.0.0.1       medhistory.local
+
+4. Guarda el archivo (Ctrl+S)
+
+================================================================================
+PASO 4: CONFIGURAR POSTGRESQL
+================================================================================
+
+1. Abre pgAdmin 4
+
+2. Crea la base de datos:
+   - Clic derecho en "Databases" → "Create" → "Database"
+   - Name: medhistory
+   - Owner: postgres
+   - Clic en "Save"
+
+3. Ejecuta el schema:
+   - Clic derecho en la base de datos "medhistory" → "Query Tool"
+   - Abre el archivo: C:\web\medHistory\database\schema.sql
+   - Copia todo y pégalo en Query Tool
+   - Presiona F5 o clic en el botón "Execute"
+
+4. Ejecuta los datos de prueba:
+   - Abre el archivo: C:\web\medHistory\database\datos_prueba.sql
+   - Copia todo, pégalo en Query Tool y ejecuta (F5)
+
+Detalles de conexión:
+- Host: localhost
+- Puerto: 5432
+- Base de datos: medhistory
+- Usuario: postgres
+- Contraseña: (la que pusiste al instalar PostgreSQL)
+
+================================================================================
+PASO 5: REINICIAR APACHE
+================================================================================
+
+1. En XAMPP Control Panel, clic en "Start" en Apache
+
+2. Si hay errores, revisa los pasos 2 y 3
+
+3. Abre tu navegador y ve a: http://medhistory.local
+
+   Deberías ver la página de inicio del proyecto
+
+================================================================================
+PASO 6: PROBAR QUE TODO FUNCIONA
+================================================================================
+
+Abre estas URLs en tu navegador:
+
+✓ http://medhistory.local/frontend/static/index.html
+  → Página de inicio
+
+✓ http://medhistory.local/frontend/static/register.html
+  → Formulario de registro de pacientes
+
+✓ http://medhistory.local/frontend/static/login.html
+  → Login del sistema
+
+Prueba registrar un paciente nuevo:
+- DNI: 11111111H (formato: 8 números + letra)
+- Email: prueba@test.com
+- Contraseña: Test1234 (mínimo 8 caracteres, mayúscula y número)
+
+================================================================================
+USUARIOS DE PRUEBA EN LA BASE DE DATOS
+================================================================================
+
+ADMINISTRADORES:
+- Email: claudia.mateo@admin.com | Password: Admin123
+- Email: yousra.jebari@admin.com | Password: Admin123
+
+MÉDICOS (5 creados):
+- Email: juan.medico@clinica.com | Password: Medico123
+- Email: maria.medico@clinica.com | Password: Medico123
+- (etc... revisa datos_prueba.sql para más)
+
+PACIENTES (5 creados):
+- DNI: 12345678A | Password: Paciente123
+- DNI: 87654321B | Password: Paciente123
+- (etc...)
+
+================================================================================
+RESOLUCIÓN DE PROBLEMAS
+================================================================================
+
+PROBLEMA: Apache no arranca
+SOLUCIÓN: Revisa que el puerto 80 no esté ocupado. En XAMPP clic en 
+          "Config" → "Service and Port Settings" → Cambia a puerto 8080 
+          si es necesario
+
+PROBLEMA: "This site can't be reached" al abrir medhistory.local
+SOLUCIÓN: ¿Editaste el archivo hosts? ¿Apache está corriendo?
+          Abre cmd y escribe: ping medhistory.local
+          Debería responder desde 127.0.0.1
+
+PROBLEMA: Error al conectar con la base de datos
+SOLUCIÓN: ¿PostgreSQL está corriendo? Verifica que el puerto 5432 esté
+          activo. Comprueba usuario y contraseña en pgAdmin.
+
+PROBLEMA: El formulario no se muestra
+SOLUCIÓN: Abre la consola del navegador (F12) y busca errores en rojo.
+          Asegúrate de estar en la URL correcta:
+          http://medhistory.local/frontend/static/register.html
+
+================================================================================
+Si tienes dudas, me dicesss

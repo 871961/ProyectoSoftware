@@ -1,0 +1,6 @@
+PASOS:
+Preguntar si está programando la otra persona.
+
+Si la otra persona NO esta programando siempre hacer primero PULL para actualizar cambios anteriores. Cuando termine commit + PUSH.
+
+Si otra persona SI está programando hacemos liveShare, pasamos el enlace y podemos programar a la vez. La persona que pasa el enlace, deberá cuando terminemos de programar hacer el commit y el PUSH.

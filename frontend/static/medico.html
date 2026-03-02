@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Médico - MedHistory</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-50 flex flex-col">
+
+        <!-- Logo Section -->
+        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="stethoscope" class="w-4 h-4 text-white"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-900">MedHistory</span>
+            </div>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <a href="#" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span>Mis Pacientes</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+                <span>Agenda de Citas</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                <span>Historiales</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <span>Mensajes</span>
+            </a>
+
+            <div class="pt-4 border-t border-gray-200 mt-4">
+                <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Configuración</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Logout Button -->
+        <div class="px-4 py-4 border-t border-gray-200">
+            <a href="index.html"
+                class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span class="font-medium">Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64 min-h-screen flex flex-col">
+
+        <!-- Top Navbar -->
+        <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div class="h-full px-4 lg:px-8 flex items-center justify-between">
+
+                <!-- Mobile Menu Button -->
+                <button id="openSidebar" class="lg:hidden text-gray-600 hover:text-gray-900">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Search Bar (Hidden on mobile) -->
+                <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                    <div class="relative w-full">
+                        <i data-lucide="search"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input type="text" placeholder="Buscar pacientes, historiales..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-4">
+
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+                    </button>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                        <div class="hidden sm:block text-right">
+                            <p class="text-sm font-semibold text-gray-900">Dr. Juan Pérez</p>
+                            <p class="text-xs text-gray-500">Médico General</p>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                            JP
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="flex-1 p-4 lg:p-8">
+
+            <!-- Welcome Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Buenos días, Dr. Pérez</h1>
+                <p class="text-gray-600">Tienes 8 citas programadas para hoy</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+                <!-- Pacientes Hoy -->
+                <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Pacientes Hoy</h3>
+                    <p class="text-3xl font-bold text-gray-900">8</p>
+                    <div class="flex items-center mt-2 text-xs">
+                        <span class="text-green-600 font-medium">↑ 2</span>
+                        <span class="text-gray-500 ml-1">vs. ayer</span>
+                    </div>
+                </div>
+
+                <!-- Citas Pendientes -->
+                <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-amber-50 rounded-lg">
+                            <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Citas Pendientes</h3>
+                    <p class="text-3xl font-bold text-gray-900">5</p>
+                    <div class="flex items-center mt-2 text-xs">
+                        <span class="text-amber-600 font-medium">Próxima: 10:00</span>
+                    </div>
+                </div>
+
+                <!-- Consultas Completadas -->
+                <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-green-50 rounded-lg">
+                            <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Completadas</h3>
+                    <p class="text-3xl font-bold text-gray-900">3</p>
+                    <div class="flex items-center mt-2 text-xs">
+                        <span class="text-gray-500">Hoy</span>
+                    </div>
+                </div>
+
+                <!-- Mensajes Nuevos -->
+                <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-purple-50 rounded-lg">
+                            <i data-lucide="message-circle" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Mensajes</h3>
+                    <p class="text-3xl font-bold text-gray-900">12</p>
+                    <div class="flex items-center mt-2 text-xs">
+                        <span class="text-purple-600 font-medium">4 sin leer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar (Prominent) -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-1 relative">
+                        <i data-lucide="search"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input type="text" placeholder="Buscar pacientes por nombre, DNI o historial clínico..."
+                            class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base">
+                    </div>
+                    <button
+                        class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
+                        <span class="flex items-center space-x-2">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                            <span>Buscar</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Patients List (2 columns) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Citas de Hoy</h3>
+                                <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">Ver
+                                    todas</button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Paciente
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Hora
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Motivo
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Estado
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    AM
+                                                </div>
+                                                <div class="ml-4">
+                                                    <p class="font-medium text-gray-900">Ana Martínez</p>
+                                                    <p class="text-sm text-gray-500">DNI: 12345678A</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-gray-900">10:00</p>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-gray-900">Revisión anual</p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
+                                                Pendiente
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
+                                                historial</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    CL
+                                                </div>
+                                                <div class="ml-4">
+                                                    <p class="font-medium text-gray-900">Carlos López</p>
+                                                    <p class="text-sm text-gray-500">DNI: 87654321B</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-gray-900">10:30</p>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-gray-900">Control hipertensión</p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
+                                                Pendiente
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
+                                                historial</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    MR
+                                                </div>
+                                                <div class="ml-4">
+                                                    <p class="font-medium text-gray-900">María Rodríguez</p>
+                                                    <p class="text-sm text-gray-500">DNI: 11223344C</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-gray-900">11:00</p>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-gray-900">Resultados análisis</p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
+                                                Pendiente
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
+                                                historial</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50 transition-colors bg-green-50/30">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    JG
+                                                </div>
+                                                <div class="ml-4">
+                                                    <p class="font-medium text-gray-900">Jorge García</p>
+                                                    <p class="text-sm text-gray-500">DNI: 99887766D</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-gray-900">09:00</p>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-gray-900">Consulta general</p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                                Completada
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
+                                                historial</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    LS
+                                                </div>
+                                                <div class="ml-4">
+                                                    <p class="font-medium text-gray-900">Laura Sánchez</p>
+                                                    <p class="text-sm text-gray-500">DNI: 55667788E</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-gray-900">11:30</p>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-gray-900">Vacunación</p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
+                                                Pendiente
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
+                                                historial</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar - Quick Info -->
+                <div class="space-y-6">
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+                        <div class="space-y-3">
+                            <button
+                                class="w-full flex items-center space-x-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                                <i data-lucide="user-plus" class="w-5 h-5 text-blue-600"></i>
+                                <span class="text-sm font-medium text-gray-900">Registrar Paciente</span>
+                            </button>
+                            <button
+                                class="w-full flex items-center space-x-3 p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                                <i data-lucide="file-plus" class="w-5 h-5 text-green-600"></i>
+                                <span class="text-sm font-medium text-gray-900">Nueva Consulta</span>
+                            </button>
+                            <button
+                                class="w-full flex items-center space-x-3 p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                                <i data-lucide="clipboard" class="w-5 h-5 text-purple-600"></i>
+                                <span class="text-sm font-medium text-gray-900">Emitir Receta</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Alerts -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Alertas Recientes</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 bg-red-50 rounded-lg">
+                                    <i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Resultado crítico</p>
+                                    <p class="text-xs text-gray-600 mt-1">Paciente: Ana M.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 bg-amber-50 rounded-lg">
+                                    <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Receta por vencer</p>
+                                    <p class="text-xs text-gray-600 mt-1">Carlos L. - 3 días</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 bg-blue-50 rounded-lg">
+                                    <i data-lucide="info" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Nueva solicitud de cita</p>
+                                    <p class="text-xs text-gray-600 mt-1">Hace 15 minutos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Widget -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Esta Semana</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Lunes</span>
+                                <span class="text-sm font-semibold text-gray-900">12 citas</span>
+                            </div>
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Martes</span>
+                                <span class="text-sm font-semibold text-blue-600">8 citas (hoy)</span>
+                            </div>
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Miércoles</span>
+                                <span class="text-sm font-semibold text-gray-900">10 citas</span>
+                            </div>
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Jueves</span>
+                                <span class="text-sm font-semibold text-gray-900">9 citas</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Viernes</span>
+                                <span class="text-sm font-semibold text-gray-900">7 citas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="js/dashboard-medico.js"></script>
+</body>
+
+</html>

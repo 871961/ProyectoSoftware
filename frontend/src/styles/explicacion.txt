@@ -1,0 +1,9 @@
+Esta carpeta contiene los ESTILOS organizados del proyecto.
+
+Se usa para dividir el CSS cuando el proyecto crece:
+- estilos generales
+- estilos de formularios
+- estilos de botones
+
+Estos estilos luego pueden copiarse o unirse
+en los archivos CSS finales de static/css.

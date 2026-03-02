@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<!--
+    Archivo: admin.html
+    Descripción: Panel de administrador renovado - Sistema Médico
+    Fecha: Marzo 2026
+    Autoras: Yousra y Claudia
+-->
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - MedHistory</title>
+    <link href="css/admin.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="admin-layout not-authenticated">
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal show">
+            <div class="modal-content login-modal">
+                <div class="modal-header">
+                    <h2>
+                        <i class="fas fa-shield-halved"></i>
+                        Acceso Seguro
+                    </h2>
+                </div>
+                <div class="modal-body">
+                    <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+                        <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
+                            <div class="logo-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            MedHistory
+                        </div>
+                        <p style="color: var(--gray-500); font-size: 0.875rem;">
+                            Panel de administración del sistema médico
+                        </p>
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="email-login" class="required">Email de administrador</label>
+                            <input type="email" id="email-login" name="email" required placeholder="admin@clinica.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contrasena-login" class="required">Contraseña</label>
+                            <input type="password" id="contrasena-login" name="contrasena" required
+                                placeholder="Ingrese su contraseña">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Iniciar Sesión
+                        </button>
+                    </form>
+
+                    <div
+                        style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); font-size: 0.75rem; color: var(--gray-500);">
+                        <i class="fas fa-info-circle"></i>
+                        Solo personal autorizado puede acceder a este panel
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-logo">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    MedHistory
+                </a>
+            </div>
+
+            <nav class="admin-nav">
+                <ul>
+                    <li>
+                        <a href="#" data-tab="dashboard" class="nav-link active">
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="medicos" class="nav-link">
+                            <i class="fas fa-user-doctor"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="pacientes" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="auditoria" class="nav-link">
+                            <i class="fas fa-clipboard-list"></i>
+                            Auditoría
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="admin-header">
+            <h1 class="header-title">
+                <i class="fas fa-cog"></i>
+                Panel de Administración
+            </h1>
+            <div class="header-actions">
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span id="admin-nombre">Administrador</span>
+                </div>
+                <button id="btn-logout" class="btn btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Salir
+                </button>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Tab -->
+            <section id="dashboard-tab" class="tab-content active">
+                <!-- Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-info">
+                                <div class="stat-number" id="stats-pacientes">0</div>
+                                <div class="stat-label">Pacientes Activos</div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-info">
+                                <div class="stat-number" id="stats-medicos">0</div>
+                                <div class="stat-label">Médicos Activos</div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-user-doctor"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-info">
+                                <div class="stat-number" id="stats-consultas">0</div>
+                                <div class="stat-label">Consultas del Mes</div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Especialidades Chart -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Especialidades Más Demandadas
+                        </h3>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <div id="especialidades-chart" class="chart-container">
+                            <div style="text-align: center; color: var(--gray-500);">
+                                <i class="fas fa-chart-bar" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Cargando datos de especialidades...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Médicos Tab -->
+            <section id="medicos-tab" class="tab-content">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-user-doctor"></i>
+                            Gestión de Médicos
+                        </h3>
+                        <button id="btn-nuevo-medico" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Médico
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="tabla-medicos" class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Médico</th>
+                                    <th>Email</th>
+                                    <th>Especialidad</th>
+                                    <th>Núm. Colegiado</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pacientes Tab -->
+            <section id="pacientes-tab" class="tab-content">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-users"></i>
+                            Gestión de Pacientes
+                        </h3>
+                        <button id="btn-nuevo-paciente" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuevo Paciente
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="tabla-pacientes" class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Paciente</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Fecha Nac.</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Auditoría Tab -->
+            <section id="auditoria-tab" class="tab-content">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Logs de Auditoría
+                        </h3>
+                        <div style="color: var(--gray-500); font-size: 0.875rem;">
+                            <i class="fas fa-info-circle"></i>
+                            Trazabilidad completa del sistema
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="tabla-auditoria" class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha/Hora</th>
+                                    <th>Usuario</th>
+                                    <th>Acción</th>
+                                    <th>Tabla</th>
+                                    <th>Registro ID</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Nuevo Médico -->
+    <div id="medicoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-user-doctor"></i>
+                    Registrar Nuevo Médico
+                </h3>
+                <span class="close" data-modal="medicoModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="medicoForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medico-nombre" class="required">Nombre</label>
+                            <input type="text" id="medico-nombre" name="nombre" required placeholder="Ej: Carlos">
+                        </div>
+                        <div class="form-group">
+                            <label for="medico-apellidos" class="required">Apellidos</label>
+                            <input type="text" id="medico-apellidos" name="apellidos" required
+                                placeholder="Ej: García López">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medico-email" class="required">Email Profesional</label>
+                            <input type="email" id="medico-email" name="email" required
+                                placeholder="medico@clinica.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="medico-telefono">Teléfono de Contacto</label>
+                            <input type="tel" id="medico-telefono" name="telefono" placeholder="+34 600 123 456">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="medico-direccion">Dirección</label>
+                        <textarea id="medico-direccion" name="direccion" rows="2"
+                            placeholder="Dirección completa del médico"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medico-colegiado" class="required">Número de Colegiado</label>
+                            <input type="text" id="medico-colegiado" name="num_colegiado" required
+                                placeholder="Ej: MD001234">
+                        </div>
+                        <div class="form-group">
+                            <label for="medico-especialidad" class="required">Especialidad Médica</label>
+                            <select id="medico-especialidad" name="especialidad" required>
+                                <option value="">Seleccionar especialidad...</option>
+                                <option value="Medicina General">Medicina General</option>
+                                <option value="Cardiología">Cardiología</option>
+                                <option value="Dermatología">Dermatología</option>
+                                <option value="Endocrinología">Endocrinología</option>
+                                <option value="Ginecología">Ginecología</option>
+                                <option value="Neurología">Neurología</option>
+                                <option value="Pediatría">Pediatría</option>
+                                <option value="Psiquiatría">Psiquiatría</option>
+                                <option value="Traumatología">Traumatología</option>
+                                <option value="Urología">Urología</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="medico-contrasena" class="required">Contraseña de Acceso</label>
+                        <input type="password" id="medico-contrasena" name="contrasena" required
+                            placeholder="Mínimo 8 caracteres">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-close="medicoModal">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i>
+                            Registrar Médico
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo Paciente -->
+    <div id="pacienteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-user-plus"></i>
+                    Registrar Nuevo Paciente
+                </h3>
+                <span class="close" data-modal="pacienteModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="pacienteForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paciente-nombre" class="required">Nombre</label>
+                            <input type="text" id="paciente-nombre" name="nombre" required placeholder="Ej: María">
+                        </div>
+                        <div class="form-group">
+                            <label for="paciente-apellidos" class="required">Apellidos</label>
+                            <input type="text" id="paciente-apellidos" name="apellidos" required
+                                placeholder="Ej: Pérez García">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paciente-email" class="required">Email de Contacto</label>
+                            <input type="email" id="paciente-email" name="email" required
+                                placeholder="paciente@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="paciente-telefono">Teléfono</label>
+                            <input type="tel" id="paciente-telefono" name="telefono" placeholder="+34 600 123 456">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="paciente-direccion">Dirección de Residencia</label>
+                        <textarea id="paciente-direccion" name="direccion" rows="2"
+                            placeholder="Dirección completa del paciente"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paciente-fecha-nacimiento" class="required">Fecha de Nacimiento</label>
+                            <input type="date" id="paciente-fecha-nacimiento" name="fecha_nacimiento" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="paciente-seguridad-social">Núm. Seguridad Social</label>
+                            <input type="text" id="paciente-seguridad-social" name="num_seguridad_social"
+                                placeholder="Ej: 123456789012">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="paciente-contrasena" class="required">Contraseña de Acceso</label>
+                        <input type="password" id="paciente-contrasena" name="contrasena" required
+                            placeholder="Mínimo 8 caracteres">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-close="pacienteModal">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i>
+                            Registrar Paciente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

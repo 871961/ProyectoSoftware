@@ -1,0 +1,14 @@
+Esta carpeta contiene FUNCIONES AUXILIARES reutilizables.
+
+Aquí va la lógica compartida que se usa en varias páginas:
+- autenticación
+- validaciones
+- llamadas a la API
+- manejo de localStorage o sessionStorage
+
+No contiene código específico de una sola página.
+
+Ejemplos:
+- auth.js
+- validators.js
+- api.js

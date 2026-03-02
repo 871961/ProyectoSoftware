@@ -1,0 +1,12 @@
+Páginas completas o vistas (Login, Registro, Dashboard…)Esta carpeta contiene la LÓGICA de cada página.
+
+Aquí va el JavaScript que controla el comportamiento
+de una página específica (login, registro, dashboard, etc).
+
+NO contiene HTML.
+NO contiene estilos.
+
+Ejemplos:
+- login.js → lógica del login
+- register.js → lógica del registro
+- dashboard.js → lógica del dashboard

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedHistory - Sistema de Gestión de Historial Clínico</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='18'>🏥</text></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'clinical-gray': '#F9FAFB',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/index.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Main Container -->
+    <div class="min-h-screen bg-gradient-to-br from-clinical-gray via-white to-blue-50">
+
+        <!-- Header -->
+        <header class="backdrop-blur-sm bg-white/90 shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-medical-blue rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-semibold text-gray-900 tracking-tight">MedHistory</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left Side - Auto-Rotating Content -->
+                <div class="text-center lg:text-left">
+                    <div class="hero-content-carousel">
+
+                        <!-- Slide 1 - Contenido Hero Original -->
+                        <div class="hero-slide active">
+                            <div
+                                class="inline-flex items-center px-4 py-2 rounded-full bg-medical-blue/10 text-medical-blue text-sm font-semibold mb-6">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Sistema Médico Profesional
+                            </div>
+
+                            <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                                Gestión de
+                                <span class="text-medical-blue">Historiales Clínicos</span>
+                                Moderna
+                            </h1>
+
+                            <p class="text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl">
+                                Plataforma segura y profesional para la gestión de historiales médicos.
+                                Cumple con GDPR/LOPD y está diseñada para profesionales de la salud.
+                            </p>
+
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                                <div
+                                    class="inline-flex items-center space-x-2 text-green-700 bg-green-50 px-4 py-2 rounded-xl">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="font-medium">Seguro y Confiable</span>
+                                </div>
+                                <div
+                                    class="inline-flex items-center space-x-2 text-blue-700 bg-blue-50 px-4 py-2 rounded-xl">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="font-medium">GDPR/LOPD</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2 - Contenido de Características -->
+                        <div class="hero-slide">
+                            <div
+                                class="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold mb-6">
+                                <i data-lucide="star" class="w-4 h-4 mr-2"></i>
+                                Tecnología Avanzada
+                            </div>
+
+                            <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                                ¿Por qué elegir
+                                <span class="text-medical-blue">MedHistory</span>?
+                            </h1>
+
+                            <p class="text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl">
+                                Plataforma diseñada específicamente para profesionales de la salud que exigen
+                                <span class="font-semibold text-blue-600">excelencia operacional</span> y
+                                <span class="font-semibold text-blue-600">seguridad de grado clínico</span>
+                            </p>
+
+                            <!-- Preview de Características -->
+                            <div class="space-y-4 max-w-2xl">
+                                <div class="flex items-center space-x-4 p-3 bg-blue-50/50 rounded-xl">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                                        <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-semibold text-gray-900">Infraestructura de Grado Clínico</h4>
+                                        <p class="text-sm text-gray-600">Cifrado AES-256 y cumplimiento GDPR/HIPAA</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center space-x-4 p-3 bg-emerald-50/50 rounded-xl">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg">
+                                        <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-semibold text-gray-900">Ecosistema de Trazabilidad Total</h4>
+                                        <p class="text-sm text-gray-600">Historial electrónico unificado</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center space-x-4 p-3 bg-purple-50/50 rounded-xl">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-semibold text-gray-900">Arquitectura de Alta Disponibilidad</h4>
+                                        <p class="text-sm text-gray-600">Latencia ultra-baja y SLA 99.9%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indicadores del Carrusel -->
+                        <div class="hero-indicators">
+                            <div class="hero-indicator active" data-slide="1"></div>
+                            <div class="hero-indicator" data-slide="2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Access Panel -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-8">
+
+                    <div class="text-center mb-8">
+                        <div class="inline-flex items-center justify-center mb-3 space-x-2">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-blue-600"></i>
+                            <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Acceso
+                                seguro</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+                            Accede a MedHistory
+                        </h2>
+                        <p class="text-gray-600 max-w-md mx-auto text-center">
+                            Acceso seguro para profesionales: inicia sesión o crea tu cuenta.
+                        </p>
+                    </div>
+
+                    <!-- Premium Access Buttons -->
+                    <div class="space-y-4">
+                        <!-- Login Button (Secondary/Ghost Style) -->
+                        <a href="login.html"
+                            class="group medical-btn-secondary relative block w-full text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-200/50 text-decoration-none">
+                            <div class="btn-content relative flex items-center justify-center space-x-3">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg ring-1 ring-blue-200/50 group-hover:ring-blue-300/60 transition-all duration-300">
+                                    <i data-lucide="log-in"
+                                        class="w-5 h-5 text-blue-600 group-hover:text-blue-700 transition-colors duration-300"></i>
+                                </div>
+                                <span
+                                    class="text-lg font-semibold tracking-wide group-hover:text-blue-700 transition-colors duration-300">Iniciar
+                                    Sesión</span>
+                                <div class="flex items-center space-x-1">
+                                    <i data-lucide="arrow-right"
+                                        class="w-4 h-4 btn-icon-arrow icon-hover-slide text-blue-500 group-hover:text-blue-600"></i>
+                                    <i data-lucide="check" class="w-4 h-4 btn-icon-check text-green-500"></i>
+                                </div>
+                            </div>
+                            <!-- Loading State -->
+                            <div
+                                class="absolute inset-0 flex items-center justify-center opacity-0 loading-state transition-opacity duration-300">
+                                <div class="spinner border-blue-500"></div>
+                            </div>
+                        </a>
+
+                        <!-- Register Button (Primary Style) -->
+                        <a href="register.html"
+                            class="group medical-btn-primary relative block w-full text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-200/50 text-decoration-none ring-1 ring-white/20">
+                            <div class="btn-content relative flex items-center justify-center space-x-3">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 bg-white/15 backdrop-blur-sm rounded-lg ring-1 ring-white/30 group-hover:ring-white/50 transition-all duration-300">
+                                    <i data-lucide="user-plus"
+                                        class="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300"></i>
+                                </div>
+                                <span class="text-lg font-semibold tracking-wide">Registrarse</span>
+                                <div class="flex items-center space-x-1">
+                                    <i data-lucide="arrow-right"
+                                        class="w-4 h-4 btn-icon-arrow icon-hover-slide text-white/80 group-hover:text-white"></i>
+                                    <i data-lucide="check" class="w-4 h-4 btn-icon-check text-green-300"></i>
+                                </div>
+                            </div>
+                            <!-- Loading State -->
+                            <div
+                                class="absolute inset-0 flex items-center justify-center opacity-0 loading-state transition-opacity duration-300">
+                                <div class="spinner border-white"></div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="flex items-center my-6">
+                        <div class="flex-grow border-t border-gray-300"></div>
+                        <div class="flex-grow border-t border-gray-300"></div>
+                    </div>
+
+                    <!-- Info Text -->
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Únete a la comunidad de profesionales médicos que confían en
+                            <span class="font-semibold text-medical-blue">MedHistory</span>
+                            para la gestión segura de historiales clínicos
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Premium Footer -->
+        <footer class="bg-slate-50 border-t border-slate-200" style="margin-top: 50px;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="grid lg:grid-cols-4 gap-8 lg:gap-12">
+
+                    <!-- Columna 1 - Marca y Confianza -->
+                    <div class="lg:col-span-1">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i data-lucide="stethoscope" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900 tracking-tight">MedHistory</span>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-6 max-w-xs">
+                            Plataforma líder en gestión de historiales clínicos electrónicos,
+                            respaldada por más de 10,000 profesionales de la salud.
+                        </p>
+
+                        <!-- Sellos de Certificación -->
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div
+                                class="flex items-center space-x-1 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
+                                <i data-lucide="shield-check" class="w-3 h-3 text-green-600"></i>
+                                <span class="text-xs font-medium text-green-700">GDPR</span>
+                            </div>
+                            <div
+                                class="flex items-center space-x-1 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full">
+                                <i data-lucide="lock" class="w-3 h-3 text-blue-600"></i>
+                                <span class="text-xs font-medium text-blue-700">SSL</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-1 text-xs text-gray-500">
+                            <i data-lucide="award" class="w-3 h-3"></i>
+                            <span>ISO 27001 & SOC 2 Type II</span>
+                        </div>
+                    </div>
+
+                    <!-- Columna 2 - Plataforma -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Plataforma</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="calendar"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Gestión de Citas
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="file-text"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Historial Clínico
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="user-check"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Portal del Médico
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="users"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Gestión de Pacientes
+                                </a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 3 - Recursos -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Recursos</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="book-open"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Guía de Uso
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="headphones"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Soporte Técnico 24/7
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="code"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Documentación API
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="graduation-cap"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Centro de Formación
+                                </a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 4 - Legal -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Legal</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="file-text"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Aviso Legal
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="shield"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Política de Privacidad (LOPD)
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="cookie"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Política de Cookies
+                                </a></li>
+                            <li><a href="#"
+                                    class="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center group">
+                                    <i data-lucide="scale"
+                                        class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                                    Términos de Servicio
+                                </a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Línea Separadora -->
+                <div class="border-t border-gray-200 mt-12 pt-8"> </div>
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center space-x-6 text-xs text-gray-500 mb-4 md:mb-0">
+                        <span>© 2026 MedHistory</span>
+                        <span class="hidden md:block">•</span>
+                        <span>Conforme a Directiva EU 2016/679 (GDPR)</span>
+                        <span class="hidden md:block">•</span>
+                        <span>Reglamento UE MDR 2017/745</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-1 text-xs text-green-600">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span>Servicios operativos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
+    </div>
+    </footer>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="js/index.js"></script>
+</body>
+
+</html>

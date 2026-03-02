@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Paciente - MedHistory</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563eb',
+                        'clinical-gray': '#f8fafc',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-50 flex flex-col">
+
+        <!-- Logo Section -->
+        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="stethoscope" class="w-4 h-4 text-white"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-900">MedHistory</span>
+            </div>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <a href="#" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                <span>Mi Historial</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+                <span>Mis Citas</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="pill" class="w-5 h-5"></i>
+                <span>Medicación</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <span>Mensajes</span>
+            </a>
+
+            <div class="pt-4 border-t border-gray-200 mt-4">
+                <!-- Family Management Section -->
+                <div class="mb-4">
+                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Familia</p>
+                    <button id="addDependentBtn"
+                        class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-transparent transition-all group">
+                        <div class="p-1.5 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-emerald-600"></i>
+                        </div>
+                        <span class="text-sm font-medium">Añadir Hijo/Dependiente</span>
+                    </button>
+
+                    <!-- Family Members List (populated dynamically) -->
+                    <div id="familyMembersList" class="mt-2 space-y-1">
+                        <!-- Dynamic family members will be added here -->
+                    </div>
+                </div>
+
+                <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Configuración</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Logout Button -->
+        <div class="px-4 py-4 border-t border-gray-200">
+            <a href="index.html"
+                class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span class="font-medium">Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64 min-h-screen flex flex-col">
+
+        <!-- Top Navbar -->
+        <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div class="h-full px-4 lg:px-8 flex items-center justify-between">
+
+                <!-- Mobile Menu Button -->
+                <button id="openSidebar" class="lg:hidden text-gray-600 hover:text-gray-900">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Title & Back Button -->
+                <div class="flex-1 flex items-center space-x-4">
+                    <h2 id="dashboardTitle" class="text-lg font-semibold text-gray-900">Mi Panel de Salud</h2>
+                    <button id="backToParentBtn"
+                        class="hidden items-center space-x-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Volver a mi perfil</span>
+                    </button>
+                </div>
+
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-4">
+
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+                    </button>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                        <div class="hidden sm:block text-right">
+                            <p id="profileName" class="text-sm font-semibold text-gray-900">Juan García</p>
+                            <p id="profileRole" class="text-xs text-gray-500">Paciente</p>
+                        </div>
+                        <div id="profileAvatar"
+                            class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-semibold">
+                            JG
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="flex-1 p-4 lg:p-8">
+
+            <!-- ADULT VIEW (Default) -->
+            <div id="adultView" class="view-section active">
+
+                <!-- Welcome Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Bienvenido, Juan</h1>
+                    <p class="text-gray-600">Aquí está tu resumen de salud actualizado</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+                    <!-- Próxima Cita -->
+                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-blue-50 rounded-lg">
+                                <i data-lucide="calendar-check" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                            <span
+                                class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Próxima</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Próxima Cita</h3>
+                        <p class="text-2xl font-bold text-gray-900 mb-2">15 Feb, 10:00</p>
+                        <p class="text-sm text-gray-600">Dr. María González</p>
+                        <p class="text-xs text-gray-500 mt-1">Revisión anual</p>
+                    </div>
+
+                    <!-- Último Diagnóstico -->
+                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-green-50 rounded-lg">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                            <span
+                                class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Actualizado</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Último Diagnóstico</h3>
+                        <p class="text-2xl font-bold text-gray-900 mb-2">Estado Saludable</p>
+                        <p class="text-sm text-gray-600">08 Feb 2026</p>
+                        <p class="text-xs text-gray-500 mt-1">Chequeo general positivo</p>
+                    </div>
+
+                    <!-- Medicación Activa -->
+                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-purple-50 rounded-lg">
+                                <i data-lucide="pill" class="w-6 h-6 text-purple-600"></i>
+                            </div>
+                            <span
+                                class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Activa</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Medicación Activa</h3>
+                        <p class="text-2xl font-bold text-gray-900 mb-2">2 Recetas</p>
+                        <p class="text-sm text-gray-600">Omeprazol, Vitamina D</p>
+                        <p class="text-xs text-gray-500 mt-1">Renovar en 15 días</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Chart -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+                    <!-- Quick Actions -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Acceso Rápido</h3>
+                            <div class="space-y-3">
+                                <button
+                                    class="w-full flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                                    <div class="p-2 bg-blue-600 rounded-lg">
+                                        <i data-lucide="calendar-plus" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="flex-1 text-left">
+                                        <p class="font-semibold text-gray-900 group-hover:text-blue-600">Solicitar Cita
+                                        </p>
+                                        <p class="text-xs text-gray-600">Agenda una nueva consulta</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                                </button>
+
+                                <button
+                                    class="w-full flex items-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors group">
+                                    <div class="p-2 bg-emerald-600 rounded-lg">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="flex-1 text-left">
+                                        <p class="font-semibold text-gray-900 group-hover:text-emerald-600">Ver mi
+                                            Historial</p>
+                                        <p class="text-xs text-gray-600">Consulta tu historial completo</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                                </button>
+
+                                <button
+                                    class="w-full flex items-center space-x-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors group">
+                                    <div class="p-2 bg-purple-600 rounded-lg">
+                                        <i data-lucide="download" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div class="flex-1 text-left">
+                                        <p class="font-semibold text-gray-900 group-hover:text-purple-600">Descargar
+                                            Informes</p>
+                                        <p class="text-xs text-gray-600">Obtén tus documentos médicos</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evolution Chart -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900">Evolución de Salud</h3>
+                                <select
+                                    class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option>Presión Arterial</option>
+                                    <option>Peso</option>
+                                    <option>Glucosa</option>
+                                </select>
+                            </div>
+
+                            <!-- Chart Placeholder -->
+                            <div class="chart-placeholder flex items-center justify-center text-white">
+                                <div class="text-center">
+                                    <i data-lucide="trending-up" class="w-12 h-12 mx-auto mb-2 opacity-80"></i>
+                                    <p class="text-sm opacity-90">Gráfico de Evolución</p>
+                                    <p class="text-xs opacity-75 mt-1">Últimos 6 meses</p>
+                                </div>
+                            </div>
+
+                            <!-- Stats Below Chart -->
+                            <div class="grid grid-cols-3 gap-4 mt-6">
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 mb-1">Promedio</p>
+                                    <p class="text-lg font-bold text-gray-900">120/80</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 mb-1">Máximo</p>
+                                    <p class="text-lg font-bold text-gray-900">130/85</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 mb-1">Mínimo</p>
+                                    <p class="text-lg font-bold text-gray-900">115/75</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
+                            <div class="p-2 bg-blue-50 rounded-lg">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Cita agendada con Dr. María González</p>
+                                <p class="text-sm text-gray-600 mt-1">Revisión anual programada para el 15 de febrero
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2">Hace 2 días</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
+                            <div class="p-2 bg-green-50 rounded-lg">
+                                <i data-lucide="file-check" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Resultados de laboratorio disponibles</p>
+                                <p class="text-sm text-gray-600 mt-1">Análisis de sangre completo - Todos los valores
+                                    normales</p>
+                                <p class="text-xs text-gray-500 mt-2">Hace 5 días</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="p-2 bg-purple-50 rounded-lg">
+                                <i data-lucide="pill" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Receta renovada</p>
+                                <p class="text-sm text-gray-600 mt-1">Omeprazol 20mg - Disponible para recoger en
+                                    farmacia</p>
+                                <p class="text-xs text-gray-500 mt-2">Hace 1 semana</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+
+        <!-- PEDIATRIC VIEW (Hidden by default) -->
+        <main id="pediatricView" class="view-section flex-1 p-4 lg:p-8">
+
+            <!-- Welcome Header (Pediatric) -->
+            <div class="mb-8">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl">
+                        <i data-lucide="baby" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 id="childName" class="text-3xl font-bold text-gray-900">Panel Infantil</h1>
+                        <p id="childAge" class="text-gray-600">Edad y última actualización</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pediatric Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+                <!-- Próxima Revisión Pediátrica -->
+                <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-emerald-50 rounded-lg">
+                            <i data-lucide="stethoscope" class="w-6 h-6 text-emerald-600"></i>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Próxima</span>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Próxima Revisión</h3>
+                    <p class="text-2xl font-bold text-gray-900 mb-2">20 Feb, 11:00</p>
+                    <p class="text-sm text-gray-600">Dra. Ana Pediatra</p>
+                    <p class="text-xs text-gray-500 mt-1">Control de crecimiento</p>
+                </div>
+
+                <!-- Última Vacuna -->
+                <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <i data-lucide="syringe" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Actualizado</span>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Última Vacuna</h3>
+                    <p class="text-2xl font-bold text-gray-900 mb-2">Triple Viral</p>
+                    <p class="text-sm text-gray-600">01 Feb 2026</p>
+                    <p class="text-xs text-gray-500 mt-1">Próxima: Refuerzo DTP</p>
+                </div>
+
+                <!-- Último Crecimiento -->
+                <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-amber-50 rounded-lg">
+                            <i data-lucide="ruler" class="w-6 h-6 text-amber-600"></i>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Normal</span>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Último Registro</h3>
+                    <p class="text-2xl font-bold text-gray-900 mb-2">95 cm / 14 kg</p>
+                    <p class="text-sm text-gray-600">Percentil 50-75</p>
+                    <p class="text-xs text-gray-500 mt-1">Crecimiento adecuado</p>
+                </div>
+            </div>
+
+            <!-- Main Pediatric Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+                <!-- Vaccination Calendar -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 bg-blue-50 rounded-lg">
+                                    <i data-lucide="syringe" class="w-5 h-5 text-blue-600"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">Calendario de Vacunación</h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- Vaccination Entry -->
+                            <div
+                                class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-2 bg-green-600 rounded-lg">
+                                        <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">BCG (Tuberculosis)</p>
+                                        <p class="text-sm text-gray-600">Recién nacido</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs font-medium text-green-700 bg-green-100 px-3 py-1 rounded-full">Administrada</span>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-2 bg-green-600 rounded-lg">
+                                        <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Hepatitis B</p>
+                                        <p class="text-sm text-gray-600">2 meses</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs font-medium text-green-700 bg-green-100 px-3 py-1 rounded-full">Administrada</span>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-2 bg-green-600 rounded-lg">
+                                        <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Triple Viral (MMR)</p>
+                                        <p class="text-sm text-gray-600">12 meses</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs font-medium text-green-700 bg-green-100 px-3 py-1 rounded-full">Administrada</span>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-2 bg-amber-500 rounded-lg">
+                                        <i data-lucide="clock" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">DTP (Refuerzo)</p>
+                                        <p class="text-sm text-gray-600">18 meses - Recomendada</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs font-medium text-amber-700 bg-amber-100 px-3 py-1 rounded-full">Pendiente</span>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-2 bg-gray-400 rounded-lg">
+                                        <i data-lucide="calendar" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Varicela</p>
+                                        <p class="text-sm text-gray-600">2 años</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs font-medium text-gray-600 bg-gray-200 px-3 py-1 rounded-full">Programada</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar - Growth & Quick Actions -->
+                <div class="space-y-6">
+
+                    <!-- Growth Tracking -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="p-2 bg-amber-50 rounded-lg">
+                                <i data-lucide="trending-up" class="w-5 h-5 text-amber-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Crecimiento</h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Peso</span>
+                                    <span class="text-sm font-bold text-gray-900">14 kg</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Percentil 50-75</p>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Talla</span>
+                                    <span class="text-sm font-bold text-gray-900">95 cm</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Percentil 50-75</p>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">IMC</span>
+                                    <span class="text-sm font-bold text-gray-900">15.5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Normal para edad</p>
+                            </div>
+                        </div>
+
+                        <button
+                            class="w-full mt-4 px-4 py-2 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium">
+                            Ver historial completo
+                        </button>
+                    </div>
+
+                    <!-- Health Alerts -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="p-2 bg-purple-50 rounded-lg">
+                                <i data-lucide="alert-circle" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Alergias</h3>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 p-2 bg-red-50 rounded-lg">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600"></i>
+                                <span class="text-sm font-medium text-red-900">Frutos secos</span>
+                            </div>
+                            <div class="flex items-center space-x-2 p-2 bg-yellow-50 rounded-lg">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-600"></i>
+                                <span class="text-sm font-medium text-yellow-900">Polen</span>
+                            </div>
+                        </div>
+
+                        <button
+                            class="w-full mt-4 px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium">
+                            Actualizar alergias
+                        </button>
+                    </div>
+
+                    <!-- Blood Type -->
+                    <div
+                        class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl shadow-sm border border-red-200 p-6">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="p-2 bg-red-100 rounded-lg">
+                                <i data-lucide="droplet" class="w-5 h-5 text-red-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Grupo Sanguíneo</h3>
+                        </div>
+                        <p class="text-3xl font-bold text-red-600 text-center mt-4">A+</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Pediatric Activity -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
+                        <div class="p-2 bg-emerald-50 rounded-lg">
+                            <i data-lucide="stethoscope" class="w-5 h-5 text-emerald-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">Consulta pediátrica programada</p>
+                            <p class="text-sm text-gray-600 mt-1">Control de crecimiento y desarrollo - 20 de febrero
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2">Hace 3 días</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
+                        <div class="p-2 bg-blue-50 rounded-lg">
+                            <i data-lucide="syringe" class="w-5 h-5 text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">Vacuna Triple Viral administrada</p>
+                            <p class="text-sm text-gray-600 mt-1">Aplicada correctamente - Sin reacciones adversas</p>
+                            <p class="text-xs text-gray-500 mt-2">Hace 1 semana</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="p-2 bg-amber-50 rounded-lg">
+                            <i data-lucide="ruler" class="w-5 h-5 text-amber-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">Nuevo registro de crecimiento</p>
+                            <p class="text-sm text-gray-600 mt-1">Peso: 14kg, Talla: 95cm - Desarrollo normal</p>
+                            <p class="text-xs text-gray-500 mt-2">Hace 2 semanas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Add Dependent -->
+    <div id="addDependentModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <div class="p-3 bg-emerald-50 rounded-xl">
+                        <i data-lucide="user-plus" class="w-6 h-6 text-emerald-600"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900">Añadir Hijo/Dependiente</h2>
+                </div>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="dependentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                    <input type="text" id="childNameInput" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Ej: María García López">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Nacimiento</label>
+                    <input type="date" id="childBirthDateInput" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Grupo Sanguíneo</label>
+                    <select id="childBloodTypeInput" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Alergias (opcional)</label>
+                    <textarea id="childAllergiesInput" rows="3"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                        placeholder="Ej: Frutos secos, polen, lactosa..."></textarea>
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancelModalBtn"
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all font-medium shadow-lg">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
