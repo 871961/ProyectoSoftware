@@ -331,8 +331,8 @@ class AdminPanel {
                 <td style="font-family: monospace; font-weight: 600;">${medico.num_colegiado}</td>
                 <td>
                     <span class="estado-badge ${medico.activo ? 'estado-activo' : 'estado-inactivo'}">
-                        <i class="fas fa-${medico.activo ? 'check-circle' : 'times-circle'}"></i>
-                        ${medico.activo ? 'Activo' : 'Inactivo'}
+                        <i class="fas fa-${medico.activo ? 'check-circle' : 'ban'}"></i>
+                        ${medico.activo ? 'Activo' : 'Baja'}
                     </span>
                 </td>
                 <td>
@@ -344,9 +344,11 @@ class AdminPanel {
                                 Dar de Baja
                             </button>
                         ` : `
-                            <span style="color: var(--gray-400); font-size: 0.75rem;">
-                                <i class="fas fa-info-circle"></i> Inactivo
-                            </span>
+                            <button class="btn btn-success btn-sm" onclick="adminPanel.darDeAltaMedico(${medico.id_medico})"
+                                    title="Reactivar médico" style="background: var(--medical-green); border-color: var(--medical-green);">
+                                <i class="fas fa-user-check"></i> 
+                                Dar de Alta
+                            </button>
                         `}
                     </div>
                 </td>
@@ -414,21 +416,23 @@ class AdminPanel {
                 <td>
                     <span class="estado-badge ${paciente.activo ? 'estado-activo' : 'estado-inactivo'}">
                         <i class="fas fa-${paciente.activo ? 'heart' : 'heart-broken'}"></i>
-                        ${paciente.activo ? 'Activo' : 'Inactivo'}
+                        ${paciente.activo ? 'Activo' : 'Baja'}
                     </span>
                 </td>
                 <td>
                     <div class="action-buttons">
                         ${paciente.activo ? `
-                            <button class="btn btn-danger btn-sm" onclick="adminPanel.darDeBajaPaciente(${paciente.id_paciente})"
+                            <button class="btn btn-danger btn-sm" onclick="adminPanel.darDeBajaPaciente('${paciente.dni}')"
                                     title="Dar de baja (borrado lógico)">
                                 <i class="fas fa-user-slash"></i> 
                                 Dar de Baja
                             </button>
                         ` : `
-                            <span style="color: var(--gray-400); font-size: 0.75rem;">
-                                <i class="fas fa-info-circle"></i> Inactivo
-                            </span>
+                            <button class="btn btn-success btn-sm" onclick="adminPanel.darDeAltaPaciente('${paciente.dni}')"
+                                    title="Reactivar paciente" style="background: var(--medical-green); border-color: var(--medical-green);">
+                                <i class="fas fa-user-check"></i> 
+                                Dar de Alta
+                            </button>
                         `}
                     </div>
                 </td>
@@ -642,7 +646,7 @@ class AdminPanel {
         }
 
         try {
-            const response = await this.apiCall(`dar_baja_medico?id=${id}`, 'DELETE');
+            const response = await this.apiCall(`dar_baja_medico&id=${id}`, 'DELETE');
 
             if (response.success) {
                 this.showAlert('Médico dado de baja exitosamente', 'success');
@@ -655,13 +659,32 @@ class AdminPanel {
         }
     }
 
+    async darDeAltaMedico(id) {
+        if (!confirm('¿Está seguro de que desea reactivar a este médico?')) {
+            return;
+        }
+
+        try {
+            const response = await this.apiCall(`dar_alta_medico&id=${id}`, 'POST');
+
+            if (response.success) {
+                this.showAlert('Médico reactivado exitosamente', 'success');
+                await this.loadMedicos();
+            } else {
+                this.showAlert(response.mensaje, 'error');
+            }
+        } catch (error) {
+            this.showAlert('Error al dar de alta al médico', 'error');
+        }
+    }
+
     async darDeBajaPaciente(id) {
         if (!confirm('¿Está seguro de que desea dar de baja a este paciente? Esta acción realizará un borrado lógico por cumplimiento legal.')) {
             return;
         }
 
         try {
-            const response = await this.apiCall(`dar_baja_paciente?id=${id}`, 'DELETE');
+            const response = await this.apiCall(`dar_baja_paciente&id=${id}`, 'DELETE');
 
             if (response.success) {
                 this.showAlert('Paciente dado de baja exitosamente', 'success');
@@ -671,6 +694,25 @@ class AdminPanel {
             }
         } catch (error) {
             this.showAlert('Error al dar de baja al paciente', 'error');
+        }
+    }
+
+    async darDeAltaPaciente(id) {
+        if (!confirm('¿Está seguro de que desea reactivar a este paciente?')) {
+            return;
+        }
+
+        try {
+            const response = await this.apiCall(`dar_alta_paciente&id=${id}`, 'POST');
+
+            if (response.success) {
+                this.showAlert('Paciente reactivado exitosamente', 'success');
+                await this.loadPacientes();
+            } else {
+                this.showAlert(response.mensaje, 'error');
+            }
+        } catch (error) {
+            this.showAlert('Error al dar de alta al paciente', 'error');
         }
     }
 

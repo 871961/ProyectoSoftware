@@ -128,11 +128,11 @@ class MedicoDAO {
     }
     
     /**
-     * Obtiene todos los médicos activos
+     * Obtiene todos los médicos (activos e inactivos)
      */
     public function obtenerTodos() {
         try {
-            $sql = "SELECT * FROM medicos WHERE activo = TRUE ORDER BY apellidos, nombre";
+            $sql = "SELECT * FROM medicos ORDER BY activo DESC, apellidos, nombre";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -146,6 +146,29 @@ class MedicoDAO {
             
         } catch (PDOException $e) {
             throw new Exception("Error al obtener médicos: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Reactiva un médico dado de baja (borrado lógico reverso)
+     */
+    public function darDeAlta($id_medico, $id_admin = null) {
+        try {
+            $sql = "UPDATE medicos SET activo = TRUE, fecha_baja = NULL WHERE id_medico = :id_medico";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_medico);
+            
+            $resultado = $stmt->execute();
+            
+            if ($resultado) {
+                $this->registrarAuditoria('ALTA_MEDICO', 'medicos', $id_medico, $id_admin);
+            }
+            
+            return $resultado;
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al dar de alta al médico: " . $e->getMessage());
         }
     }
     

@@ -207,6 +207,56 @@ try {
             }
             break;
             
+        case 'dar_alta_medico':
+            if ($metodo === 'POST' && isset($_SESSION['admin_id'])) {
+                $id_medico = $_GET['id'] ?? null;
+                if (!$id_medico) {
+                    throw new Exception('ID de médico requerido');
+                }
+                
+                $resultado = $medicoDAO->darDeAlta($id_medico, $_SESSION['admin_id']);
+                
+                if ($resultado) {
+                    echo json_encode([
+                        'success' => true,
+                        'mensaje' => 'Médico dado de alta exitosamente'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'mensaje' => 'Error al dar de alta al médico'
+                    ]);
+                }
+            } else {
+                throw new Exception('No autorizado o método no permitido');
+            }
+            break;
+            
+        case 'dar_alta_paciente':
+            if ($metodo === 'POST' && isset($_SESSION['admin_id'])) {
+                $id_paciente = $_GET['id'] ?? null;
+                if (!$id_paciente) {
+                    throw new Exception('ID de paciente requerido');
+                }
+                
+                $resultado = $pacienteDAO->darDeAlta($id_paciente, $_SESSION['admin_id']);
+                
+                if ($resultado) {
+                    echo json_encode([
+                        'success' => true,
+                        'mensaje' => 'Paciente dado de alta exitosamente'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'mensaje' => 'Error al dar de alta al paciente'
+                    ]);
+                }
+            } else {
+                throw new Exception('No autorizado o método no permitido');
+            }
+            break;
+            
         default:
             echo json_encode([
                 'success' => false,

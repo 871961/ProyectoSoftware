@@ -136,11 +136,11 @@ class PacienteDAO {
     }
     
     /**
-     * Obtiene todos los pacientes activos
+     * Obtiene todos los pacientes (activos e inactivos)
      */
     public function obtenerTodos() {
         try {
-            $sql = "SELECT * FROM pacientes WHERE activo = TRUE ORDER BY apellidos, nombre";
+            $sql = "SELECT * FROM pacientes ORDER BY activo DESC, apellidos, nombre";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -154,6 +154,29 @@ class PacienteDAO {
             
         } catch (PDOException $e) {
             throw new Exception("Error al obtener pacientes: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Reactiva un paciente dado de baja (borrado lógico reverso)
+     */
+    public function darDeAlta($dni, $id_admin = null) {
+        try {
+            $sql = "UPDATE pacientes SET activo = TRUE, fecha_baja = NULL WHERE dni = :dni";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':dni', $dni);
+            
+            $resultado = $stmt->execute();
+            
+            if ($resultado) {
+                $this->registrarAuditoria('ALTA_PACIENTE', 'pacientes', $dni, $id_admin);
+            }
+            
+            return $resultado;
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al dar de alta al paciente: " . $e->getMessage());
         }
     }
     
