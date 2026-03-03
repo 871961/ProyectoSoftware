@@ -211,6 +211,79 @@
                 </div>
             </section>
 
+            <section class="health-profile-shell mb-8">
+                <div class="health-profile-glow"></div>
+                <div class="health-profile-card bg-white rounded-2xl border border-cyan-100 p-5 md:p-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-cyan-600">RF4</p>
+                            <h2 class="text-2xl font-bold text-gray-900">Gesti&oacute;n del Perfil de Salud</h2>
+                            <p class="text-sm text-gray-600">El m&eacute;dico registra y actualiza estado general, h&aacute;bitos, alergias y enfermedades.</p>
+                        </div>
+                        <div id="saludImcCardMedico" class="imc-badge imc-neutral">
+                            <span class="imc-value" id="saludImcValueMedico">--</span>
+                            <span class="imc-label" id="saludImcLabelMedico">Sin datos</span>
+                        </div>
+                    </div>
+
+                    <form id="saludMedicoForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="saludPacienteSelect" class="block text-sm font-medium text-gray-700 mb-1">Paciente</label>
+                            <select id="saludPacienteSelect" name="id_paciente" required
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                <option value="">Selecciona un paciente...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="saludActividadFisicaMedico" class="block text-sm font-medium text-gray-700 mb-1">Actividad f&iacute;sica</label>
+                            <input id="saludActividadFisicaMedico" name="actividad_fisica" type="text" placeholder="Ej: 3 d&iacute;as/semana"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div>
+                            <label for="saludAlturaMedico" class="block text-sm font-medium text-gray-700 mb-1">Altura (cm)</label>
+                            <input id="saludAlturaMedico" name="altura_cm" type="number" min="30" max="260" step="0.1"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div>
+                            <label for="saludPesoMedico" class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+                            <input id="saludPesoMedico" name="peso_kg" type="number" min="1" max="400" step="0.1"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div>
+                            <label for="saludConsumoTabacoMedico" class="block text-sm font-medium text-gray-700 mb-1">Consumo de tabaco</label>
+                            <input id="saludConsumoTabacoMedico" name="consumo_tabaco" type="text" placeholder="Ej: No fumador"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div>
+                            <label for="saludConsumoAlcoholMedico" class="block text-sm font-medium text-gray-700 mb-1">Consumo de alcohol</label>
+                            <input id="saludConsumoAlcoholMedico" name="consumo_alcohol" type="text" placeholder="Ej: Ocasional"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="saludAlergiasMedico" class="block text-sm font-medium text-gray-700 mb-1">Alergias conocidas</label>
+                            <textarea id="saludAlergiasMedico" name="alergias" rows="2" placeholder="Ej: Penicilina, mariscos..."
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="saludEnfermedadesMedico" class="block text-sm font-medium text-gray-700 mb-1">Enfermedades diagnosticadas</label>
+                            <textarea id="saludEnfermedadesMedico" name="enfermedades" rows="2" placeholder="Ej: Hipertensi&oacute;n, asma..."
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex flex-wrap gap-2">
+                            <button type="submit"
+                                class="health-btn-primary px-4 py-2.5 text-white rounded-xl font-medium">
+                                Guardar perfil de salud
+                            </button>
+                            <button id="saludCargarBtnMedico" type="button"
+                                class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium">
+                                Cargar perfil
+                            </button>
+                        </div>
+                    </form>
+                    <p id="saludMessageMedico" class="mt-3 text-sm"></p>
+                </div>
+            </section>
+
             <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
                 <div class="flex flex-col md:flex-row md:items-end gap-3 mb-4">
                     <div>

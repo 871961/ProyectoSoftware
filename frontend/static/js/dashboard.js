@@ -4,6 +4,7 @@
 */
 
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
+const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
 
 class SidebarManager {
     constructor() {
@@ -44,6 +45,17 @@ class PacienteDashboard {
 
         this.modal = document.getElementById('consultaDetailModal');
         this.closeModalBtn = document.getElementById('closeConsultaDetailBtn');
+
+        this.saludForm = document.getElementById('saludPacienteForm');
+        this.saludMessage = document.getElementById('saludMessagePaciente');
+        this.saludReloadBtn = document.getElementById('saludReloadPaciente');
+        this.saludAlturaInput = document.getElementById('saludAlturaPaciente');
+        this.saludPesoInput = document.getElementById('saludPesoPaciente');
+        this.saludAlergias = document.getElementById('saludAlergiasPaciente');
+        this.saludEnfermedades = document.getElementById('saludEnfermedadesPaciente');
+        this.saludImcValue = document.getElementById('saludImcValuePaciente');
+        this.saludImcLabel = document.getElementById('saludImcLabelPaciente');
+        this.saludImcCard = document.getElementById('saludImcCardPaciente');
     }
 
     async init() {
@@ -54,7 +66,7 @@ class PacienteDashboard {
         new SidebarManager().init();
         this.bindEvents();
         await this.cargarSesion();
-        await this.cargarConsultas();
+        await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud()]);
     }
 
     bindEvents() {
@@ -70,6 +82,10 @@ class PacienteDashboard {
         this.modal?.addEventListener('click', (e) => {
             if (e.target === this.modal) this.closeDetailModal();
         });
+        this.saludForm?.addEventListener('submit', (e) => this.guardarPerfilSalud(e));
+        this.saludReloadBtn?.addEventListener('click', () => this.cargarPerfilSalud());
+        this.saludAlturaInput?.addEventListener('input', () => this.actualizarImcVisual());
+        this.saludPesoInput?.addEventListener('input', () => this.actualizarImcVisual());
     }
 
     async api(accion, method = 'GET', data = null, params = {}) {
@@ -111,6 +127,29 @@ class PacienteDashboard {
         }
     }
 
+    async perfilApi(accion, method = 'GET', data = null, params = {}) {
+        const query = new URLSearchParams({ accion, ...params }).toString();
+        const url = `${PERFIL_API}?${query}`;
+        const options = {
+            method,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        if (data) options.body = JSON.stringify(data);
+
+        const response = await fetch(url, options);
+        const raw = await response.text();
+        let payload = null;
+        try {
+            payload = raw ? JSON.parse(raw) : null;
+        } catch (_error) {
+            throw new Error('Respuesta no valida en perfil de salud.');
+        }
+        if (!response.ok || !payload.success) {
+            throw new Error(payload?.mensaje || `Error HTTP ${response.status}`);
+        }
+        return payload;
+    }
+
     pintarUsuario() {
         const nombre = this.usuario.nombre || '';
         const iniciales = this.obtenerIniciales(nombre);
@@ -124,6 +163,88 @@ class PacienteDashboard {
         if (profileAvatar) profileAvatar.textContent = iniciales;
         if (welcomeTitle) welcomeTitle.textContent = `Bienvenido, ${nombre}`;
         if (welcomeSubtitle) welcomeSubtitle.textContent = 'Tu historial medico se construye con cada consulta registrada.';
+    }
+
+    async cargarPerfilSalud() {
+        try {
+            const res = await this.perfilApi('obtener_mi_perfil');
+            this.pintarPerfilSalud(res.data || {});
+            this.setSaludMessage('Perfil de salud cargado.', false);
+        } catch (error) {
+            this.setSaludMessage(error.message, true);
+        }
+    }
+
+    pintarPerfilSalud(perfil) {
+        if (!this.saludForm) return;
+        this.saludForm.elements.altura_cm.value = perfil.altura_cm ?? '';
+        this.saludForm.elements.peso_kg.value = perfil.peso_kg ?? '';
+        this.saludForm.elements.consumo_tabaco.value = perfil.consumo_tabaco ?? '';
+        this.saludForm.elements.consumo_alcohol.value = perfil.consumo_alcohol ?? '';
+        this.saludForm.elements.actividad_fisica.value = perfil.actividad_fisica ?? '';
+        if (this.saludAlergias) this.saludAlergias.textContent = perfil.alergias || 'No registradas';
+        if (this.saludEnfermedades) this.saludEnfermedades.textContent = perfil.enfermedades || 'No registradas';
+        this.actualizarImcVisual(perfil.imc, perfil.clasificacion_imc);
+    }
+
+    async guardarPerfilSalud(event) {
+        event.preventDefault();
+        if (!this.saludForm) return;
+        const formData = new FormData(this.saludForm);
+        const payload = {
+            altura_cm: formData.get('altura_cm'),
+            peso_kg: formData.get('peso_kg'),
+            consumo_tabaco: formData.get('consumo_tabaco'),
+            consumo_alcohol: formData.get('consumo_alcohol'),
+            actividad_fisica: formData.get('actividad_fisica')
+        };
+
+        try {
+            const res = await this.perfilApi('actualizar_mi_perfil', 'POST', payload);
+            this.pintarPerfilSalud(res.data || {});
+            this.setSaludMessage('Perfil actualizado correctamente.', false);
+        } catch (error) {
+            this.setSaludMessage(error.message, true);
+        }
+    }
+
+    actualizarImcVisual(imc = null, clasificacion = null) {
+        const peso = Number(this.saludPesoInput?.value);
+        const altura = Number(this.saludAlturaInput?.value);
+        let finalImc = imc;
+        let finalClasificacion = clasificacion;
+
+        if (finalImc === null || finalImc === undefined) {
+            if (peso > 0 && altura > 0) {
+                const alturaM = altura / 100;
+                finalImc = Number((peso / (alturaM * alturaM)).toFixed(2));
+            } else {
+                finalImc = null;
+            }
+        }
+
+        if (!finalClasificacion) {
+            if (finalImc === null) finalClasificacion = 'datos insuficientes';
+            else if (finalImc < 18.5) finalClasificacion = 'bajo peso';
+            else if (finalImc < 25) finalClasificacion = 'normal';
+            else finalClasificacion = 'sobrepeso';
+        }
+
+        if (this.saludImcValue) this.saludImcValue.textContent = finalImc !== null ? String(finalImc) : '--';
+        if (this.saludImcLabel) this.saludImcLabel.textContent = finalClasificacion;
+        if (this.saludImcCard) {
+            this.saludImcCard.classList.remove('imc-low', 'imc-normal', 'imc-high', 'imc-neutral');
+            if (finalImc === null) this.saludImcCard.classList.add('imc-neutral');
+            else if (finalImc < 18.5) this.saludImcCard.classList.add('imc-low');
+            else if (finalImc < 25) this.saludImcCard.classList.add('imc-normal');
+            else this.saludImcCard.classList.add('imc-high');
+        }
+    }
+
+    setSaludMessage(text, isError) {
+        if (!this.saludMessage) return;
+        this.saludMessage.textContent = text;
+        this.saludMessage.className = `mt-3 text-sm ${isError ? 'text-red-600' : 'text-emerald-600'}`;
     }
 
     async cargarConsultas() {
@@ -245,4 +366,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     const app = new PacienteDashboard();
     await app.init();
 });
-

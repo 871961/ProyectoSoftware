@@ -78,9 +78,15 @@ CREATE TABLE perfiles_salud (
     id_paciente VARCHAR(20) UNIQUE NOT NULL,
     peso NUMERIC(5,2),
     altura NUMERIC(3,2),
+    peso_kg NUMERIC(5,2),
+    altura_cm NUMERIC(5,2),
     alergias TEXT,
+    enfermedades TEXT,
     actividad_fisica VARCHAR(100),
     consumo_tabaco VARCHAR(100),
+    consumo_alcohol VARCHAR(100),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- Sin CASCADE: Si intentas borrar un paciente físicamente, SQL dará error
     CONSTRAINT fk_paciente_perfil FOREIGN KEY (id_paciente) 
         REFERENCES pacientes(dni) 
