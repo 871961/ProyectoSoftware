@@ -108,7 +108,7 @@
 
         <!-- Logout Button -->
         <div class="px-4 py-4 border-t border-gray-200">
-            <a href="index.html"
+            <a href="index.html" id="logoutLink"
                 class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
                 <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span class="font-medium">Cerrar Sesión</span>
@@ -170,9 +170,34 @@
 
                 <!-- Welcome Header -->
                 <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Bienvenido, Juan</h1>
-                    <p class="text-gray-600">Aquí está tu resumen de salud actualizado</p>
+                    <h1 id="welcomeTitle" class="text-3xl font-bold text-gray-900 mb-2">Bienvenido, Juan</h1>
+                    <p id="welcomeSubtitle" class="text-gray-600">Aquí está tu resumen de salud actualizado</p>
                 </div>
+
+                <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <div class="flex flex-col md:flex-row md:items-end gap-3 mb-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Mis Consultas Médicas</h2>
+                        <div class="md:ml-auto flex items-end gap-2">
+                            <div>
+                                <label for="filtroDesdePaciente" class="block text-xs text-gray-600 mb-1">Desde</label>
+                                <input id="filtroDesdePaciente" type="date"
+                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label for="filtroHastaPaciente" class="block text-xs text-gray-600 mb-1">Hasta</label>
+                                <input id="filtroHastaPaciente" type="date"
+                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                            </div>
+                            <button id="aplicarFiltroPaciente" type="button"
+                                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Filtrar</button>
+                            <button id="limpiarFiltroPaciente" type="button"
+                                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Limpiar</button>
+                        </div>
+                    </div>
+                    <div id="consultasPacienteCards" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    </div>
+                    <p id="consultasPacienteEmpty" class="mt-3 text-sm text-gray-500 hidden">Todavía no tienes consultas registradas.</p>
+                </section>
 
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -715,6 +740,53 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: Consulta Detail -->
+    <div id="consultaDetailModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-xs uppercase tracking-wide text-blue-600 font-semibold">Historial Médico</p>
+                    <h3 id="consultaDetailTitle" class="text-2xl font-bold text-gray-900">Detalle de consulta</h3>
+                </div>
+                <button id="closeConsultaDetailBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-blue-50 rounded-xl p-4">
+                    <p class="text-xs text-blue-700 uppercase font-semibold mb-1">Fecha</p>
+                    <p id="detailFecha" class="text-gray-900 font-medium">-</p>
+                </div>
+                <div class="bg-emerald-50 rounded-xl p-4">
+                    <p class="text-xs text-emerald-700 uppercase font-semibold mb-1">Médico</p>
+                    <p id="detailMedico" class="text-gray-900 font-medium">-</p>
+                </div>
+                <div class="bg-purple-50 rounded-xl p-4 md:col-span-2">
+                    <p class="text-xs text-purple-700 uppercase font-semibold mb-1">Especialidad</p>
+                    <p id="detailEspecialidad" class="text-gray-900 font-medium">-</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="border border-gray-200 rounded-xl p-4">
+                    <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Diagnóstico</p>
+                    <p id="detailDiagnostico" class="text-gray-900">-</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-4">
+                    <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Tratamiento</p>
+                    <p id="detailTratamiento" class="text-gray-900">-</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-4">
+                    <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Resultados</p>
+                    <p id="detailResultados" class="text-gray-900">-</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-4">
+                    <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Observaciones</p>
+                    <p id="detailObservaciones" class="text-gray-900">-</p>
+                </div>
+            </div>
         </div>
     </div>
 

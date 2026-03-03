@@ -1,669 +1,248 @@
-/**
- * ====================================
- * MedHistory - Patient Dashboard Module
- * ====================================
- * 
- * Purpose: Manage patient dashboard and pediatric mode
- * Responsibilities:
- *   - Family member management (add/edit/delete children)
- *   - Switch between adult and pediatric views
- *   - Modal handling for adding dependents
- *   - Age calculation and display
- *   - Profile management
- * 
- * Dependencies: Lucide Icons
- * Author: MedHistory Development Team
- * Last Modified: February 2, 2026
- */
+/*
+    Archivo: dashboard.js
+    Descripcion: Dashboard paciente con historial de consultas en cards y detalle
+*/
 
-// ========================================
-// MODULE: FAMILY MEMBER MANAGER
-// ========================================
+const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 
-class FamilyMemberManager {
+class SidebarManager {
     constructor() {
-        this.familyMembers = [];
-        this.storageKey = 'medhistory_family_members';
-        this.loadFromStorage();
+        this.sidebar = document.getElementById('sidebar');
+        this.sidebarOverlay = document.getElementById('sidebarOverlay');
+        this.openBtn = document.getElementById('openSidebar');
+        this.closeBtn = document.getElementById('closeSidebar');
     }
 
-    /**
-     * Add a new family member
-     * @param {object} memberData - Member information
-     * @returns {object} Added member with generated ID
-     */
-    addMember(memberData) {
-        const member = {
-            id: this.generateId(),
-            name: memberData.name,
-            birthDate: memberData.birthDate,
-            bloodType: memberData.bloodType,
-            allergies: memberData.allergies || '',
-            initials: this.getInitials(memberData.name),
-            age: this.calculateAge(memberData.birthDate),
-            createdAt: new Date().toISOString()
-        };
-
-        this.familyMembers.push(member);
-        this.saveToStorage();
-
-        return member;
-    }
-
-    /**
-     * Remove a family member by ID
-     * @param {string} memberId - Member ID to remove
-     * @returns {boolean} Success status
-     */
-    removeMember(memberId) {
-        const initialLength = this.familyMembers.length;
-        this.familyMembers = this.familyMembers.filter(m => m.id !== memberId);
-
-        if (this.familyMembers.length < initialLength) {
-            this.saveToStorage();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Get member by ID
-     * @param {string} memberId - Member ID
-     * @returns {object|null} Member object or null
-     */
-    getMemberById(memberId) {
-        return this.familyMembers.find(m => m.id === memberId) || null;
-    }
-
-    /**
-     * Get all family members
-     * @returns {Array} Array of family members
-     */
-    getAllMembers() {
-        return this.familyMembers;
-    }
-
-    /**
-     * Update member information
-     * @param {string} memberId - Member ID
-     * @param {object} updates - Fields to update
-     * @returns {boolean} Success status
-     */
-    updateMember(memberId, updates) {
-        const member = this.getMemberById(memberId);
-
-        if (member) {
-            Object.assign(member, updates);
-
-            // Recalculate derived fields if needed
-            if (updates.name) {
-                member.initials = this.getInitials(updates.name);
-            }
-            if (updates.birthDate) {
-                member.age = this.calculateAge(updates.birthDate);
-            }
-
-            this.saveToStorage();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Generate unique ID
-     * @returns {string} Unique identifier
-     */
-    generateId() {
-        return `member_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    }
-
-    /**
-     * Extract initials from full name
-     * @param {string} name - Full name
-     * @returns {string} Initials (e.g., "JG" from "Juan García")
-     */
-    getInitials(name) {
-        return name.split(' ')
-            .filter((_, index, array) => index === 0 || index === array.length - 1)
-            .map(word => word[0])
-            .join('')
-            .toUpperCase();
-    }
-
-    /**
-     * Calculate age from birth date
-     * @param {string} birthDate - Birth date in YYYY-MM-DD format
-     * @returns {string} Formatted age (e.g., "18 meses" or "3 años")
-     */
-    calculateAge(birthDate) {
-        const today = new Date();
-        const birth = new Date(birthDate);
-        let years = today.getFullYear() - birth.getFullYear();
-        let months = today.getMonth() - birth.getMonth();
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        if (years < 2) {
-            const totalMonths = years * 12 + months;
-            return `${totalMonths} ${totalMonths === 1 ? 'mes' : 'meses'}`;
-        } else {
-            return `${years} ${years === 1 ? 'año' : 'años'}`;
-        }
-    }
-
-    /**
-     * Save family members to localStorage
-     */
-    saveToStorage() {
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.familyMembers));
-        } catch (error) {
-            console.error('Error saving family members:', error);
-        }
-    }
-
-    /**
-     * Load family members from localStorage
-     */
-    loadFromStorage() {
-        try {
-            const data = localStorage.getItem(this.storageKey);
-            if (data) {
-                this.familyMembers = JSON.parse(data);
-            }
-        } catch (error) {
-            console.error('Error loading family members:', error);
-            this.familyMembers = [];
-        }
-    }
-}
-
-// ========================================
-// MODULE: VIEW MANAGER
-// ========================================
-
-class ViewManager {
-    constructor() {
-        this.currentView = 'adult'; // 'adult' or 'pediatric'
-        this.currentChildId = null;
-    }
-
-    /**
-     * Switch to pediatric view
-     * @param {object} childData - Child information
-     */
-    switchToPediatricView(childData) {
-        this.currentView = 'pediatric';
-        this.currentChildId = childData.id;
-
-        // Update header title
-        const dashboardTitle = document.getElementById('dashboardTitle');
-        if (dashboardTitle) {
-            dashboardTitle.textContent = `Panel Infantil - ${childData.name}`;
-        }
-
-        // Show back button
-        const backButton = document.getElementById('backToParentBtn');
-        if (backButton) {
-            backButton.classList.remove('hidden');
-            backButton.classList.add('flex');
-        }
-
-        // Update profile information
-        this.updateProfileDisplay(childData);
-
-        // Update pediatric view content
-        this.updatePediatricContent(childData);
-
-        // Switch views
-        const adultView = document.getElementById('adultView');
-        const pediatricView = document.getElementById('pediatricView');
-
-        if (adultView) adultView.classList.remove('active');
-        if (pediatricView) pediatricView.classList.add('active');
-
-        // Apply pediatric styling to body
-        document.body.classList.add('pediatric-mode');
-
-        // Re-initialize icons
-        this.refreshIcons();
-
-        // Close mobile sidebar
-        this.closeMobileSidebar();
-    }
-
-    /**
-     * Switch to adult view
-     */
-    switchToAdultView() {
-        this.currentView = 'adult';
-        this.currentChildId = null;
-
-        // Reset header title
-        const dashboardTitle = document.getElementById('dashboardTitle');
-        if (dashboardTitle) {
-            dashboardTitle.textContent = 'Mi Panel de Salud';
-        }
-
-        // Hide back button
-        const backButton = document.getElementById('backToParentBtn');
-        if (backButton) {
-            backButton.classList.add('hidden');
-            backButton.classList.remove('flex');
-        }
-
-        // Reset profile information to parent
-        this.resetProfileToParent();
-
-        // Switch views
-        const adultView = document.getElementById('adultView');
-        const pediatricView = document.getElementById('pediatricView');
-
-        if (pediatricView) pediatricView.classList.remove('active');
-        if (adultView) adultView.classList.add('active');
-
-        // Remove pediatric styling
-        document.body.classList.remove('pediatric-mode');
-
-        // Re-initialize icons
-        this.refreshIcons();
-    }
-
-    /**
-     * Update profile display with child info
-     * @param {object} childData - Child information
-     */
-    updateProfileDisplay(childData) {
-        const profileName = document.getElementById('profileName');
-        const profileRole = document.getElementById('profileRole');
-        const profileAvatar = document.getElementById('profileAvatar');
-
-        if (profileName) {
-            profileName.textContent = childData.name;
-        }
-
-        if (profileRole) {
-            profileRole.textContent = `${childData.age} • Hijo/a`;
-        }
-
-        if (profileAvatar) {
-            profileAvatar.className = 'w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-semibold';
-            profileAvatar.textContent = childData.initials;
-        }
-    }
-
-    /**
-     * Reset profile to parent user
-     */
-    resetProfileToParent() {
-        const profileName = document.getElementById('profileName');
-        const profileRole = document.getElementById('profileRole');
-        const profileAvatar = document.getElementById('profileAvatar');
-
-        if (profileName) {
-            profileName.textContent = 'Juan García';
-        }
-
-        if (profileRole) {
-            profileRole.textContent = 'Paciente';
-        }
-
-        if (profileAvatar) {
-            profileAvatar.className = 'w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-semibold';
-            profileAvatar.textContent = 'JG';
-        }
-    }
-
-    /**
-     * Update pediatric view with child-specific data
-     * @param {object} childData - Child information
-     */
-    updatePediatricContent(childData) {
-        // Update child name and age in pediatric view
-        const childNameElement = document.getElementById('childName');
-        const childAgeElement = document.getElementById('childAge');
-
-        if (childNameElement) {
-            childNameElement.textContent = childData.name;
-        }
-
-        if (childAgeElement) {
-            childAgeElement.textContent = `${childData.age} • Última actualización: hoy`;
-        }
-
-        // You can add more dynamic content updates here
-        // For example: update blood type, allergies, etc.
-    }
-
-    /**
-     * Close mobile sidebar
-     */
-    closeMobileSidebar() {
-        if (window.innerWidth < 1024) {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-            if (sidebar) sidebar.classList.remove('open');
-            if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
-        }
-    }
-
-    /**
-     * Refresh Lucide icons
-     */
-    refreshIcons() {
-        setTimeout(() => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }, 100);
-    }
-}
-
-// ========================================
-// MODULE: MODAL MANAGER
-// ========================================
-
-class ModalManager {
-    constructor() {
-        this.modal = null;
-        this.form = null;
-    }
-
-    /**
-     * Initialize modal functionality
-     */
     init() {
-        this.modal = document.getElementById('addDependentModal');
-        this.form = document.getElementById('dependentForm');
-
-        if (!this.modal || !this.form) {
-            console.warn('Modal or form not found');
-            return;
-        }
-
-        this.setupEventListeners();
+        this.openBtn?.addEventListener('click', () => this.open());
+        this.closeBtn?.addEventListener('click', () => this.close());
+        this.sidebarOverlay?.addEventListener('click', () => this.close());
     }
 
-    /**
-     * Setup modal event listeners
-     */
-    setupEventListeners() {
-        // Open modal button
-        const openButton = document.getElementById('addDependentBtn');
-        if (openButton) {
-            openButton.addEventListener('click', () => this.open());
-        }
-
-        // Close modal buttons
-        const closeButton = document.getElementById('closeModalBtn');
-        const cancelButton = document.getElementById('cancelModalBtn');
-
-        if (closeButton) {
-            closeButton.addEventListener('click', () => this.close());
-        }
-
-        if (cancelButton) {
-            cancelButton.addEventListener('click', () => this.close());
-        }
-
-        // Close on overlay click
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
-                this.close();
-            }
-        });
-    }
-
-    /**
-     * Open modal
-     */
     open() {
-        if (this.modal) {
-            this.modal.classList.add('active');
-            setTimeout(() => {
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            }, 100);
-        }
+        this.sidebar?.classList.add('open');
+        this.sidebarOverlay?.classList.remove('hidden');
     }
 
-    /**
-     * Close modal
-     */
     close() {
-        if (this.modal) {
-            this.modal.classList.remove('active');
-            if (this.form) {
-                this.form.reset();
-            }
-        }
+        this.sidebar?.classList.remove('open');
+        this.sidebarOverlay?.classList.add('hidden');
     }
 }
 
-// ========================================
-// MODULE: NOTIFICATION MANAGER
-// ========================================
-
-class NotificationManager {
-    /**
-     * Show notification toast
-     * @param {string} message - Notification message
-     * @param {string} type - Notification type (success, error, info)
-     */
-    static show(message, type = 'success') {
-        const colors = {
-            success: 'bg-emerald-500',
-            error: 'bg-red-500',
-            info: 'bg-blue-500'
-        };
-
-        const notification = document.createElement('div');
-        notification.className = `notification-toast fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
-    }
-}
-
-// ========================================
-// MODULE: DASHBOARD APPLICATION
-// ========================================
-
-class PatientDashboard {
+class PacienteDashboard {
     constructor() {
-        this.familyManager = new FamilyMemberManager();
-        this.viewManager = new ViewManager();
-        this.modalManager = new ModalManager();
+        this.usuario = null;
+        this.consultas = [];
+        this.cardsContainer = document.getElementById('consultasPacienteCards');
+        this.emptyEl = document.getElementById('consultasPacienteEmpty');
+        this.logoutLink = document.getElementById('logoutLink');
+        this.filtroDesde = document.getElementById('filtroDesdePaciente');
+        this.filtroHasta = document.getElementById('filtroHastaPaciente');
+        this.filtroBtn = document.getElementById('aplicarFiltroPaciente');
+        this.limpiarFiltroBtn = document.getElementById('limpiarFiltroPaciente');
+
+        this.modal = document.getElementById('consultaDetailModal');
+        this.closeModalBtn = document.getElementById('closeConsultaDetailBtn');
     }
 
-    /**
-     * Initialize dashboard
-     */
-    init() {
-        // Initialize Lucide icons
+    async init() {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
 
-        // Initialize modal
-        this.modalManager.init();
-
-        // Setup event listeners
-        this.setupEventListeners();
-
-        // Render family members list
-        this.renderFamilyMembersList();
-
-        // Setup sidebar
-        this.setupSidebar();
-
-        console.log('✅ Patient Dashboard initialized successfully');
+        new SidebarManager().init();
+        this.bindEvents();
+        await this.cargarSesion();
+        await this.cargarConsultas();
     }
 
-    /**
-     * Setup all event listeners
-     */
-    setupEventListeners() {
-        // Form submission
-        const form = document.getElementById('dependentForm');
-        if (form) {
-            form.addEventListener('submit', (e) => this.handleFormSubmit(e));
-        }
+    bindEvents() {
+        this.logoutLink?.addEventListener('click', (e) => this.logout(e));
+        this.filtroBtn?.addEventListener('click', () => this.cargarConsultas());
+        this.limpiarFiltroBtn?.addEventListener('click', () => {
+            if (this.filtroDesde) this.filtroDesde.value = '';
+            if (this.filtroHasta) this.filtroHasta.value = '';
+            this.cargarConsultas();
+        });
 
-        // Back to parent button
-        const backButton = document.getElementById('backToParentBtn');
-        if (backButton) {
-            backButton.addEventListener('click', () => {
-                this.viewManager.switchToAdultView();
-            });
-        }
-
-        // Page visibility change
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                this.renderFamilyMembersList();
-            }
+        this.closeModalBtn?.addEventListener('click', () => this.closeDetailModal());
+        this.modal?.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.closeDetailModal();
         });
     }
 
-    /**
-     * Handle form submission for adding dependent
-     * @param {Event} event - Form submit event
-     */
-    handleFormSubmit(event) {
-        event.preventDefault();
+    async api(accion, method = 'GET', data = null, params = {}) {
+        const query = new URLSearchParams({ accion, ...params }).toString();
+        const url = `${CONSULTAS_API}?${query}`;
+        const options = {
+            method,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        if (data) options.body = JSON.stringify(data);
 
-        const formData = {
-            name: document.getElementById('childNameInput').value,
-            birthDate: document.getElementById('childBirthDateInput').value,
-            bloodType: document.getElementById('childBloodTypeInput').value,
-            allergies: document.getElementById('childAllergiesInput').value
+        const response = await fetch(url, options);
+        const raw = await response.text();
+        let payload = null;
+        try {
+            payload = raw ? JSON.parse(raw) : null;
+        } catch (_error) {
+            throw new Error('Respuesta no valida del servidor.');
+        }
+        if (!response.ok || !payload.success) {
+            throw new Error(payload?.mensaje || `Error HTTP ${response.status}`);
+        }
+        return payload;
+    }
+
+    async cargarSesion() {
+        try {
+            const res = await this.api('sesion');
+            this.usuario = res.usuario;
+
+            if (this.usuario.tipo !== 'paciente') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            this.pintarUsuario();
+        } catch (_error) {
+            window.location.href = 'login.html';
+        }
+    }
+
+    pintarUsuario() {
+        const nombre = this.usuario.nombre || '';
+        const iniciales = this.obtenerIniciales(nombre);
+
+        const profileName = document.getElementById('profileName');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        const welcomeSubtitle = document.getElementById('welcomeSubtitle');
+
+        if (profileName) profileName.textContent = nombre;
+        if (profileAvatar) profileAvatar.textContent = iniciales;
+        if (welcomeTitle) welcomeTitle.textContent = `Bienvenido, ${nombre}`;
+        if (welcomeSubtitle) welcomeSubtitle.textContent = 'Tu historial medico se construye con cada consulta registrada.';
+    }
+
+    async cargarConsultas() {
+        try {
+            const params = {};
+            if (this.filtroDesde?.value) params.fecha_desde = this.filtroDesde.value;
+            if (this.filtroHasta?.value) params.fecha_hasta = this.filtroHasta.value;
+            const res = await this.api('mis_consultas', 'GET', null, params);
+            this.consultas = res.data || [];
+            this.renderConsultas();
+        } catch (error) {
+            this.renderError(error.message);
+        }
+    }
+
+    renderConsultas() {
+        if (!this.cardsContainer) return;
+        this.cardsContainer.innerHTML = '';
+
+        if (this.consultas.length === 0) {
+            this.emptyEl?.classList.remove('hidden');
+            return;
+        }
+        this.emptyEl?.classList.add('hidden');
+
+        this.consultas.forEach((consulta) => {
+            const medico = `${consulta.medico_nombre || ''} ${consulta.medico_apellidos || ''}`.trim() || consulta.id_medico;
+            const especialidad = consulta.especialidad || 'Especialidad no indicada';
+            const diagnostico = consulta.diagnostico || 'Sin diagnostico';
+            const fecha = this.formatearFecha(consulta.fecha);
+            const tratamiento = consulta.tratamiento || 'Sin tratamiento';
+
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'text-left group bg-gradient-to-br from-white to-blue-50/60 border border-blue-100 rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all';
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-3 mb-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-wide text-blue-600 font-semibold">${fecha}</p>
+                        <h3 class="text-lg font-semibold text-gray-900 mt-1">${especialidad}</h3>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">Consulta</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-2">Médico: <span class="text-gray-700 font-medium">${medico}</span></p>
+                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">Diagnóstico:</span> ${diagnostico}</p>
+                <p class="text-sm text-gray-600 mt-2 line-clamp-1"><span class="font-semibold text-gray-800">Tratamiento:</span> ${tratamiento}</p>
+                <div class="mt-4 text-sm text-blue-700 font-medium group-hover:text-blue-800">Ver detalle completo</div>
+            `;
+            card.addEventListener('click', () => this.openDetailModal(consulta));
+            this.cardsContainer.appendChild(card);
+        });
+    }
+
+    renderError(message) {
+        if (!this.cardsContainer) return;
+        this.cardsContainer.innerHTML = `<div class="col-span-full text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">${message}</div>`;
+        this.emptyEl?.classList.add('hidden');
+    }
+
+    openDetailModal(consulta) {
+        const medico = `${consulta.medico_nombre || ''} ${consulta.medico_apellidos || ''}`.trim() || consulta.id_medico;
+        const especialidad = consulta.especialidad || '-';
+
+        const set = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value || '-';
         };
 
+        set('consultaDetailTitle', `Consulta #${consulta.id_consulta || ''}`);
+        set('detailFecha', this.formatearFecha(consulta.fecha));
+        set('detailMedico', medico);
+        set('detailEspecialidad', especialidad);
+        set('detailDiagnostico', consulta.diagnostico || '-');
+        set('detailTratamiento', consulta.tratamiento || '-');
+        set('detailResultados', consulta.resultados || '-');
+        set('detailObservaciones', consulta.observaciones || '-');
+
+        if (this.modal) {
+            this.modal.classList.add('active');
+            this.modal.style.display = 'flex';
+        }
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    closeDetailModal() {
+        if (!this.modal) return;
+        this.modal.classList.remove('active');
+        this.modal.style.display = 'none';
+    }
+
+    async logout(event) {
+        event.preventDefault();
         try {
-            const newMember = this.familyManager.addMember(formData);
-            this.renderFamilyMembersList();
-            this.modalManager.close();
-            NotificationManager.show('Hijo/dependiente añadido correctamente');
-        } catch (error) {
-            console.error('Error adding family member:', error);
-            NotificationManager.show('Error al añadir familiar', 'error');
+            await this.api('logout', 'POST');
+        } catch (_error) {
+            // Redirigir igualmente
         }
+        window.location.href = 'login.html';
     }
 
-    /**
-     * Render family members list in sidebar
-     */
-    renderFamilyMembersList() {
-        const container = document.getElementById('familyMembersList');
-        if (!container) return;
-
-        container.innerHTML = '';
-        const members = this.familyManager.getAllMembers();
-
-        members.forEach((member) => {
-            const memberElement = document.createElement('button');
-            memberElement.className = 'family-profile w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gradient-to-r hover:from-emerald-50 hover:to-transparent transition-all';
-            memberElement.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                    ${member.initials}
-                </div>
-                <div class="flex-1 text-left">
-                    <p class="text-sm font-medium text-gray-900">${member.name}</p>
-                    <p class="text-xs text-gray-500">${member.age}</p>
-                </div>
-            `;
-
-            memberElement.addEventListener('click', () => {
-                this.viewManager.switchToPediatricView(member);
-            });
-
-            container.appendChild(memberElement);
-        });
-
-        // Re-initialize icons
-        setTimeout(() => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }, 100);
+    formatearFecha(value) {
+        if (!value) return '-';
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return value;
+        return d.toLocaleString('es-ES');
     }
 
-    /**
-     * Setup sidebar navigation
-     */
-    setupSidebar() {
-        // Mobile sidebar toggle
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const openSidebarBtn = document.getElementById('openSidebar');
-        const closeSidebarBtn = document.getElementById('closeSidebar');
-
-        if (openSidebarBtn) {
-            openSidebarBtn.addEventListener('click', () => {
-                if (sidebar) sidebar.classList.add('open');
-                if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
-            });
-        }
-
-        if (closeSidebarBtn) {
-            closeSidebarBtn.addEventListener('click', () => {
-                if (sidebar) sidebar.classList.remove('open');
-                if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
-            });
-        }
-
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', () => {
-                if (sidebar) sidebar.classList.remove('open');
-                sidebarOverlay.classList.add('hidden');
-            });
-        }
-
-        // Sidebar navigation active state
-        const sidebarLinks = document.querySelectorAll('.sidebar-item');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
+    obtenerIniciales(nombreCompleto) {
+        const words = (nombreCompleto || '').trim().split(/\s+/).filter(Boolean);
+        if (words.length === 0) return 'PA';
+        if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+        return (words[0][0] + words[words.length - 1][0]).toUpperCase();
     }
 }
 
-// ========================================
-// APPLICATION ENTRY POINT
-// ========================================
-
-/**
- * Initialize dashboard when DOM is ready
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const dashboard = new PatientDashboard();
-    dashboard.init();
+document.addEventListener('DOMContentLoaded', async () => {
+    const app = new PacienteDashboard();
+    await app.init();
 });
 
-// ========================================
-// EXPORT FOR MODULE USAGE
-// ========================================
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        FamilyMemberManager,
-        ViewManager,
-        ModalManager,
-        NotificationManager,
-        PatientDashboard
-    };
-}

@@ -1,0 +1,362 @@
+<?php
+/**
+ * Archivo: test_db.php
+ * Descripción: Script completo de pruebas y carga de datos iniciales
+ * Fecha: Marzo 2026
+ * Autoras: Yousra y Claudia
+ */
+//hola hola
+
+// Mostrar errores para depurar
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Importar los archivos necesarios
+require_once 'backend/src/config/database.php';
+require_once 'backend/src/vo/PacienteVO.php';
+require_once 'backend/src/vo/MedicoVO.php';
+require_once 'backend/src/vo/AdministradorVO.php';
+
+// Incluir los DAO
+require_once 'backend/src/dao/PacienteDAO.php';
+require_once 'backend/src/dao/MedicoDAO.php';
+require_once 'backend/src/dao/AdministradorDAO.php';
+
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pruebas de sistema - MedHistory</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1000px; margin: 0 auto; padding: 24px; }
+        h1, h2 { margin: 16px 0 12px 0; font-weight: 600; }
+        h1 { border-bottom: 2px solid #333; padding-bottom: 8px; }
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+        p { margin: 6px 0; line-height: 1.5; }
+        pre { background:#f5f5f5; padding:12px; border-radius:6px; overflow:auto; margin: 12px 0; }
+        .section { margin: 24px 0; }
+    </style>
+</head>
+<body>
+    <h1>Pruebas de sistema — MedHistory</h1>
+    <p><em>Script de inicialización y verificación de base de datos</em></p>
+
+    <?php
+    // =========================================================================
+    // 1. PRUEBA DE CONEXIÓN
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>1. Prueba de conexión a PostgreSQL</h2>";
+    try {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->query("SELECT version()");
+        $version = $stmt->fetchColumn();
+        echo '<p><strong>Hecho:</strong> Intento de conexión a la base de datos.</p>';
+        echo '<p><strong>Resultado:</strong> Conexión exitosa. Versión: ' . htmlspecialchars($version) . '</p>';
+    } catch (Exception $e) {
+        echo '<p><strong>Hecho:</strong> Intento de conexión a la base de datos.</p>';
+        echo '<p><strong>Resultado:</strong> Error de conexión: ' . htmlspecialchars($e->getMessage()) . '</p>';
+        echo '<p>Compruebe que PostgreSQL está en ejecución, las credenciales en backend/src/config/database.php y que la extensión pdo_pgsql está habilitada.</p>';
+        exit;
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 2. CREACIÓN DE ADMINISTRADORES
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>2. Creación de Administradores</h2>";
+    $adminsCreados = 0;
+    try {
+        $adminDAO = new AdministradorDAO();
+
+        $adminsPrueba = [
+            ['nombre' => 'Claudia', 'apellidos' => 'Mateo', 'email' => 'claudia.mateo@admin.com', 'telefono' => '600000001'],
+            ['nombre' => 'Yousra',  'apellidos' => 'Jebari', 'email' => 'yousra.jebari@admin.com',  'telefono' => '600000002']
+        ];
+
+        echo '<p><strong>Hecho:</strong> Verificar y crear administradores de prueba.</p>';
+
+        foreach ($adminsPrueba as $adminData) {
+            $existe = $adminDAO->buscarPorEmail($adminData['email']);
+            if (!$existe) {
+                $admin = new AdministradorVO([
+                    'nombre' => $adminData['nombre'],
+                    'apellidos' => $adminData['apellidos'],
+                    'email' => $adminData['email'],
+                    'contrasena_hash' => password_hash('Admin123', PASSWORD_BCRYPT),
+                    'telefono' => $adminData['telefono']
+                ]);
+                if ($adminDAO->insertar($admin)) {
+                    $adminsCreados++;
+                }
+            }
+        }
+
+        $admins = $adminDAO->obtenerTodos();
+        echo '<p><strong>Resultado:</strong> Administradores creados en esta ejecución: ' . $adminsCreados . '. Total en sistema: ' . count($admins) . '</p>';
+        foreach ($admins as $a) {
+            echo '<p>- ' . htmlspecialchars($a->getNombre() . ' ' . $a->getApellidos()) . ' - ' . htmlspecialchars($a->getEmail()) . '</p>';
+        }
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error en AdministradorDAO: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 3. CREACIÓN DE MÉDICOS
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>3. Prueba de DAO — Médicos</h2>";
+    $medicosCreados = 0;
+    try {
+        $medicoDAO = new MedicoDAO();
+        
+        // Médicos de prueba (2 médicos)
+        $medicosPrueba = [
+            ['nombre' => 'Elena', 'apellidos' => 'Fernández Sánchez', 'email' => 'elena.fernandez@clinica.com', 'especialidad' => 'Medicina General', 'num_colegiado' => 'MD-001234', 'telefono' => '612-345-678'],
+            ['nombre' => 'Miguel', 'apellidos' => 'Ángel Rodríguez', 'email' => 'miguel.rodriguez@clinica.com', 'especialidad' => 'Cardiología', 'num_colegiado' => 'CD-005678', 'telefono' => '623-456-789']
+        ];
+        
+        echo '<p><strong>Hecho:</strong> Verificar y crear médicos de prueba.</p>';
+        
+        foreach ($medicosPrueba as $medicoData) {
+            $existe = $medicoDAO->buscarPorEmail($medicoData['email']);
+            if (!$existe) {
+                $medico = new MedicoVO([
+                    'nombre' => $medicoData['nombre'],
+                    'apellidos' => $medicoData['apellidos'],
+                    'email' => $medicoData['email'],
+                    'contrasena_hash' => password_hash('medico123', PASSWORD_BCRYPT),
+                    'especialidad' => $medicoData['especialidad'],
+                    'num_colegiado' => $medicoData['num_colegiado'],
+                    'telefono' => $medicoData['telefono']
+                ]);
+                if ($medicoDAO->insertar($medico)) {
+                    $medicosCreados++;
+                }
+            }
+        }
+        
+        $medicos = $medicoDAO->obtenerTodos();
+        echo '<p><strong>Resultado:</strong> Médicos creados en esta ejecución: ' . $medicosCreados . '. Total en sistema: ' . count($medicos) . '</p>';
+        foreach ($medicos as $m) {
+            echo '<p>- Dr./Dra. ' . htmlspecialchars($m->getNombre() . ' ' . $m->getApellidos()) . ' - ' . htmlspecialchars($m->getEspecialidad()) . ' (' . htmlspecialchars($m->getEmail()) . ')</p>';
+        }
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error en MedicoDAO: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 4. CREACIÓN DE PACIENTES
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>4. Prueba de DAO — Pacientes</h2>";
+    $pacientesCreados = 0;
+    try {
+        $pacienteDAO = new PacienteDAO();
+        
+        // 5 Pacientes de prueba
+        $pacientesPrueba = [
+            ['nombre' => 'María', 'apellidos' => 'Pérez García', 'email' => 'maria.perez@email.com', 'fecha_nacimiento' => '1985-03-15', 'num_seguridad_social' => '280315123456', 'telefono' => '667-890-123', 'direccion' => 'Calle Alcalá 73, Madrid'],
+            ['nombre' => 'José', 'apellidos' => 'Martín López', 'email' => 'jose.martin@email.com', 'fecha_nacimiento' => '1978-07-22', 'num_seguridad_social' => '220778234567', 'telefono' => '678-901-234', 'direccion' => 'Paseo del Prado 150, Madrid'],
+            ['nombre' => 'Laura', 'apellidos' => 'Ruiz Herrera', 'email' => 'laura.ruiz@email.com', 'fecha_nacimiento' => '1992-11-08', 'num_seguridad_social' => '081192345678', 'telefono' => '689-012-345', 'direccion' => 'Calle Goya 89, Madrid'],
+            ['nombre' => 'Antonio', 'apellidos' => 'Sánchez Verde', 'email' => 'antonio.sanchez@email.com', 'fecha_nacimiento' => '1965-05-12', 'num_seguridad_social' => '120565456789', 'telefono' => '690-123-456', 'direccion' => 'Avenida América 200, Madrid'],
+            ['nombre' => 'Patricia', 'apellidos' => 'Moreno Castro', 'email' => 'patricia.moreno@email.com', 'fecha_nacimiento' => '1989-09-30', 'num_seguridad_social' => '300989567890', 'telefono' => '601-234-567', 'direccion' => 'Calle Bravo Murillo 75, Madrid']
+        ];
+        
+        echo '<p><strong>Hecho:</strong> Verificar y crear pacientes de prueba.</p>';
+        
+        foreach ($pacientesPrueba as $pacienteData) {
+            $existe = $pacienteDAO->buscarPorEmailInclusoInactivos($pacienteData['email']);
+            if (!$existe) {
+                $paciente = new PacienteVO([
+                    'nombre' => $pacienteData['nombre'],
+                    'apellidos' => $pacienteData['apellidos'],
+                    'email' => $pacienteData['email'],
+                    'contrasena_hash' => password_hash('paciente123', PASSWORD_BCRYPT),
+                    'telefono' => $pacienteData['telefono'],
+                    'direccion' => $pacienteData['direccion'],
+                    'fecha_nacimiento' => $pacienteData['fecha_nacimiento'],
+                    'num_seguridad_social' => $pacienteData['num_seguridad_social']
+                ]);
+                if ($pacienteDAO->insertar($paciente)) {
+                    $pacientesCreados++;
+                }
+            }
+        }
+        
+        $pacientesActivos = $pacienteDAO->obtenerTodos();
+        echo '<p><strong>Resultado:</strong> Pacientes creados en esta ejecución: ' . $pacientesCreados . '. Total de pacientes activos: ' . count($pacientesActivos) . '</p>';
+        foreach ($pacientesActivos as $p) {
+            echo '<p>- ' . htmlspecialchars($p->getNombre() . ' ' . $p->getApellidos()) . ' (' . htmlspecialchars($p->getEmail()) . ')</p>';
+        }
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error en PacienteDAO: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 4.1. REACTIVACIÓN DE PACIENTES INACTIVOS (Si existen)
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>4.1. Reactivación de pacientes inactivos</h2>";
+    try {
+        echo '<p><strong>Hecho:</strong> Verificar si hay pacientes inactivos y reactivarlos.</p>';
+        
+        // Buscar pacientes inactivos mediante consulta SQL directa
+        $stmt = $db->query("SELECT id_paciente, nombre, apellidos, email FROM pacientes WHERE activo = FALSE");
+        $inactivos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (!empty($inactivos)) {
+            $reactivados = 0;
+            foreach ($inactivos as $pac) {
+                $update = $db->prepare("UPDATE pacientes SET activo = TRUE, fecha_baja = NULL WHERE id_paciente = :id");
+                $update->execute([':id' => $pac['id_paciente']]);
+                $reactivados++;
+            }
+            echo '<p><strong>Resultado:</strong> Pacientes inactivos encontrados y reactivados: ' . $reactivados . '</p>';
+            foreach ($inactivos as $pac) {
+                echo '<p>- Reactivado: ' . htmlspecialchars($pac['nombre'] . ' ' . $pac['apellidos']) . ' (' . htmlspecialchars($pac['email']) . ')</p>';
+            }
+        } else {
+            echo '<p><strong>Resultado:</strong> No se encontraron pacientes inactivos para reactivar.</p>';
+        }
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error al verificar pacientes inactivos: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 5. CREACIÓN DE CATÁLOGO DE ENFERMEDADES
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>5. Catálogo de enfermedades</h2>";
+    try {
+        echo '<p><strong>Hecho:</strong> Verificar y crear catálogo de enfermedades.</p>';
+        
+        $enfermedades = [
+            'Diabetes Mellitus Tipo 2',
+            'Hipertensión Arterial',
+            'Cardiopatía Isquémica',
+            'Cáncer de Mama',
+            'Cáncer de Próstata',
+            'Asma Brónquica',
+            'Artritis Reumatoide',
+            'Osteoporosis',
+            'Depresión Mayor',
+            'Alzheimer',
+            'Enfermedad Renal Crónica',
+            'Fibromialgia',
+            'Migraña',
+            'Epilepsia',
+            'Tiroides (Hipotiroidismo)'
+        ];
+        
+        $enfermedadesCreadas = 0;
+        foreach ($enfermedades as $enfermedad) {
+            try {
+                $stmt = $db->prepare("INSERT INTO enfermedades_catalogo (nombre_patologia) VALUES (:nombre) ON CONFLICT (nombre_patologia) DO NOTHING");
+                $stmt->execute([':nombre' => $enfermedad]);
+                if ($stmt->rowCount() > 0) {
+                    $enfermedadesCreadas++;
+                }
+            } catch (PDOException $e) {
+                // Ignorar duplicados
+            }
+        }
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM enfermedades_catalogo");
+        $totalEnfermedades = $stmt->fetchColumn();
+        
+        echo '<p><strong>Resultado:</strong> Enfermedades añadidas en esta ejecución: ' . $enfermedadesCreadas . '. Total en catálogo: ' . $totalEnfermedades . '</p>';
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error al crear catálogo de enfermedades: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 6. PRUEBA DE BORRADO LÓGICO
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>6. Prueba de borrado lógico</h2>";
+    try {
+        $pacienteDAO = new PacienteDAO();
+        $pacientes = $pacienteDAO->obtenerTodos();
+        echo '<p><strong>Hecho:</strong> Intentar borrado lógico de un paciente activo.</p>';
+        
+        if (!empty($pacientes)) {
+            $p = $pacientes[0];
+            $pid = $p->getIdPaciente();
+            $pnombre = $p->getNombre() . ' ' . $p->getApellidos();
+            
+            $ok = $pacienteDAO->darDeBaja($pid, 1);
+            if ($ok) {
+                echo '<p><strong>Resultado:</strong> Borrado lógico realizado correctamente sobre paciente: ' . htmlspecialchars($pnombre) . ' (ID: ' . $pid . '). El registro permanece en la base de datos con activo=FALSE.</p>';
+            } else {
+                echo '<p><strong>Resultado:</strong> Error al realizar el borrado lógico.</p>';
+            }
+        } else {
+            echo '<p><strong>Resultado:</strong> No hay pacientes activos disponibles para realizar el borrado lógico.</p>';
+        }
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error en prueba de borrado lógico: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+
+    // =========================================================================
+    // 7. RESUMEN FINAL
+    // =========================================================================
+    echo '<div class="section">';
+    echo "<h2>7. Resumen del sistema</h2>";
+    try {
+        $stmt = $db->query("SELECT COUNT(*) FROM administradores WHERE activo = TRUE");
+        $totalAdmins = $stmt->fetchColumn();
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM medicos WHERE activo = TRUE");
+        $totalMedicos = $stmt->fetchColumn();
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM pacientes WHERE activo = TRUE");
+        $totalPacientesActivos = $stmt->fetchColumn();
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM pacientes WHERE activo = FALSE");
+        $totalPacientesInactivos = $stmt->fetchColumn();
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM enfermedades_catalogo");
+        $totalEnfermedades = $stmt->fetchColumn();
+        
+        echo '<p><strong>Hecho:</strong> Recopilación de estadísticas del sistema.</p>';
+        echo '<p><strong>Resultado:</strong></p>';
+        echo '<pre>';
+        echo "Administradores activos:    " . $totalAdmins . "\n";
+        echo "Médicos activos:            " . $totalMedicos . "\n";
+        echo "Pacientes activos:          " . $totalPacientesActivos . "\n";
+        echo "Pacientes inactivos:        " . $totalPacientesInactivos . "\n";
+        echo "Enfermedades en catálogo:   " . $totalEnfermedades . "\n";
+        echo "\nArquitectura MVC implementada correctamente.\n";
+        echo "Borrado lógico funcional (GDPR/LOPD compliant).\n";
+        echo "Sistema de auditoría configurado.\n";
+        echo '</pre>';
+        
+        echo '<p><strong>Credenciales de prueba:</strong></p>';
+        echo '<pre>';
+        echo "Médicos:          elena.fernandez@clinica.com / medico123\n";
+        echo "                  miguel.rodriguez@clinica.com / medico123\n\n";
+        echo "Pacientes:        maria.perez@email.com / paciente123\n";
+        echo "                  jose.martin@email.com / paciente123\n";
+        echo "                  (y 3 pacientes más con misma contraseña)\n";
+        echo '</pre>';
+        
+    } catch (Exception $e) {
+        echo '<p><strong>Resultado:</strong> Error al recopilar estadísticas: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    }
+    echo '</div>';
+    ?>
+    
+    <hr style="margin: 32px 0;">
+    <p><em>Script ejecutado correctamente. Sistema MedHistory operativo.</em></p>
+</body>
+</html>

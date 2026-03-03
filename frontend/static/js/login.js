@@ -1,6 +1,6 @@
 // MedHistory - Login Page Functionality
 // API Base URL - ajustar según entorno
-const API_BASE = 'http://medHistory.local/backend/src/controllers';
+const API_BASE = '/backend/src/controllers';
 
 document.addEventListener('DOMContentLoaded', function () {
 
