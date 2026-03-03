@@ -42,6 +42,10 @@ class PacienteDashboard {
         this.filtroHasta = document.getElementById('filtroHastaPaciente');
         this.filtroBtn = document.getElementById('aplicarFiltroPaciente');
         this.limpiarFiltroBtn = document.getElementById('limpiarFiltroPaciente');
+        this.navInicio = document.getElementById('navInicioPaciente');
+        this.navPerfilSalud = document.getElementById('navPerfilSaludPaciente');
+        this.mainPacienteView = document.getElementById('mainPacienteView');
+        this.healthProfileView = document.getElementById('healthProfileView');
 
         this.modal = document.getElementById('consultaDetailModal');
         this.closeModalBtn = document.getElementById('closeConsultaDetailBtn');
@@ -67,6 +71,7 @@ class PacienteDashboard {
         this.bindEvents();
         await this.cargarSesion();
         await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud()]);
+        this.mostrarVista('inicio');
     }
 
     bindEvents() {
@@ -77,6 +82,14 @@ class PacienteDashboard {
             if (this.filtroHasta) this.filtroHasta.value = '';
             this.cargarConsultas();
         });
+        this.navInicio?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.mostrarVista('inicio');
+        });
+        this.navPerfilSalud?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.mostrarVista('perfil_salud');
+        });
 
         this.closeModalBtn?.addEventListener('click', () => this.closeDetailModal());
         this.modal?.addEventListener('click', (e) => {
@@ -86,6 +99,19 @@ class PacienteDashboard {
         this.saludReloadBtn?.addEventListener('click', () => this.cargarPerfilSalud());
         this.saludAlturaInput?.addEventListener('input', () => this.actualizarImcVisual());
         this.saludPesoInput?.addEventListener('input', () => this.actualizarImcVisual());
+    }
+
+    mostrarVista(vista) {
+        const inicio = vista === 'inicio';
+        if (this.mainPacienteView) {
+            this.mainPacienteView.classList.toggle('active', inicio);
+        }
+        if (this.healthProfileView) {
+            this.healthProfileView.classList.toggle('active', !inicio);
+        }
+        this.navInicio?.classList.toggle('active', inicio);
+        this.navPerfilSalud?.classList.toggle('active', !inicio);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async api(accion, method = 'GET', data = null, params = {}) {
@@ -253,7 +279,11 @@ class PacienteDashboard {
             if (this.filtroDesde?.value) params.fecha_desde = this.filtroDesde.value;
             if (this.filtroHasta?.value) params.fecha_hasta = this.filtroHasta.value;
             const res = await this.api('mis_consultas', 'GET', null, params);
-            this.consultas = res.data || [];
+            this.consultas = (res.data || []).sort((a, b) => {
+                const da = new Date(a.fecha).getTime();
+                const db = new Date(b.fecha).getTime();
+                return db - da;
+            });
             this.renderConsultas();
         } catch (error) {
             this.renderError(error.message);
