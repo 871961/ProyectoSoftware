@@ -81,7 +81,7 @@ class ConsultaDAO {
         try {
             $sql = "SELECT c.*, p.nombre as paciente_nombre, p.apellidos as paciente_apellidos 
                     FROM consultas c 
-                    INNER JOIN pacientes p ON c.id_paciente = p.id_paciente 
+                    INNER JOIN pacientes p ON c.id_paciente = p.dni 
                     WHERE c.id_medico = :id_medico";
             
             if ($fecha_desde && $fecha_hasta) {
@@ -111,6 +111,25 @@ class ConsultaDAO {
             throw new Exception("Error al obtener consultas del médico: " . $e->getMessage());
         }
     }
+
+    /**
+     * Obtiene una consulta por ID
+     */
+    public function obtenerPorId($id_consulta) {
+        try {
+            $sql = "SELECT * FROM consultas WHERE id_consulta = :id_consulta";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_consulta', $id_consulta);
+            $stmt->execute();
+            $resultado = $stmt->fetch();
+            if ($resultado) {
+                return new ConsultaVO($resultado);
+            }
+            return null;
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener consulta: " . $e->getMessage());
+        }
+    }
     
     /**
      * Actualiza una consulta
@@ -138,6 +157,59 @@ class ConsultaDAO {
             
         } catch (PDOException $e) {
             throw new Exception("Error al actualizar consulta: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Actualiza una consulta solo si pertenece al médico indicado
+     */
+    public function actualizarPorMedico(ConsultaVO $consulta, $id_medico) {
+        try {
+            $sql = "UPDATE consultas 
+                    SET fecha = :fecha,
+                        diagnostico = :diagnostico,
+                        tratamiento = :tratamiento,
+                        resultados = :resultados,
+                        observaciones = :observaciones
+                    WHERE id_consulta = :id_consulta AND id_medico = :id_medico";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':fecha', $consulta->getFecha());
+            $stmt->bindParam(':diagnostico', $consulta->getDiagnostico());
+            $stmt->bindParam(':tratamiento', $consulta->getTratamiento());
+            $stmt->bindParam(':resultados', $consulta->getResultados());
+            $stmt->bindParam(':observaciones', $consulta->getObservaciones());
+            $stmt->bindParam(':id_consulta', $consulta->getIdConsulta());
+            $stmt->bindParam(':id_medico', $id_medico);
+
+            $resultado = $stmt->execute();
+            if ($resultado && $stmt->rowCount() > 0) {
+                $this->registrarAuditoria('ACTUALIZAR_CONSULTA', 'consultas', $consulta->getIdConsulta(), $id_medico);
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            throw new Exception("Error al actualizar consulta del médico: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Elimina una consulta solo si pertenece al medico indicado
+     */
+    public function eliminarPorMedico($id_consulta, $id_medico) {
+        try {
+            $sql = "DELETE FROM consultas WHERE id_consulta = :id_consulta AND id_medico = :id_medico";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_consulta', $id_consulta);
+            $stmt->bindParam(':id_medico', $id_medico);
+            $resultado = $stmt->execute();
+            if ($resultado && $stmt->rowCount() > 0) {
+                $this->registrarAuditoria('ELIMINAR_CONSULTA', 'consultas', $id_consulta, $id_medico);
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            throw new Exception("Error al eliminar consulta del medico: " . $e->getMessage());
         }
     }
     

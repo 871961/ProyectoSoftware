@@ -15,6 +15,11 @@ class ConsultaVO {
     private $tratamiento;
     private $resultados;
     private $observaciones;
+    private $medico_nombre;
+    private $medico_apellidos;
+    private $especialidad;
+    private $paciente_nombre;
+    private $paciente_apellidos;
     
     public function __construct($datos = []) {
         if (!empty($datos)) {
@@ -26,6 +31,11 @@ class ConsultaVO {
             $this->tratamiento = $datos['tratamiento'] ?? '';
             $this->resultados = $datos['resultados'] ?? '';
             $this->observaciones = $datos['observaciones'] ?? '';
+            $this->medico_nombre = $datos['medico_nombre'] ?? '';
+            $this->medico_apellidos = $datos['medico_apellidos'] ?? '';
+            $this->especialidad = $datos['especialidad'] ?? '';
+            $this->paciente_nombre = $datos['paciente_nombre'] ?? '';
+            $this->paciente_apellidos = $datos['paciente_apellidos'] ?? '';
         }
     }
     
@@ -38,6 +48,11 @@ class ConsultaVO {
     public function getTratamiento() { return $this->tratamiento; }
     public function getResultados() { return $this->resultados; }
     public function getObservaciones() { return $this->observaciones; }
+    public function getMedicoNombre() { return $this->medico_nombre; }
+    public function getMedicoApellidos() { return $this->medico_apellidos; }
+    public function getEspecialidad() { return $this->especialidad; }
+    public function getPacienteNombre() { return $this->paciente_nombre; }
+    public function getPacienteApellidos() { return $this->paciente_apellidos; }
     
     // Setters
     public function setIdConsulta($id) { $this->id_consulta = $id; }
@@ -48,6 +63,11 @@ class ConsultaVO {
     public function setTratamiento($tratamiento) { $this->tratamiento = $tratamiento; }
     public function setResultados($resultados) { $this->resultados = $resultados; }
     public function setObservaciones($observaciones) { $this->observaciones = $observaciones; }
+    public function setMedicoNombre($nombre) { $this->medico_nombre = $nombre; }
+    public function setMedicoApellidos($apellidos) { $this->medico_apellidos = $apellidos; }
+    public function setEspecialidad($especialidad) { $this->especialidad = $especialidad; }
+    public function setPacienteNombre($nombre) { $this->paciente_nombre = $nombre; }
+    public function setPacienteApellidos($apellidos) { $this->paciente_apellidos = $apellidos; }
     
     public function toArray() {
         return [
@@ -58,7 +78,12 @@ class ConsultaVO {
             'diagnostico' => $this->diagnostico,
             'tratamiento' => $this->tratamiento,
             'resultados' => $this->resultados,
-            'observaciones' => $this->observaciones
+            'observaciones' => $this->observaciones,
+            'medico_nombre' => $this->medico_nombre,
+            'medico_apellidos' => $this->medico_apellidos,
+            'especialidad' => $this->especialidad,
+            'paciente_nombre' => $this->paciente_nombre,
+            'paciente_apellidos' => $this->paciente_apellidos
         ];
     }
 }
