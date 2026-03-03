@@ -199,8 +199,8 @@ class MedicoDashboard {
                 <td class="px-4 py-3 text-sm text-gray-700">${diagnostico}</td>
                 <td class="px-4 py-3 text-sm text-gray-700">${tratamiento}</td>
                 <td class="px-4 py-3 text-sm text-gray-700">
-                    <button class="text-blue-600 hover:text-blue-800 font-medium" data-edit-id="${consulta.id_consulta}">Editar</button>
-                    <button class="text-red-600 hover:text-red-800 font-medium ml-3" data-delete-id="${consulta.id_consulta}">Eliminar</button>
+                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium" data-edit-id="${consulta.id_consulta}">Editar</button>
+                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 font-medium ml-2" data-delete-id="${consulta.id_consulta}">Eliminar</button>
                 </td>
             `;
             this.consultasBody.appendChild(row);
