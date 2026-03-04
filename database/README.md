@@ -1,104 +1,108 @@
 # Base de Datos - MedHistory
 
-Este directorio contiene los scripts SQL y herramientas para configurar la base de datos.
+Este directorio contiene los scripts SQL para configurar la base de datos PostgreSQL.
 
-## Archivos
+## 📁 Archivos
 
-- **schema.sql**: Crea todas las tablas del sistema (pacientes, médicos, administradores, etc.)
-- **datos_prueba.sql**: Carga datos de ejemplo para probar el sistema
-- **ejecutar_sql.ps1**: Script de PowerShell que facilita la ejecución de los archivos SQL
+- **schema.sql**: Esquema completo de la base de datos (11 tablas)
+- **datos_prueba.sql**: Datos de ejemplo para desarrollo y testing
+- **reinstalar_completo.sql**: Script todo-en-uno (limpia + crea tablas)
+- **limpiar_base_datos.sql**: Elimina todas las tablas existentes
+- **ejecutar_sql.ps1**: Script PowerShell para automatizar la instalación
 
-## Instalación de la Base de Datos
+## 🚀 Instalación Rápida
 
-### Opción 1: Usando el script de PowerShell (Recomendado)
+### Opción 1: Todo-en-Uno (Más Fácil)
 
-Desde el directorio raíz del proyecto:
+Desde **pgAdmin** o **Query Tool**, ejecutar en orden:
 
-```powershell
-# Ejecutar ambos archivos (schema y datos)
-.\database\ejecutar_sql.ps1
-
-# O ejecutar solo el schema
-.\database\ejecutar_sql.ps1 schema
-
-# O ejecutar solo los datos
-.\database\ejecutar_sql.ps1 datos
+```sql
+-- 1. Ejecutar reinstalar_completo.sql (crea las 11 tablas)
+-- 2. Ejecutar datos_prueba.sql (inserta datos de prueba)
 ```
 
-### Opción 2: Manualmente con psql
-
-Si `psql` está en el PATH del sistema:
+### Opción 2: PowerShell Automatizado
 
 ```powershell
-psql -U postgres -d medhistory -f database/schema.sql
-psql -U postgres -d medhistory -f database/datos_prueba.sql
+cd database
+.\ejecutar_sql.ps1
 ```
 
-Si `psql` NO está en el PATH, usar la ruta completa:
+### Opción 3: Paso a Paso (Manual)
 
 ```powershell
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d medhistory -f database/schema.sql
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d medhistory -f database/datos_prueba.sql
+cd database
+
+# 1. Limpiar tablas existentes (opcional)
+psql -U postgres -d medhistory -f limpiar_base_datos.sql
+
+# 2. Crear estructura
+psql -U postgres -d medhistory -f schema.sql
+
+# 3. Insertar datos
+psql -U postgres -d medhistory -f datos_prueba.sql
 ```
 
-### Opción 3: Agregar PostgreSQL al PATH
+## 📊 Estructura de la Base de Datos
 
-1. Buscar la carpeta `bin` de PostgreSQL (ejemplo: `C:\Program Files\PostgreSQL\18\bin`)
-2. Editar las variables de entorno del sistema
-3. Añadir la ruta a la variable PATH
-4. Reiniciar PowerShell
+**11 Tablas creadas:**
 
-Comando para agregar al PATH de sesión actual:
+### Tablas Principales
+- `administradores` - Usuarios admin del sistema
+- `medicos` - Tabla padre (médicos generales + especialistas)
+- `medicos_generales` - Médicos de cabecera
+- `medicos_especialistas` - Especialistas (cardiólogos, dermatólogos, etc.)
+- `pacientes` - Pacientes con médico general asignado
+
+### Tablas de Historial Clínico
+- `enfermedades_catalogo` - Catálogo de enfermedades
+- `perfiles_salud` - Información detallada de salud
+- `antecedentes_familiares` - Historial familiar
+- `consultas` - Registro de consultas médicas
+- `recordatorios` - Recordatorios de medicación/citas
+- `auditoria_logs` - Logs de auditoría y trazabilidad
+
+## 🔐 Credenciales de Prueba
+
+Todos los usuarios usan contraseña: **Admin123**
+
+- **Admin**: claudia.mateo@admin.com
+- **Médico General**: elena.fernandez@clinica.com
+- **Paciente**: maria.perez@email.com
+
+## 📝 Datos de Prueba
+
+- 2 Administradores
+- 3 Médicos Generales
+- 4 Médicos Especialistas (Cardiología, Dermatología, Traumatología, Ginecología)
+- 5 Pacientes (todos con médico general asignado automáticamente)
+- 15 Enfermedades en catálogo
+- 5 Perfiles de salud completos
+- 5 Antecedentes familiares
+- 5 Consultas médicas
+- 5 Recordatorios
+- 5 Logs de auditoría
+
+## ⚙️ Configuración PostgreSQL
+
+Si `psql` no está en el PATH:
 
 ```powershell
+# Agregar PostgreSQL al PATH (sesión actual)
 $env:Path += ";C:\Program Files\PostgreSQL\18\bin"
 ```
 
-## Verificación
+## ✅ Verificación
 
-Después de ejecutar los scripts, acceder a:
+Para verificar que todo se instaló correctamente:
 
+```powershell
+psql -U postgres -d medhistory -c "\dt"
 ```
-http://medHistory.local/test_db.php
-```
 
-Este script de pruebas verificará:
-- Conexión a PostgreSQL
-- Creación de administradores (Yousra y Claudia)
-- Creación de médicos (2)
-- Creación de pacientes (5)
-- Catálogo de enfermedades (15)
-- Borrado lógico
-- Reactivación de pacientes inactivos
+Deberías ver 11 tablas listadas.
 
-## Credenciales de Prueba
+---
 
-### Administradores
-- yousra@clinica.com / admin123
-- claudia@clinica.com / admin123
-
-### Médicos
-- elena.fernandez@clinica.com / medico123
-- miguel.rodriguez@clinica.com / medico123
-
-### Pacientes
-- maria.perez@email.com / paciente123
-- jose.martin@email.com / paciente123
-- laura.ruiz@email.com / paciente123
-- antonio.sanchez@email.com / paciente123
-- patricia.moreno@email.com / paciente123
-
-## Estructura de la Base de Datos
-
-El esquema implementa:
-- **Borrado lógico**: Las tablas principales usan `activo` y `fecha_baja`
-- **Sin CASCADE**: Las FK no usan ON DELETE CASCADE para preservar historial
-- **Auditoría**: Tabla `auditoria_logs` para trazabilidad GDPR/LOPD
-- **Catálogo de enfermedades**: Para antecedentes familiares
-- **Recordatorios**: Asociados a consultas médicas
-
-## Notas
-
-- El script `test_db.php` puede ejecutarse múltiples veces sin duplicar datos
-- Los datos ya existentes no se recrean
-- Los pacientes inactivos se reactivan automáticamente en cada ejecución de test_db.php
+**Autoras**: Yousra Jebari & Claudia Mateo  
+**Fecha**: Marzo 2026

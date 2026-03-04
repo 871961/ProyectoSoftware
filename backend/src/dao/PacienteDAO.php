@@ -18,11 +18,12 @@ class PacienteDAO {
     
     /**
      * Inserta un nuevo paciente en la base de datos
+     * Con asignación automática de médico general
      */
     public function insertar(PacienteVO $paciente) {
         try {
-            $sql = "INSERT INTO pacientes (dni, nombre, apellidos, email, contrasena_hash, telefono, direccion, fecha_nacimiento, num_seguridad_social) 
-                    VALUES (:dni, :nombre, :apellidos, :email, :contrasena_hash, :telefono, :direccion, :fecha_nacimiento, :num_seguridad_social)";
+            $sql = "INSERT INTO pacientes (dni, nombre, apellidos, email, contrasena_hash, telefono, direccion, fecha_nacimiento, num_seguridad_social, id_medico_general) 
+                    VALUES (:dni, :nombre, :apellidos, :email, :contrasena_hash, :telefono, :direccion, :fecha_nacimiento, :num_seguridad_social, :id_medico_general)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':dni', $paciente->getDni());
@@ -34,6 +35,7 @@ class PacienteDAO {
             $stmt->bindValue(':direccion', $paciente->getDireccion());
             $stmt->bindValue(':fecha_nacimiento', $paciente->getFechaNacimiento());
             $stmt->bindValue(':num_seguridad_social', $paciente->getNumSeguridadSocial());
+            $stmt->bindValue(':id_medico_general', $paciente->getIdMedicoGeneral());
             
             $resultado = $stmt->execute();
             
@@ -56,7 +58,8 @@ class PacienteDAO {
         try {
             $sql = "UPDATE pacientes SET nombre = :nombre, apellidos = :apellidos, email = :email, 
                     telefono = :telefono, direccion = :direccion, fecha_nacimiento = :fecha_nacimiento, 
-                    num_seguridad_social = :num_seguridad_social WHERE dni = :dni AND activo = TRUE";
+                    num_seguridad_social = :num_seguridad_social, id_medico_general = :id_medico_general
+                    WHERE dni = :dni AND activo = TRUE";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':nombre', $paciente->getNombre());
@@ -66,6 +69,7 @@ class PacienteDAO {
             $stmt->bindParam(':direccion', $paciente->getDireccion());
             $stmt->bindParam(':fecha_nacimiento', $paciente->getFechaNacimiento());
             $stmt->bindParam(':num_seguridad_social', $paciente->getNumSeguridadSocial());
+            $stmt->bindParam(':id_medico_general', $paciente->getIdMedicoGeneral());
             $stmt->bindParam(':dni', $paciente->getDni());
             
             $resultado = $stmt->execute();

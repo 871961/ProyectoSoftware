@@ -18,11 +18,16 @@ class MedicoDAO {
     
     /**
      * Inserta un nuevo médico (solo por administrador)
+     * Con jerarquía: general o especialista
      */
     public function insertar(MedicoVO $medico, $id_admin = null) {
         try {
-            $sql = "INSERT INTO medicos (nombre, apellidos, email, contrasena_hash, telefono, direccion, num_colegiado, especialidad) 
-                    VALUES (:nombre, :apellidos, :email, :contrasena_hash, :telefono, :direccion, :num_colegiado, :especialidad)";
+            $this->db->beginTransaction();
+            
+            // 1. Insertar en tabla medicos (entidad padre)
+            $sql = "INSERT INTO medicos (nombre, apellidos, email, contrasena_hash, telefono, direccion, num_colegiado, tipo_medico) 
+                    VALUES (:nombre, :apellidos, :email, :contrasena_hash, :telefono, :direccion, :num_colegiado, :tipo_medico)
+                    RETURNING id_medico";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':nombre', $medico->getNombre());
@@ -32,18 +37,35 @@ class MedicoDAO {
             $stmt->bindValue(':telefono', $medico->getTelefono());
             $stmt->bindValue(':direccion', $medico->getDireccion());
             $stmt->bindValue(':num_colegiado', $medico->getNumColegiado());
-            $stmt->bindValue(':especialidad', $medico->getEspecialidad());
+            $stmt->bindValue(':tipo_medico', $medico->getTipoMedico());
             
-            $resultado = $stmt->execute();
+            $stmt->execute();
+            $id_medico = $stmt->fetchColumn();
+            $medico->setIdMedico($id_medico);
             
-            if ($resultado) {
-                $medico->setIdMedico($this->db->lastInsertId());
-                $this->registrarAuditoria('CREAR_MEDICO', 'medicos', $medico->getIdMedico(), $id_admin);
-                return true;
+            // 2. Insertar en tabla correspondiente según tipo
+            if ($medico->esGeneral()) {
+                // Insertar en medicos_generales
+                $sql_general = "INSERT INTO medicos_generales (id_medico) VALUES (:id_medico)";
+                $stmt_general = $this->db->prepare($sql_general);
+                $stmt_general->bindValue(':id_medico', $id_medico);
+                $stmt_general->execute();
+            } else if ($medico->esEspecialista()) {
+                // Insertar en medicos_especialistas
+                $sql_especialista = "INSERT INTO medicos_especialistas (id_medico, especialidad) 
+                                    VALUES (:id_medico, :especialidad)";
+                $stmt_especialista = $this->db->prepare($sql_especialista);
+                $stmt_especialista->bindValue(':id_medico', $id_medico);
+                $stmt_especialista->bindValue(':especialidad', $medico->getEspecialidad());
+                $stmt_especialista->execute();
             }
-            return false;
+            
+            $this->db->commit();
+            $this->registrarAuditoria('CREAR_MEDICO', 'medicos', $id_medico, $id_admin);
+            return true;
             
         } catch (PDOException $e) {
+            $this->db->rollBack();
             throw new Exception("Error al insertar médico: " . $e->getMessage());
         }
     }
@@ -53,9 +75,12 @@ class MedicoDAO {
      */
     public function actualizar(MedicoVO $medico, $id_admin = null) {
         try {
+            $this->db->beginTransaction();
+            
+            // Actualizar tabla principal medicos
             $sql = "UPDATE medicos SET nombre = :nombre, apellidos = :apellidos, email = :email, 
                     telefono = :telefono, direccion = :direccion, num_colegiado = :num_colegiado, 
-                    especialidad = :especialidad WHERE id_medico = :id_medico AND activo = TRUE";
+                    tipo_medico = :tipo_medico WHERE id_medico = :id_medico AND activo = TRUE";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':nombre', $medico->getNombre());
@@ -64,18 +89,27 @@ class MedicoDAO {
             $stmt->bindParam(':telefono', $medico->getTelefono());
             $stmt->bindParam(':direccion', $medico->getDireccion());
             $stmt->bindParam(':num_colegiado', $medico->getNumColegiado());
-            $stmt->bindParam(':especialidad', $medico->getEspecialidad());
+            $stmt->bindParam(':tipo_medico', $medico->getTipoMedico());
             $stmt->bindParam(':id_medico', $medico->getIdMedico());
             
-            $resultado = $stmt->execute();
+            $stmt->execute();
             
-            if ($resultado) {
-                $this->registrarAuditoria('ACTUALIZAR_MEDICO', 'medicos', $medico->getIdMedico(), $id_admin);
+            // Actualizar especialidad si es especialista
+            if ($medico->esEspecialista()) {
+                $sql_esp = "UPDATE medicos_especialistas SET especialidad = :especialidad 
+                           WHERE id_medico = :id_medico";
+                $stmt_esp = $this->db->prepare($sql_esp);
+                $stmt_esp->bindParam(':especialidad', $medico->getEspecialidad());
+                $stmt_esp->bindParam(':id_medico', $medico->getIdMedico());
+                $stmt_esp->execute();
             }
             
-            return $resultado;
+            $this->db->commit();
+            $this->registrarAuditoria('ACTUALIZAR_MEDICO', 'medicos', $medico->getIdMedico(), $id_admin);
+            return true;
             
         } catch (PDOException $e) {
+            $this->db->rollBack();
             throw new Exception("Error al actualizar médico: " . $e->getMessage());
         }
     }
@@ -105,10 +139,14 @@ class MedicoDAO {
     
     /**
      * Obtiene un médico por ID (solo activos)
+     * Con JOIN a tablas medicos_generales o medicos_especialistas
      */
     public function obtenerPorId($id_medico) {
         try {
-            $sql = "SELECT * FROM medicos WHERE id_medico = :id_medico AND activo = TRUE";
+            $sql = "SELECT m.*, me.especialidad 
+                    FROM medicos m
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    WHERE m.id_medico = :id_medico AND m.activo = TRUE";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id_medico', $id_medico);
@@ -129,10 +167,14 @@ class MedicoDAO {
     
     /**
      * Obtiene todos los médicos (activos e inactivos)
+     * Con JOIN para obtener especialidad si es especialista
      */
     public function obtenerTodos() {
         try {
-            $sql = "SELECT * FROM medicos ORDER BY activo DESC, apellidos, nombre";
+            $sql = "SELECT m.*, me.especialidad 
+                    FROM medicos m
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    ORDER BY m.activo DESC, m.apellidos, m.nombre";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -177,7 +219,11 @@ class MedicoDAO {
      */
     public function obtenerPorEspecialidad($especialidad) {
         try {
-            $sql = "SELECT * FROM medicos WHERE especialidad = :especialidad AND activo = TRUE ORDER BY apellidos, nombre";
+            $sql = "SELECT m.*, me.especialidad 
+                    FROM medicos m
+                    INNER JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    WHERE me.especialidad = :especialidad AND m.activo = TRUE 
+                    ORDER BY m.apellidos, m.nombre";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':especialidad', $especialidad);
@@ -200,7 +246,10 @@ class MedicoDAO {
      */
     public function buscarPorEmail($email) {
         try {
-            $sql = "SELECT * FROM medicos WHERE email = :email AND activo = TRUE";
+            $sql = "SELECT m.*, me.especialidad 
+                    FROM medicos m
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    WHERE m.email = :email AND m.activo = TRUE";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':email', $email);
@@ -216,6 +265,99 @@ class MedicoDAO {
             
         } catch (PDOException $e) {
             throw new Exception("Error al buscar médico por email: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Obtiene solo médicos generales activos
+     */
+    public function obtenerMedicosGenerales() {
+        try {
+            $sql = "SELECT m.* 
+                    FROM medicos m
+                    INNER JOIN medicos_generales mg ON m.id_medico = mg.id_medico
+                    WHERE m.activo = TRUE 
+                    ORDER BY m.apellidos, m.nombre";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            
+            $medicos = [];
+            while ($fila = $stmt->fetch()) {
+                $medicos[] = new MedicoVO($fila);
+            }
+            
+            return $medicos;
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener médicos generales: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Obtiene un médico general aleatorio con menos pacientes asignados
+     * Para asignación automática de nuevos pacientes
+     */
+    public function obtenerMedicoGeneralDisponible() {
+        try {
+            $sql = "SELECT m.* 
+                    FROM medicos m
+                    INNER JOIN medicos_generales mg ON m.id_medico = mg.id_medico
+                    WHERE m.activo = TRUE 
+                    ORDER BY mg.pacientes_asignados ASC, RANDOM()
+                    LIMIT 1";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            
+            $resultado = $stmt->fetch();
+            
+            if ($resultado) {
+                return new MedicoVO($resultado);
+            }
+            
+            return null;
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener médico general disponible: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Incrementa el contador de pacientes asignados a un médico general
+     */
+    public function incrementarPacientesAsignados($id_medico) {
+        try {
+            $sql = "UPDATE medicos_generales 
+                    SET pacientes_asignados = pacientes_asignados + 1 
+                    WHERE id_medico = :id_medico";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_medico);
+            
+            return $stmt->execute();
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al incrementar pacientes asignados: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Decrementa el contador de pacientes asignados a un médico general
+     */
+    public function decrementarPacientesAsignados($id_medico) {
+        try {
+            $sql = "UPDATE medicos_generales 
+                    SET pacientes_asignados = GREATEST(0, pacientes_asignados - 1)
+                    WHERE id_medico = :id_medico";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_medico);
+            
+            return $stmt->execute();
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al decrementar pacientes asignados: " . $e->getMessage());
         }
     }
     

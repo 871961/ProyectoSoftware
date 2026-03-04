@@ -336,21 +336,33 @@
                                 placeholder="Ej: MD001234">
                         </div>
                         <div class="form-group">
-                            <label for="medico-especialidad" class="required">Especialidad Médica</label>
-                            <select id="medico-especialidad" name="especialidad" required>
-                                <option value="">Seleccionar especialidad...</option>
-                                <option value="Medicina General">Medicina General</option>
-                                <option value="Cardiología">Cardiología</option>
-                                <option value="Dermatología">Dermatología</option>
-                                <option value="Endocrinología">Endocrinología</option>
-                                <option value="Ginecología">Ginecología</option>
-                                <option value="Neurología">Neurología</option>
-                                <option value="Pediatría">Pediatría</option>
-                                <option value="Psiquiatría">Psiquiatría</option>
-                                <option value="Traumatología">Traumatología</option>
-                                <option value="Urología">Urología</option>
-                            </select>
+                            <label class="required">Tipo de Médico</label>
+                            <div style="display: flex; gap: 20px; margin-top: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="radio" id="tipo-general" name="tipo_medico" value="general" required
+                                        checked>
+                                    <span>Médico General</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="radio" id="tipo-especialista" name="tipo_medico" value="especialista"
+                                        required>
+                                    <span>Especialista</span>
+                                </label>
+                            </div>
                         </div>
+                    </div>
+                    <div class="form-group" id="especialidad-container" style="display: none;">
+                        <label for="medico-especialidad" class="required">Especialidad Médica</label>
+                        <select id="medico-especialidad" name="especialidad">
+                            <option value="">Seleccionar especialidad...</option>
+                            <option value="Cardiología">Cardiología</option>
+                            <option value="Dermatología">Dermatología</option>
+                            <option value="Endocrinología">Endocrinología</option>
+                            <option value="Ginecología">Ginecología</option>
+                            <option value="Neurología">Neurología</option>
+                            <option value="Pediatría">Pediatría</option>
+                            <option value="Traumatología">Traumatología</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="medico-contrasena" class="required">Contraseña de Acceso</label>

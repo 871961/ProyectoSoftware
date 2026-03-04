@@ -111,10 +111,26 @@ try {
                 $datos = $input;
                 $datos['contrasena_hash'] = password_hash($datos['contrasena'], PASSWORD_DEFAULT);
                 
+                // Asignar un médico general disponible automáticamente
+                $medicoGeneral = $medicoDAO->obtenerMedicoGeneralDisponible();
+                
+                if (!$medicoGeneral) {
+                    echo json_encode([
+                        'success' => false,
+                        'mensaje' => 'No hay médicos generales disponibles en este momento'
+                    ]);
+                    break;
+                }
+                
+                $datos['id_medico_general'] = $medicoGeneral->getIdMedico();
+                
                 $paciente = new PacienteVO($datos);
                 $resultado = $pacienteDAO->insertar($paciente);
                 
                 if ($resultado) {
+                    // Incrementar contador de pacientes asignados
+                    $medicoDAO->incrementarPacientesAsignados($medicoGeneral->getIdMedico());
+                    
                     echo json_encode([
                         'success' => true,
                         'mensaje' => 'Paciente creado exitosamente',

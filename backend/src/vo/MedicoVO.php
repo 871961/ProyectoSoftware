@@ -15,7 +15,8 @@ class MedicoVO {
     private $telefono;
     private $direccion;
     private $num_colegiado;
-    private $especialidad;
+    private $tipo_medico; // 'general' o 'especialista'
+    private $especialidad; // Solo para especialistas
     private $activo;
     private $fecha_baja;
     
@@ -29,7 +30,8 @@ class MedicoVO {
             $this->telefono = $datos['telefono'] ?? '';
             $this->direccion = $datos['direccion'] ?? '';
             $this->num_colegiado = $datos['num_colegiado'] ?? '';
-            $this->especialidad = $datos['especialidad'] ?? '';
+            $this->tipo_medico = $datos['tipo_medico'] ?? 'general';
+            $this->especialidad = $datos['especialidad'] ?? null;
             $this->activo = $datos['activo'] ?? true;
             $this->fecha_baja = $datos['fecha_baja'] ?? null;
         }
@@ -44,6 +46,7 @@ class MedicoVO {
     public function getTelefono() { return $this->telefono; }
     public function getDireccion() { return $this->direccion; }
     public function getNumColegiado() { return $this->num_colegiado; }
+    public function getTipoMedico() { return $this->tipo_medico; }
     public function getEspecialidad() { return $this->especialidad; }
     public function getActivo() { return $this->activo; }
     public function getFechaBaja() { return $this->fecha_baja; }
@@ -57,12 +60,21 @@ class MedicoVO {
     public function setTelefono($telefono) { $this->telefono = $telefono; }
     public function setDireccion($direccion) { $this->direccion = $direccion; }
     public function setNumColegiado($num) { $this->num_colegiado = $num; }
+    public function setTipoMedico($tipo) { $this->tipo_medico = $tipo; }
     public function setEspecialidad($especialidad) { $this->especialidad = $especialidad; }
     public function setActivo($activo) { $this->activo = $activo; }
     public function setFechaBaja($fecha) { $this->fecha_baja = $fecha; }
     
     public function getNombreCompleto() {
         return 'Dr/a. ' . $this->nombre . ' ' . $this->apellidos;
+    }
+    
+    public function esGeneral() {
+        return $this->tipo_medico === 'general';
+    }
+    
+    public function esEspecialista() {
+        return $this->tipo_medico === 'especialista';
     }
     
     public function toArray() {
@@ -74,6 +86,7 @@ class MedicoVO {
             'telefono' => $this->telefono,
             'direccion' => $this->direccion,
             'num_colegiado' => $this->num_colegiado,
+            'tipo_medico' => $this->tipo_medico,
             'especialidad' => $this->especialidad,
             'activo' => $this->activo,
             'fecha_baja' => $this->fecha_baja

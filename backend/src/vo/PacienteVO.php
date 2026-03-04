@@ -16,6 +16,7 @@ class PacienteVO {
     private $direccion;
     private $fecha_nacimiento;
     private $num_seguridad_social;
+    private $id_medico_general; // Médico de cabecera asignado
     private $activo;
     private $fecha_baja;
     
@@ -30,6 +31,7 @@ class PacienteVO {
             $this->direccion = $datos['direccion'] ?? '';
             $this->fecha_nacimiento = $datos['fecha_nacimiento'] ?? '';
             $this->num_seguridad_social = $datos['num_seguridad_social'] ?? '';
+            $this->id_medico_general = $datos['id_medico_general'] ?? null;
             $this->activo = $datos['activo'] ?? true;
             $this->fecha_baja = $datos['fecha_baja'] ?? null;
         }
@@ -45,6 +47,7 @@ class PacienteVO {
     public function getDireccion() { return $this->direccion; }
     public function getFechaNacimiento() { return $this->fecha_nacimiento; }
     public function getNumSeguridadSocial() { return $this->num_seguridad_social; }
+    public function getIdMedicoGeneral() { return $this->id_medico_general; }
     public function getActivo() { return $this->activo; }
     public function getFechaBaja() { return $this->fecha_baja; }
     
@@ -58,6 +61,7 @@ class PacienteVO {
     public function setDireccion($direccion) { $this->direccion = $direccion; }
     public function setFechaNacimiento($fecha) { $this->fecha_nacimiento = $fecha; }
     public function setNumSeguridadSocial($num) { $this->num_seguridad_social = $num; }
+    public function setIdMedicoGeneral($id) { $this->id_medico_general = $id; }
     public function setActivo($activo) { $this->activo = $activo; }
     public function setFechaBaja($fecha) { $this->fecha_baja = $fecha; }
     
@@ -75,6 +79,7 @@ class PacienteVO {
             'direccion' => $this->direccion,
             'fecha_nacimiento' => $this->fecha_nacimiento,
             'num_seguridad_social' => $this->num_seguridad_social,
+            'id_medico_general' => $this->id_medico_general,
             'activo' => $this->activo,
             'fecha_baja' => $this->fecha_baja
         ];

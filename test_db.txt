@@ -108,19 +108,29 @@ require_once 'backend/src/dao/AdministradorDAO.php';
     // =========================================================================
     // 3. CREACIÓN DE MÉDICOS
     // =========================================================================
+    // 3. CREACIÓN DE MÉDICOS (Generales y Especialistas)
+    // =========================================================================
     echo '<div class="section">';
-    echo "<h2>3. Prueba de DAO — Médicos</h2>";
+    echo "<h2>3. Prueba de DAO — Médicos (Generales y Especialistas)</h2>";
     $medicosCreados = 0;
     try {
         $medicoDAO = new MedicoDAO();
         
-        // Médicos de prueba (2 médicos)
+        // Médicos de prueba: 3 generales y 4 especialistas
         $medicosPrueba = [
-            ['nombre' => 'Elena', 'apellidos' => 'Fernández Sánchez', 'email' => 'elena.fernandez@clinica.com', 'especialidad' => 'Medicina General', 'num_colegiado' => 'MD-001234', 'telefono' => '612-345-678'],
-            ['nombre' => 'Miguel', 'apellidos' => 'Ángel Rodríguez', 'email' => 'miguel.rodriguez@clinica.com', 'especialidad' => 'Cardiología', 'num_colegiado' => 'CD-005678', 'telefono' => '623-456-789']
+            // Médicos Generales
+            ['nombre' => 'Elena', 'apellidos' => 'Fernández Sánchez', 'email' => 'elena.fernandez@clinica.com', 'tipo_medico' => 'general', 'especialidad' => null, 'num_colegiado' => 'MG-001234', 'telefono' => '612-345-678'],
+            ['nombre' => 'Carlos', 'apellidos' => 'López Jiménez', 'email' => 'carlos.lopez@clinica.com', 'tipo_medico' => 'general', 'especialidad' => null, 'num_colegiado' => 'MG-002345', 'telefono' => '613-456-789'],
+            ['nombre' => 'Ana', 'apellidos' => 'Martínez Ruiz', 'email' => 'ana.martinez@clinica.com', 'tipo_medico' => 'general', 'especialidad' => null, 'num_colegiado' => 'MG-003456', 'telefono' => '614-567-890'],
+            
+            // Médicos Especialistas
+            ['nombre' => 'Miguel', 'apellidos' => 'Ángel Rodríguez', 'email' => 'miguel.rodriguez@clinica.com', 'tipo_medico' => 'especialista', 'especialidad' => 'Cardiología', 'num_colegiado' => 'CD-005678', 'telefono' => '623-456-789'],
+            ['nombre' => 'Laura', 'apellidos' => 'García Santos', 'email' => 'laura.garcia@clinica.com', 'tipo_medico' => 'especialista', 'especialidad' => 'Dermatología', 'num_colegiado' => 'DM-006789', 'telefono' => '624-567-890'],
+            ['nombre' => 'Pedro', 'apellidos' => 'Sánchez Moreno', 'email' => 'pedro.sanchez@clinica.com', 'tipo_medico' => 'especialista', 'especialidad' => 'Traumatología', 'num_colegiado' => 'TR-007890', 'telefono' => '625-678-901'],
+            ['nombre' => 'Isabel', 'apellidos' => 'Díaz Fernández', 'email' => 'isabel.diaz@clinica.com', 'tipo_medico' => 'especialista', 'especialidad' => 'Ginecología', 'num_colegiado' => 'GN-008901', 'telefono' => '626-789-012']
         ];
         
-        echo '<p><strong>Hecho:</strong> Verificar y crear médicos de prueba.</p>';
+        echo '<p><strong>Hecho:</strong> Verificar y crear médicos de prueba (generales y especialistas).</p>';
         
         foreach ($medicosPrueba as $medicoData) {
             $existe = $medicoDAO->buscarPorEmail($medicoData['email']);
@@ -130,6 +140,7 @@ require_once 'backend/src/dao/AdministradorDAO.php';
                     'apellidos' => $medicoData['apellidos'],
                     'email' => $medicoData['email'],
                     'contrasena_hash' => password_hash('medico123', PASSWORD_BCRYPT),
+                    'tipo_medico' => $medicoData['tipo_medico'],
                     'especialidad' => $medicoData['especialidad'],
                     'num_colegiado' => $medicoData['num_colegiado'],
                     'telefono' => $medicoData['telefono']
@@ -141,9 +152,12 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         }
         
         $medicos = $medicoDAO->obtenerTodos();
-        echo '<p><strong>Resultado:</strong> Médicos creados en esta ejecución: ' . $medicosCreados . '. Total en sistema: ' . count($medicos) . '</p>';
+        $medicosGenerales = $medicoDAO->obtenerMedicosGenerales();
+        
+        echo '<p><strong>Resultado:</strong> Médicos creados en esta ejecución: ' . $medicosCreados . '. Total en sistema: ' . count($medicos) . ' (' . count($medicosGenerales) . ' generales)</p>';
         foreach ($medicos as $m) {
-            echo '<p>- Dr./Dra. ' . htmlspecialchars($m->getNombre() . ' ' . $m->getApellidos()) . ' - ' . htmlspecialchars($m->getEspecialidad()) . ' (' . htmlspecialchars($m->getEmail()) . ')</p>';
+            $tipo = $m->esGeneral() ? 'Médico General' : htmlspecialchars($m->getEspecialidad());
+            echo '<p>- Dr./Dra. ' . htmlspecialchars($m->getNombre() . ' ' . $m->getApellidos()) . ' - ' . $tipo . ' (' . htmlspecialchars($m->getEmail()) . ')</p>';
         }
     } catch (Exception $e) {
         echo '<p><strong>Resultado:</strong> Error en MedicoDAO: ' . htmlspecialchars($e->getMessage()) . '</p>';
@@ -159,32 +173,40 @@ require_once 'backend/src/dao/AdministradorDAO.php';
     try {
         $pacienteDAO = new PacienteDAO();
         
-        // 5 Pacientes de prueba
+        // 5 Pacientes de prueba con DNI incluido
         $pacientesPrueba = [
-            ['nombre' => 'María', 'apellidos' => 'Pérez García', 'email' => 'maria.perez@email.com', 'fecha_nacimiento' => '1985-03-15', 'num_seguridad_social' => '280315123456', 'telefono' => '667-890-123', 'direccion' => 'Calle Alcalá 73, Madrid'],
-            ['nombre' => 'José', 'apellidos' => 'Martín López', 'email' => 'jose.martin@email.com', 'fecha_nacimiento' => '1978-07-22', 'num_seguridad_social' => '220778234567', 'telefono' => '678-901-234', 'direccion' => 'Paseo del Prado 150, Madrid'],
-            ['nombre' => 'Laura', 'apellidos' => 'Ruiz Herrera', 'email' => 'laura.ruiz@email.com', 'fecha_nacimiento' => '1992-11-08', 'num_seguridad_social' => '081192345678', 'telefono' => '689-012-345', 'direccion' => 'Calle Goya 89, Madrid'],
-            ['nombre' => 'Antonio', 'apellidos' => 'Sánchez Verde', 'email' => 'antonio.sanchez@email.com', 'fecha_nacimiento' => '1965-05-12', 'num_seguridad_social' => '120565456789', 'telefono' => '690-123-456', 'direccion' => 'Avenida América 200, Madrid'],
-            ['nombre' => 'Patricia', 'apellidos' => 'Moreno Castro', 'email' => 'patricia.moreno@email.com', 'fecha_nacimiento' => '1989-09-30', 'num_seguridad_social' => '300989567890', 'telefono' => '601-234-567', 'direccion' => 'Calle Bravo Murillo 75, Madrid']
+            ['dni' => '12345678A', 'nombre' => 'María', 'apellidos' => 'Pérez García', 'email' => 'maria.perez@email.com', 'fecha_nacimiento' => '1985-03-15', 'num_seguridad_social' => '280315123456', 'telefono' => '667-890-123', 'direccion' => 'Calle Alcalá 73, Madrid'],
+            ['dni' => '23456789B', 'nombre' => 'José', 'apellidos' => 'Martín López', 'email' => 'jose.martin@email.com', 'fecha_nacimiento' => '1978-07-22', 'num_seguridad_social' => '220778234567', 'telefono' => '678-901-234', 'direccion' => 'Paseo del Prado 150, Madrid'],
+            ['dni' => '34567890C', 'nombre' => 'Laura', 'apellidos' => 'Ruiz Herrera', 'email' => 'laura.ruiz@email.com', 'fecha_nacimiento' => '1992-11-08', 'num_seguridad_social' => '081192345678', 'telefono' => '689-012-345', 'direccion' => 'Calle Goya 89, Madrid'],
+            ['dni' => '45678901D', 'nombre' => 'Antonio', 'apellidos' => 'Sánchez Verde', 'email' => 'antonio.sanchez@email.com', 'fecha_nacimiento' => '1965-05-12', 'num_seguridad_social' => '120565456789', 'telefono' => '690-123-456', 'direccion' => 'Avenida América 200, Madrid'],
+            ['dni' => '56789012E', 'nombre' => 'Patricia', 'apellidos' => 'Moreno Castro', 'email' => 'patricia.moreno@email.com', 'fecha_nacimiento' => '1989-09-30', 'num_seguridad_social' => '300989567890', 'telefono' => '601-234-567', 'direccion' => 'Calle Bravo Murillo 75, Madrid']
         ];
         
-        echo '<p><strong>Hecho:</strong> Verificar y crear pacientes de prueba.</p>';
+        echo '<p><strong>Hecho:</strong> Verificar y crear pacientes de prueba con médico general asignado.</p>';
         
         foreach ($pacientesPrueba as $pacienteData) {
             $existe = $pacienteDAO->buscarPorEmailInclusoInactivos($pacienteData['email']);
             if (!$existe) {
-                $paciente = new PacienteVO([
-                    'nombre' => $pacienteData['nombre'],
-                    'apellidos' => $pacienteData['apellidos'],
-                    'email' => $pacienteData['email'],
-                    'contrasena_hash' => password_hash('paciente123', PASSWORD_BCRYPT),
-                    'telefono' => $pacienteData['telefono'],
-                    'direccion' => $pacienteData['direccion'],
-                    'fecha_nacimiento' => $pacienteData['fecha_nacimiento'],
-                    'num_seguridad_social' => $pacienteData['num_seguridad_social']
-                ]);
-                if ($pacienteDAO->insertar($paciente)) {
-                    $pacientesCreados++;
+                // Asignar médico general disponible
+                $medicoGeneral = $medicoDAO->obtenerMedicoGeneralDisponible();
+                
+                if ($medicoGeneral) {
+                    $paciente = new PacienteVO([
+                        'dni' => $pacienteData['dni'],
+                        'nombre' => $pacienteData['nombre'],
+                        'apellidos' => $pacienteData['apellidos'],
+                        'email' => $pacienteData['email'],
+                        'contrasena_hash' => password_hash('paciente123', PASSWORD_BCRYPT),
+                        'telefono' => $pacienteData['telefono'],
+                        'direccion' => $pacienteData['direccion'],
+                        'fecha_nacimiento' => $pacienteData['fecha_nacimiento'],
+                        'num_seguridad_social' => $pacienteData['num_seguridad_social'],
+                        'id_medico_general' => $medicoGeneral->getIdMedico()
+                    ]);
+                    if ($pacienteDAO->insertar($paciente)) {
+                        $medicoDAO->incrementarPacientesAsignados($medicoGeneral->getIdMedico());
+                        $pacientesCreados++;
+                    }
                 }
             }
         }
@@ -192,7 +214,9 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         $pacientesActivos = $pacienteDAO->obtenerTodos();
         echo '<p><strong>Resultado:</strong> Pacientes creados en esta ejecución: ' . $pacientesCreados . '. Total de pacientes activos: ' . count($pacientesActivos) . '</p>';
         foreach ($pacientesActivos as $p) {
-            echo '<p>- ' . htmlspecialchars($p->getNombre() . ' ' . $p->getApellidos()) . ' (' . htmlspecialchars($p->getEmail()) . ')</p>';
+            $medicoAsignado = $p->getIdMedicoGeneral() ? $medicoDAO->obtenerPorId($p->getIdMedicoGeneral()) : null;
+            $nombreMedico = $medicoAsignado ? $medicoAsignado->getNombreCompleto() : 'Sin asignar';
+            echo '<p>- ' . htmlspecialchars($p->getNombre() . ' ' . $p->getApellidos()) . ' (' . htmlspecialchars($p->getEmail()) . ') - Médico: ' . htmlspecialchars($nombreMedico) . '</p>';
         }
     } catch (Exception $e) {
         echo '<p><strong>Resultado:</strong> Error en PacienteDAO: ' . htmlspecialchars($e->getMessage()) . '</p>';
@@ -319,6 +343,12 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         $stmt = $db->query("SELECT COUNT(*) FROM medicos WHERE activo = TRUE");
         $totalMedicos = $stmt->fetchColumn();
         
+        $stmt = $db->query("SELECT COUNT(*) FROM medicos_generales mg INNER JOIN medicos m ON mg.id_medico = m.id_medico WHERE m.activo = TRUE");
+        $totalMedicosGenerales = $stmt->fetchColumn();
+        
+        $stmt = $db->query("SELECT COUNT(*) FROM medicos_especialistas me INNER JOIN medicos m ON me.id_medico = m.id_medico WHERE m.activo = TRUE");
+        $totalMedicosEspecialistas = $stmt->fetchColumn();
+        
         $stmt = $db->query("SELECT COUNT(*) FROM pacientes WHERE activo = TRUE");
         $totalPacientesActivos = $stmt->fetchColumn();
         
@@ -333,21 +363,34 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         echo '<pre>';
         echo "Administradores activos:    " . $totalAdmins . "\n";
         echo "Médicos activos:            " . $totalMedicos . "\n";
+        echo "  - Médicos Generales:      " . $totalMedicosGenerales . "\n";
+        echo "  - Especialistas:          " . $totalMedicosEspecialistas . "\n";
         echo "Pacientes activos:          " . $totalPacientesActivos . "\n";
         echo "Pacientes inactivos:        " . $totalPacientesInactivos . "\n";
         echo "Enfermedades en catálogo:   " . $totalEnfermedades . "\n";
         echo "\nArquitectura MVC implementada correctamente.\n";
         echo "Borrado lógico funcional (GDPR/LOPD compliant).\n";
         echo "Sistema de auditoría configurado.\n";
+        echo "Jerarquía de médicos (Generales/Especialistas) implementada.\n";
+        echo "Asignación automática de médicos generales a pacientes.\n";
         echo '</pre>';
         
         echo '<p><strong>Credenciales de prueba:</strong></p>';
         echo '<pre>';
-        echo "Médicos:          elena.fernandez@clinica.com / medico123\n";
-        echo "                  miguel.rodriguez@clinica.com / medico123\n\n";
+        echo "Administradores:  claudia.mateo@admin.com / Admin123\n";
+        echo "                  yousra.jebari@admin.com / Admin123\n\n";
+        echo "Médicos Generales:\n";
+        echo "                  elena.fernandez@clinica.com / medico123\n";
+        echo "                  carlos.lopez@clinica.com / medico123\n";
+        echo "                  ana.martinez@clinica.com / medico123\n\n";
+        echo "Especialistas:    miguel.rodriguez@clinica.com / medico123 (Cardiología)\n";
+        echo "                  laura.garcia@clinica.com / medico123 (Dermatología)\n";
+        echo "                  pedro.sanchez@clinica.com / medico123 (Traumatología)\n";
+        echo "                  isabel.diaz@clinica.com / medico123 (Ginecología)\n\n";
         echo "Pacientes:        maria.perez@email.com / paciente123\n";
         echo "                  jose.martin@email.com / paciente123\n";
         echo "                  (y 3 pacientes más con misma contraseña)\n";
+        echo "                  Todos tienen un médico general asignado automáticamente.\n";
         echo '</pre>';
         
     } catch (Exception $e) {

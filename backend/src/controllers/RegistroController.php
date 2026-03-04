@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once '../dao/PacienteDAO.php';
+require_once '../dao/MedicoDAO.php';
 require_once '../vo/PacienteVO.php';
 
 try {
@@ -135,7 +136,15 @@ try {
     // Hash de la contraseña
     $contrasenaHash = password_hash($password, PASSWORD_BCRYPT);
     
-    // Crear el objeto PacienteVO
+    // Asignar un médico general disponible automáticamente
+    $medicoDAO = new MedicoDAO();
+    $medicoGeneral = $medicoDAO->obtenerMedicoGeneralDisponible();
+    
+    if (!$medicoGeneral) {
+        throw new Exception('No hay médicos generales disponibles en este momento. Por favor, contacta al administrador.');
+    }
+    
+    // Crear el objeto PacienteVO con médico general asignado
     $paciente = new PacienteVO([
         'dni' => strtoupper($dni),
         'nombre' => $nombre,
@@ -146,6 +155,7 @@ try {
         'direccion' => $direccion,
         'fecha_nacimiento' => $fecha_nacimiento,
         'num_seguridad_social' => null,
+        'id_medico_general' => $medicoGeneral->getIdMedico(),
         'activo' => true,
         'fecha_baja' => null
     ]);
@@ -154,6 +164,8 @@ try {
     $dniPaciente = $pacienteDAO->insertar($paciente);
     
     if ($dniPaciente) {
+        // Incrementar contador de pacientes asignados al médico general
+        $medicoDAO->incrementarPacientesAsignados($medicoGeneral->getIdMedico());
         // Registro exitoso - crear sesión automáticamente
         $_SESSION['user_id'] = $dniPaciente;
         $_SESSION['user_tipo'] = 'paciente';

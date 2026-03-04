@@ -58,6 +58,10 @@ class AdminPanel {
         document.getElementById('medicoForm').addEventListener('submit', (e) => this.handleCreateMedico(e));
         document.getElementById('pacienteForm').addEventListener('submit', (e) => this.handleCreatePaciente(e));
 
+        // Tipo de médico: mostrar/ocultar especialidad
+        document.getElementById('tipo-general').addEventListener('change', () => this.toggleEspecialidadField());
+        document.getElementById('tipo-especialista').addEventListener('change', () => this.toggleEspecialidadField());
+
         // Close modals on background click
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
@@ -596,11 +600,39 @@ class AdminPanel {
         });
     }
 
+    toggleEspecialidadField() {
+        const tipoEspecialista = document.getElementById('tipo-especialista');
+        const especialidadContainer = document.getElementById('especialidad-container');
+        const especialidadSelect = document.getElementById('medico-especialidad');
+
+        if (tipoEspecialista.checked) {
+            // Mostrar selector de especialidad
+            especialidadContainer.style.display = 'block';
+            especialidadSelect.required = true;
+        } else {
+            // Ocultar selector de especialidad
+            especialidadContainer.style.display = 'none';
+            especialidadSelect.required = false;
+            especialidadSelect.value = '';
+        }
+    }
+
     async handleCreateMedico(e) {
         e.preventDefault();
 
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
+
+        // Validar que si es especialista, tenga especialidad
+        if (data.tipo_medico === 'especialista' && !data.especialidad) {
+            this.showAlert('Debe seleccionar una especialidad', 'error');
+            return;
+        }
+
+        // Si es médico general, eliminar el campo especialidad
+        if (data.tipo_medico === 'general') {
+            delete data.especialidad;
+        }
 
         try {
             const response = await this.apiCall('crear_medico', 'POST', data);
@@ -609,6 +641,7 @@ class AdminPanel {
                 this.showAlert('Médico creado exitosamente', 'success');
                 this.closeModal('medicoModal');
                 e.target.reset();
+                this.toggleEspecialidadField(); // Resetear vista de especialidad
                 await this.loadMedicos();
             } else {
                 this.showAlert(response.mensaje, 'error');
