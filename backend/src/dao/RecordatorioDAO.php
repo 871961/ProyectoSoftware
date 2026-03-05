@@ -75,10 +75,11 @@ class RecordatorioDAO {
             $condicion_activo = $solo_activos ? "AND r.activo = true" : "";
             
             $sql = "SELECT r.*, p.nombre as paciente_nombre, p.apellidos as paciente_apellidos,
-                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, m.especialidad
+                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, me.especialidad
                     FROM recordatorios r 
                     LEFT JOIN pacientes p ON r.id_paciente = p.id_paciente 
                     LEFT JOIN medicos m ON r.id_medico = m.id_medico 
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
                     WHERE r.id_paciente = :id_paciente $condicion_activo
                     ORDER BY r.fecha_recordatorio ASC, r.hora_recordatorio ASC";
 
@@ -99,10 +100,11 @@ class RecordatorioDAO {
     public function obtenerPendientesPorPaciente($id_paciente) {
         try {
             $sql = "SELECT r.*, p.nombre as paciente_nombre, p.apellidos as paciente_apellidos,
-                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, m.especialidad
+                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, me.especialidad
                     FROM recordatorios r 
                     LEFT JOIN pacientes p ON r.id_paciente = p.id_paciente 
                     LEFT JOIN medicos m ON r.id_medico = m.id_medico 
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
                     WHERE r.id_paciente = :id_paciente 
                     AND r.estado = 'pendiente' 
                     AND r.activo = true
@@ -128,10 +130,11 @@ class RecordatorioDAO {
     public function obtenerParaHoy() {
         try {
             $sql = "SELECT r.*, p.nombre as paciente_nombre, p.apellidos as paciente_apellidos, p.telefono,
-                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, m.especialidad
+                           m.nombre as medico_nombre, m.apellidos as medico_apellidos, me.especialidad
                     FROM recordatorios r 
                     JOIN pacientes p ON r.id_paciente = p.id_paciente 
                     LEFT JOIN medicos m ON r.id_medico = m.id_medico 
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
                     WHERE DATE(r.fecha_recordatorio) = CURRENT_DATE
                     AND r.estado = 'pendiente' 
                     AND r.activo = true

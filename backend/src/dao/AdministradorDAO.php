@@ -164,11 +164,12 @@ class AdministradorDAO {
             $estadisticas['consultas_mes'] = $stmt->fetch()['total'];
             
             // Especialidades más demandadas
-            $sql = "SELECT m.especialidad, COUNT(c.id_consulta) as total_consultas 
-                    FROM medicos m 
+            $sql = "SELECT me.especialidad, COUNT(c.id_consulta) as total_consultas 
+                    FROM medicos_especialistas me
+                    INNER JOIN medicos m ON me.id_medico = m.id_medico
                     LEFT JOIN consultas c ON m.id_medico = c.id_medico 
                     WHERE m.activo = TRUE 
-                    GROUP BY m.especialidad 
+                    GROUP BY me.especialidad 
                     ORDER BY total_consultas DESC 
                     LIMIT 5";
             $stmt = $this->db->prepare($sql);

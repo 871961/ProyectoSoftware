@@ -52,9 +52,10 @@ class ConsultaDAO {
      */
     public function obtenerPorPaciente($id_paciente) {
         try {
-            $sql = "SELECT c.*, m.nombre as medico_nombre, m.apellidos as medico_apellidos, m.especialidad 
+            $sql = "SELECT c.*, m.nombre as medico_nombre, m.apellidos as medico_apellidos, me.especialidad 
                     FROM consultas c 
                     INNER JOIN medicos m ON c.id_medico = m.id_medico 
+                    LEFT JOIN medicos_especialistas me ON m.id_medico = me.id_medico
                     WHERE c.id_paciente = :id_paciente 
                     ORDER BY c.fecha DESC";
             
