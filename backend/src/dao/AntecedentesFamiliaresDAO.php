@@ -31,9 +31,9 @@ class AntecedentesFamiliaresDAO {
 
             $sql = "INSERT INTO antecedentes_familiares 
                     (id_paciente, id_enfermedad, parentesco, lado_familiar, 
-                     edad_diagnóstico, notas_adicionales) 
+                     edad_diagnostico, notas_adicionales) 
                     VALUES (:id_paciente, :id_enfermedad, :parentesco, :lado_familiar,
-                            :edad_diagnóstico, :notas_adicionales) 
+                            :edad_diagnostico, :notas_adicionales) 
                     RETURNING id_antecedente";
 
             $stmt = $this->db->prepare($sql);
@@ -42,7 +42,7 @@ class AntecedentesFamiliaresDAO {
                 ':id_enfermedad' => $antecedente->getIdEnfermedad(),
                 ':parentesco' => $antecedente->getParentesco(),
                 ':lado_familiar' => $antecedente->getLadoFamiliar(),
-                ':edad_diagnóstico' => $antecedente->getEdadDiagnostico(),
+                ':edad_diagnostico' => $antecedente->getEdadDiagnostico(),
                 ':notas_adicionales' => $antecedente->getNotasAdicionales()
             ]);
 
@@ -73,7 +73,7 @@ class AntecedentesFamiliaresDAO {
                            p.nombre as paciente_nombre, p.apellidos as paciente_apellidos
                     FROM antecedentes_familiares af
                     JOIN enfermedades_catalogo ec ON af.id_enfermedad = ec.id_enfermedad
-                    JOIN pacientes p ON af.id_paciente = p.id_paciente
+                    JOIN pacientes p ON af.id_paciente = p.dni
                     WHERE af.id_paciente = :id_paciente AND af.activo = true
                     ORDER BY ec.nivel_gravedad DESC, af.parentesco, ec.nombre";
 
@@ -89,6 +89,40 @@ class AntecedentesFamiliaresDAO {
     }
 
     /**
+     * Obtiene antecedentes de un paciente con información completa para API
+     * (alias para compatibilidad con controladores)
+     */
+    public function obtenerPorPaciente($dni_paciente) {
+        try {
+            $sql = "SELECT 
+                        af.id_antecedente,
+                        af.id_paciente,
+                        af.id_enfermedad,
+                        af.parentesco,
+                        af.lado_familiar,
+                        af.edad_diagnostico,
+                        af.notas_adicionales,
+                        af.fecha_registro,
+                        af.activo,
+                        ec.nombre_patologia
+                    FROM antecedentes_familiares af
+                    JOIN enfermedades_catalogo ec ON af.id_enfermedad = ec.id_enfermedad
+                    WHERE af.id_paciente = :dni_paciente 
+                      AND af.activo = TRUE
+                    ORDER BY af.parentesco, ec.nombre_patologia";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':dni_paciente' => $dni_paciente]);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            error_log("Error al obtener antecedentes por paciente (DNI): " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
      * Obtiene antecedentes por enfermedad específica
      */
     public function obtenerPorEnfermedad($id_enfermedad) {
@@ -97,7 +131,7 @@ class AntecedentesFamiliaresDAO {
                            p.nombre as paciente_nombre, p.apellidos as paciente_apellidos
                     FROM antecedentes_familiares af
                     JOIN enfermedades_catalogo ec ON af.id_enfermedad = ec.id_enfermedad
-                    JOIN pacientes p ON af.id_paciente = p.id_paciente
+                    JOIN pacientes p ON af.id_paciente = p.dni
                     WHERE af.id_enfermedad = :id_enfermedad 
                     AND af.activo = true AND p.activo = true
                     ORDER BY af.parentesco, p.apellidos, p.nombre";
@@ -195,7 +229,7 @@ class AntecedentesFamiliaresDAO {
                     SET id_enfermedad = :id_enfermedad,
                         parentesco = :parentesco,
                         lado_familiar = :lado_familiar,
-                        edad_diagnóstico = :edad_diagnóstico,
+                        edad_diagnostico = :edad_diagnostico,
                         notas_adicionales = :notas_adicionales
                     WHERE id_antecedente = :id_antecedente AND activo = true";
 
@@ -204,7 +238,7 @@ class AntecedentesFamiliaresDAO {
                 ':id_enfermedad' => $antecedente->getIdEnfermedad(),
                 ':parentesco' => $antecedente->getParentesco(),
                 ':lado_familiar' => $antecedente->getLadoFamiliar(),
-                ':edad_diagnóstico' => $antecedente->getEdadDiagnostico(),
+                ':edad_diagnostico' => $antecedente->getEdadDiagnostico(),
                 ':notas_adicionales' => $antecedente->getNotasAdicionales(),
                 ':id_antecedente' => $antecedente->getIdAntecedente()
             ]);
@@ -277,6 +311,13 @@ class AntecedentesFamiliaresDAO {
             error_log("Error en borrado lógico de antecedente: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    /**
+     * Eliminar (desactivar) un antecedente - Alias para compatibilidad con controladores
+     */
+    public function eliminar($id_antecedente) {
+        return $this->darDeBaja($id_antecedente, $_SESSION['user_id'] ?? 'Sistema');
     }
 
     /**

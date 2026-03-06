@@ -5,6 +5,7 @@
 
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
+const ANTECEDENTES_API = '/backend/src/controllers/AntecedentesController.php';
 
 class SidebarManager {
     constructor() {
@@ -60,6 +61,8 @@ class PacienteDashboard {
         this.saludImcValue = document.getElementById('saludImcValuePaciente');
         this.saludImcLabel = document.getElementById('saludImcLabelPaciente');
         this.saludImcCard = document.getElementById('saludImcCardPaciente');
+
+        this.antecedentesContainer = document.getElementById('antecedentesPacienteLista');
     }
 
     async init() {
@@ -70,7 +73,7 @@ class PacienteDashboard {
         new SidebarManager().init();
         this.bindEvents();
         await this.cargarSesion();
-        await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud()]);
+        await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud(), this.cargarAntecedentes()]);
         this.mostrarVista('inicio');
     }
 
@@ -271,6 +274,110 @@ class PacienteDashboard {
         if (!this.saludMessage) return;
         this.saludMessage.textContent = text;
         this.saludMessage.className = `mt-3 text-sm ${isError ? 'text-red-600' : 'text-emerald-600'}`;
+    }
+
+    async cargarAntecedentes() {
+        if (!this.antecedentesContainer) return;
+
+        try {
+            const response = await fetch(`${ANTECEDENTES_API}?accion=obtenerMisAntecedentes`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const raw = await response.text();
+            let payload = null;
+
+            try {
+                payload = raw ? JSON.parse(raw) : null;
+            } catch (_error) {
+                throw new Error('Respuesta no válida del servidor.');
+            }
+
+            if (!response.ok || !payload.success) {
+                throw new Error(payload?.error || `Error HTTP ${response.status}`);
+            }
+
+            this.renderizarAntecedentes(payload.data || []);
+        } catch (error) {
+            console.error('Error al cargar antecedentes:', error);
+            this.antecedentesContainer.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <i data-lucide="alert-circle" class="w-8 h-8 mx-auto mb-2 opacity-50 text-red-500"></i>
+                    <p>Error al cargar antecedentes: ${error.message}</p>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+    }
+
+    renderizarAntecedentes(antecedentes) {
+        if (!this.antecedentesContainer) return;
+
+        if (!antecedentes || antecedentes.length === 0) {
+            this.antecedentesContainer.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <i data-lucide="info" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                    <p>No tienes antecedentes familiares registrados.</p>
+                    <p class="text-sm mt-1">Tu médico puede añadirlos durante la consulta.</p>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            return;
+        }
+
+        this.antecedentesContainer.innerHTML = '';
+
+        antecedentes.forEach(ant => {
+            const card = document.createElement('div');
+            card.className = 'bg-gradient-to-br from-white to-blue-50/40 border border-blue-100 rounded-xl p-4 shadow-sm';
+
+            const parentescoColor = this.obtenerColorParentesco(ant.parentesco);
+            const ladoFamiliar = ant.lado_familiar ? `<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">${ant.lado_familiar}</span>` : '';
+            const edadDiagnostico = (ant.edad_diagnostico || ant.edad_diagnóstico) ? `<span class="text-sm text-gray-600">Diagnosticado a los ${ant.edad_diagnostico || ant.edad_diagnóstico} años</span>` : '';
+            const notas = ant.notas_adicionales ? `<p class="text-sm text-gray-600 mt-2 italic">${ant.notas_adicionales}</p>` : '';
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-3 mb-2">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-gray-900">${ant.nombre_patologia || 'Sin nombre'}</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">${ant.categoria || 'Sin categoría'}</p>
+                    </div>
+                    <span class="text-xs px-2.5 py-1 rounded-full ${parentescoColor} font-medium whitespace-nowrap">
+                        ${ant.parentesco}
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    ${ladoFamiliar}
+                    ${edadDiagnostico}
+                </div>
+                ${notas}
+            `;
+
+            this.antecedentesContainer.appendChild(card);
+        });
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    obtenerColorParentesco(parentesco) {
+        const colores = {
+            'padre': 'bg-blue-100 text-blue-700',
+            'madre': 'bg-pink-100 text-pink-700',
+            'abuelo': 'bg-purple-100 text-purple-700',
+            'abuela': 'bg-purple-100 text-purple-700',
+            'hermano': 'bg-green-100 text-green-700',
+            'hermana': 'bg-green-100 text-green-700',
+            'tío': 'bg-amber-100 text-amber-700',
+            'tía': 'bg-amber-100 text-amber-700'
+        };
+        return colores[parentesco?.toLowerCase()] || 'bg-gray-100 text-gray-700';
     }
 
     async cargarConsultas() {

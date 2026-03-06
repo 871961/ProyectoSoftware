@@ -136,8 +136,12 @@ CREATE TABLE antecedentes_familiares (
     id_antecedente SERIAL PRIMARY KEY,
     id_paciente VARCHAR(20) NOT NULL,
     id_enfermedad INT NOT NULL,
-    parentesco VARCHAR(50) NOT NULL,
-    observaciones TEXT,
+    parentesco VARCHAR(50) NOT NULL, -- padre, madre, hermano, abuelo_paterno, etc.
+    lado_familiar VARCHAR(20), -- paterno, materno, ambos
+    edad_diagnóstico INT, -- edad en que el familiar fue diagnosticado
+    notas_adicionales TEXT,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    activo BOOLEAN DEFAULT TRUE,
     CONSTRAINT fk_paciente_antecedente FOREIGN KEY (id_paciente) 
         REFERENCES pacientes(dni),
     CONSTRAINT fk_enfermedad_antecedente FOREIGN KEY (id_enfermedad) 

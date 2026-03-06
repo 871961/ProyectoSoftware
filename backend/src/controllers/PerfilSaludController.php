@@ -241,6 +241,46 @@ try {
     ensurePerfilSchema($db);
 
     switch ($accion) {
+        case 'obtenerPacientes':
+            if ($_SESSION['user_tipo'] !== 'medico') {
+                throw new Exception('No autorizado');
+            }
+            // Obtener lista de pacientes asignados al médico
+            $idMedico = $_SESSION['user_id'];
+            $sql = "SELECT dni, nombre, apellidos, email, fecha_nacimiento 
+                    FROM pacientes 
+                    WHERE activo = TRUE 
+                      AND id_medico_general = :id_medico
+                    ORDER BY apellidos, nombre";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':id_medico' => $idMedico]);
+            $pacientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            sendJson(['success' => true, 'pacientes' => $pacientes]);
+            break;
+
+        case 'obtener':
+            if ($_SESSION['user_tipo'] !== 'medico') {
+                throw new Exception('No autorizado');
+            }
+            $dniPaciente = trim($_GET['dni_paciente'] ?? '');
+            if ($dniPaciente === '') {
+                throw new Exception('DNI de paciente obligatorio');
+            }
+            // Verificar que el paciente esté asignado a este médico
+            $idMedico = $_SESSION['user_id'];
+            $sqlCheck = "SELECT COUNT(*) FROM pacientes 
+                         WHERE dni = :dni 
+                           AND id_medico_general = :id_medico 
+                           AND activo = TRUE";
+            $stmtCheck = $db->prepare($sqlCheck);
+            $stmtCheck->execute([':dni' => $dniPaciente, ':id_medico' => $idMedico]);
+            if ($stmtCheck->fetchColumn() == 0) {
+                throw new Exception('No tienes acceso a este paciente');
+            }
+            $perfil = obtenerPerfil($db, $dniPaciente);
+            sendJson(['success' => true, 'perfil' => $perfil]);
+            break;
+
         case 'obtener_mi_perfil':
             if ($_SESSION['user_tipo'] !== 'paciente') {
                 throw new Exception('No autorizado');
@@ -257,6 +297,17 @@ try {
             if ($idPaciente === '') {
                 throw new Exception('ID de paciente obligatorio');
             }
+            // Verificar que el paciente esté asignado a este médico
+            $idMedico = $_SESSION['user_id'];
+            $sqlCheck = "SELECT COUNT(*) FROM pacientes 
+                         WHERE dni = :dni 
+                           AND id_medico_general = :id_medico 
+                           AND activo = TRUE";
+            $stmtCheck = $db->prepare($sqlCheck);
+            $stmtCheck->execute([':dni' => $idPaciente, ':id_medico' => $idMedico]);
+            if ($stmtCheck->fetchColumn() == 0) {
+                throw new Exception('No tienes acceso a este paciente');
+            }
             $perfil = obtenerPerfil($db, $idPaciente);
             sendJson(['success' => true, 'data' => $perfil]);
             break;
@@ -271,6 +322,17 @@ try {
             $idPaciente = trim((string) ($input['id_paciente'] ?? ''));
             if ($idPaciente === '') {
                 throw new Exception('ID de paciente obligatorio');
+            }
+            // Verificar que el paciente esté asignado a este médico
+            $idMedico = $_SESSION['user_id'];
+            $sqlCheck = "SELECT COUNT(*) FROM pacientes 
+                         WHERE dni = :dni 
+                           AND id_medico_general = :id_medico 
+                           AND activo = TRUE";
+            $stmtCheck = $db->prepare($sqlCheck);
+            $stmtCheck->execute([':dni' => $idPaciente, ':id_medico' => $idMedico]);
+            if ($stmtCheck->fetchColumn() == 0) {
+                throw new Exception('No tienes acceso a este paciente');
             }
             upsertPerfilCompleto($db, $idPaciente, $input);
             $perfil = obtenerPerfil($db, $idPaciente);

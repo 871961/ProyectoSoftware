@@ -43,7 +43,8 @@ class AntecedentesFamiliaresVO {
         $this->id_enfermedad = $data['id_enfermedad'] ?? null;
         $this->parentesco = $data['parentesco'] ?? null;
         $this->lado_familiar = $data['lado_familiar'] ?? null;
-        $this->edad_diagnóstico = $data['edad_diagnóstico'] ?? null;
+        // Soportar tanto edad_diagnostico como edad_diagnóstico para compatibilidad
+        $this->edad_diagnóstico = $data['edad_diagnostico'] ?? $data['edad_diagnóstico'] ?? null;
         $this->notas_adicionales = $data['notas_adicionales'] ?? null;
         $this->fecha_registro = $data['fecha_registro'] ?? null;
         $this->activo = $data['activo'] ?? true;
