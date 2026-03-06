@@ -3,6 +3,8 @@
     Descripcion: Dashboard medico conectado a sesion y consultas reales
 */
 
+console.log('*** dashboard-medico.js cargado ***');
+
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
 
@@ -15,9 +17,66 @@ class SidebarManager {
     }
 
     init() {
+        console.log('SidebarManager init() llamado');
         this.openBtn?.addEventListener('click', () => this.open());
         this.closeBtn?.addEventListener('click', () => this.close());
         this.sidebarOverlay?.addEventListener('click', () => this.close());
+        console.log('Llamando a initTabNavigation()');
+        this.initTabNavigation();
+        console.log('initTabNavigation() completado');
+    }
+
+    initTabNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link[data-tab]');
+        const tabs = document.querySelectorAll('.tab-content');
+
+        console.log('Inicializando navegación por tabs');
+        console.log('Enlaces encontrados:', navLinks.length);
+        console.log('Tabs encontrados:', tabs.length);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetTab = link.getAttribute('data-tab');
+
+                console.log('Click en tab:', targetTab);
+
+                // Ocultar todos los tabs
+                tabs.forEach(tab => {
+                    tab.classList.add('hidden');
+                });
+
+                // Remover active de todos los links
+                navLinks.forEach(l => {
+                    l.classList.remove('active');
+                });
+
+                // Mostrar el tab seleccionado
+                const selectedTab = document.getElementById(`tab-${targetTab}`);
+                if (selectedTab) {
+                    selectedTab.classList.remove('hidden');
+                    console.log('Tab mostrado:', `tab-${targetTab}`);
+                } else {
+                    console.error('Tab no encontrado:', `tab-${targetTab}`);
+                }
+
+                // Activar el link seleccionado
+                link.classList.add('active');
+
+                // Cerrar sidebar en móvil
+                this.close();
+
+                // Reinicializar iconos de Lucide si están disponibles
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            });
+        });
+
+        // Mostrar el primer tab por defecto
+        if (tabs.length > 0) {
+            tabs[0].classList.remove('hidden');
+        }
     }
 
     open() {
@@ -66,11 +125,15 @@ class MedicoDashboard {
     }
 
     async init() {
+        console.log('MedicoDashboard init() llamado');
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
 
+        console.log('Inicializando SidebarManager...');
         new SidebarManager().init();
+        console.log('SidebarManager inicializado');
+
         this.bindEvents();
         await this.cargarSesion();
         await Promise.all([this.cargarPacientes(), this.cargarConsultas()]);
@@ -511,6 +574,8 @@ class MedicoDashboard {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('DOMContentLoaded - Iniciando aplicación');
     const app = new MedicoDashboard();
     await app.init();
+    console.log('Aplicación inicializada completamente');
 });

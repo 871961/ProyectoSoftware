@@ -2,9 +2,8 @@
 -- Ejecutar despues de reinstalar_completo.sql o schema.sql
 
 -- 1. ADMINISTR ADORES
-INSERT INTO administradores (nombre, apellidos, email, contrasena_hash) VALUES
-('Claudia', 'Mateo', 'claudia.mateo@admin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
-('Yousra', 'Jebari', 'yousra.jebari@admin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+INSERT INTO administradores (nombre, apellidos, email, contrasena_hash, telefono) VALUES
+('Claudia', 'Mateo', 'claudia.mateo@clinica.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '600000001');
 
 -- 2. MEDICOS GENERALES
 INSERT INTO medicos (nombre, apellidos, email, contrasena_hash, telefono, num_colegiado, tipo_medico) VALUES

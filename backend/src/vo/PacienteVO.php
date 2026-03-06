@@ -30,7 +30,7 @@ class PacienteVO {
             $this->telefono = $datos['telefono'] ?? '';
             $this->direccion = $datos['direccion'] ?? '';
             $this->fecha_nacimiento = $datos['fecha_nacimiento'] ?? '';
-            $this->num_seguridad_social = $datos['num_seguridad_social'] ?? '';
+            $this->num_seguridad_social = $datos['num_seguridad_social'] ?? null;
             $this->id_medico_general = $datos['id_medico_general'] ?? null;
             $this->activo = $datos['activo'] ?? true;
             $this->fecha_baja = $datos['fecha_baja'] ?? null;

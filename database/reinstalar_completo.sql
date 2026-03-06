@@ -72,13 +72,18 @@ CREATE TABLE pacientes (
     telefono VARCHAR(20),
     direccion VARCHAR(255),
     fecha_nacimiento DATE NOT NULL,
-    num_seguridad_social VARCHAR(20) UNIQUE,
+    num_seguridad_social VARCHAR(20),
     id_medico_general INT,
     activo BOOLEAN DEFAULT TRUE,
     fecha_baja TIMESTAMP,
     CONSTRAINT fk_paciente_medico_general FOREIGN KEY (id_medico_general) 
         REFERENCES medicos_generales(id_medico)
 );
+
+-- Índice único parcial: solo valida unicidad cuando el valor NO es NULL
+CREATE UNIQUE INDEX idx_pacientes_num_ss_unique 
+ON pacientes (num_seguridad_social) 
+WHERE num_seguridad_social IS NOT NULL;
 
 -- Catalogo de Enfermedades
 CREATE TABLE enfermedades_catalogo (

@@ -73,8 +73,7 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         $adminDAO = new AdministradorDAO();
 
         $adminsPrueba = [
-            ['nombre' => 'Claudia', 'apellidos' => 'Mateo', 'email' => 'claudia.mateo@admin.com', 'telefono' => '600000001'],
-            ['nombre' => 'Yousra',  'apellidos' => 'Jebari', 'email' => 'yousra.jebari@admin.com',  'telefono' => '600000002']
+            ['nombre' => 'Claudia', 'apellidos' => 'Mateo', 'email' => 'claudia.mateo@clinica.com', 'telefono' => '600000001']
         ];
 
         echo '<p><strong>Hecho:</strong> Verificar y crear administradores de prueba.</p>';
@@ -92,6 +91,12 @@ require_once 'backend/src/dao/AdministradorDAO.php';
                 if ($adminDAO->insertar($admin)) {
                     $adminsCreados++;
                 }
+            } else {
+                // Si existe, actualizar la contraseña
+                $stmt = $db->prepare("UPDATE administradores SET contrasena_hash = :hash WHERE email = :email");
+                $hash = password_hash('Admin123', PASSWORD_BCRYPT);
+                $stmt->execute([':hash' => $hash, ':email' => $adminData['email']]);
+                echo '<p>- Contraseña actualizada para: ' . htmlspecialchars($adminData['email']) . '</p>';
             }
         }
 
@@ -377,8 +382,7 @@ require_once 'backend/src/dao/AdministradorDAO.php';
         
         echo '<p><strong>Credenciales de prueba:</strong></p>';
         echo '<pre>';
-        echo "Administradores:  claudia.mateo@admin.com / Admin123\n";
-        echo "                  yousra.jebari@admin.com / Admin123\n\n";
+        echo "Administrador:    claudia.mateo@clinica.com / Admin123\n\n";
         echo "Médicos Generales:\n";
         echo "                  elena.fernandez@clinica.com / medico123\n";
         echo "                  carlos.lopez@clinica.com / medico123\n";

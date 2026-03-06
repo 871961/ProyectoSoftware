@@ -55,7 +55,8 @@ try {
                 'tipo' => $_SESSION['user_tipo'],
                 'nombre' => $_SESSION['user_nombre'] ?? '',
                 'email' => $_SESSION['user_email'] ?? '',
-                'especialidad' => $_SESSION['user_especialidad'] ?? ''
+                'especialidad' => $_SESSION['user_especialidad'] ?? '',
+                'tipo_medico' => $_SESSION['user_tipo_medico'] ?? null
             ]
         ]);
     }
@@ -81,7 +82,15 @@ try {
             }
 
             $pacienteDAO = new PacienteDAO();
-            $pacientes = $pacienteDAO->obtenerTodos();
+            
+            // Si es médico general, solo mostrar sus pacientes asignados
+            if (isset($_SESSION['user_tipo_medico']) && $_SESSION['user_tipo_medico'] === 'general') {
+                $pacientes = $pacienteDAO->obtenerPorMedicoGeneral($_SESSION['user_id']);
+            } else {
+                // Si es especialista, puede ver todos los pacientes
+                $pacientes = $pacienteDAO->obtenerTodos();
+            }
+            
             $activos = array_values(array_filter($pacientes, function ($paciente) {
                 return $paciente->getActivo();
             }));

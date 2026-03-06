@@ -80,6 +80,7 @@ try {
                 $_SESSION['user_nombre'] = $medico->getNombre() . ' ' . $medico->getApellidos();
                 $_SESSION['user_email'] = $medico->getEmail();
                 $_SESSION['user_especialidad'] = $medico->getEspecialidad();
+                $_SESSION['user_tipo_medico'] = $medico->getTipoMedico();
             }
         }
     } elseif ($role === 'admin') {

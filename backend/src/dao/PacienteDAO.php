@@ -162,6 +162,31 @@ class PacienteDAO {
     }
     
     /**
+     * Obtiene solo los pacientes asignados a un médico general
+     */
+    public function obtenerPorMedicoGeneral($id_medico) {
+        try {
+            $sql = "SELECT * FROM pacientes 
+                    WHERE id_medico_general = :id_medico 
+                    ORDER BY activo DESC, apellidos, nombre";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_medico);
+            $stmt->execute();
+            
+            $pacientes = [];
+            while ($fila = $stmt->fetch()) {
+                $pacientes[] = new PacienteVO($fila);
+            }
+            
+            return $pacientes;
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener pacientes del médico: " . $e->getMessage());
+        }
+    }
+    
+    /**
      * Reactiva un paciente dado de baja (borrado lógico reverso)
      */
     public function darDeAlta($dni, $id_admin = null) {
