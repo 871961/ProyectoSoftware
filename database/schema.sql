@@ -138,7 +138,7 @@ CREATE TABLE antecedentes_familiares (
     id_enfermedad INT NOT NULL,
     parentesco VARCHAR(50) NOT NULL, -- padre, madre, hermano, abuelo_paterno, etc.
     lado_familiar VARCHAR(20), -- paterno, materno, ambos
-    edad_diagnóstico INT, -- edad en que el familiar fue diagnosticado
+    edad_diagnostico INT, -- edad en que el familiar fue diagnosticado
     notas_adicionales TEXT,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     activo BOOLEAN DEFAULT TRUE,

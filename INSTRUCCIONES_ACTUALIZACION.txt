@@ -1,0 +1,310 @@
+===============================================================================
+  INSTRUCCIONES PARA ACTUALIZAR TU ENTORNO LOCAL - MEDHISTORY
+===============================================================================
+Fecha: 7 de marzo de 2026
+¡IMPORTANTE! Sigue estos pasos EN ORDEN después de hacer git pull
+
+===============================================================================
+📋 CAMBIOS RECIENTES QUE DEBES APLICAR:
+===============================================================================
+
+1. ✅ Tabla antecedentes_familiares actualizada con:
+   - lado_familiar (paterno/materno/ambos)
+   - edad_diagnostico (sin tilde - SIN ACENTO)
+   - notas_adicionales (antes era observaciones)
+   - fecha_registro
+   - activo (borrado lógico)
+
+2. ✅ Tabla medicos rediseñada con jerarquía:
+   - Tabla padre: medicos (con tipo_medico)
+   - Tabla hija: medicos_generales
+   - Tabla hija: medicos_especialistas
+
+3. ✅ Archivos PHP actualizados:
+   - Todos los DAO usan __DIR__ en require_once (paths absolutos)
+   - Controllers actualizados para nuevo esquema
+   - VOs con edad_diagnostico
+
+4. ✅ Frontend mejorado:
+   - Nueva interfaz de "Mis Pacientes" con buscador
+   - Sistema de modales para perfil y antecedentes
+   - Nuevo archivo: frontend/static/js/mis-pacientes.js
+
+5. ✅ Contraseñas estandarizadas:
+   - TODOS los médicos: medico123
+   - TODOS los pacientes: Paciente123
+
+===============================================================================
+🔧 PASOS A SEGUIR:
+===============================================================================
+
+PASO 1: HACER BACKUP DE TU BASE DE DATOS ACTUAL (POR SI ACASO)
+----------------------------------------------------------------
+Abre pgAdmin o psql y ejecuta:
+
+    pg_dump -U postgres medhistory > backup_antes_actualizacion.sql
+
+(Si falla, no pasa nada, vas a reinstalar desde cero)
+
+
+PASO 2: REINSTALAR LA BASE DE DATOS DESDE CERO
+----------------------------------------------------------------
+🚨 ESTO BORRARÁ TODOS TUS DATOS ACTUALES 🚨
+
+Opción A - Usando pgAdmin:
+   1. Abre pgAdmin
+   2. Conecta a tu servidor PostgreSQL
+   3. Click derecho en la base de datos "medhistory" → Delete/Drop
+   4. Click derecho en "Databases" → Create → Database
+      - Nombre: medhistory
+      - Owner: postgres
+   5. Click derecho en "medhistory" → Query Tool
+   6. Abre el archivo: database/reinstalar_completo.sql
+   7. Ejecuta todo el script (botón Play ▶️)
+   8. Verifica que no haya errores en el panel de mensajes
+
+Opción B - Usando psql (PowerShell):
+   1. Abre PowerShell en la carpeta del proyecto
+   2. Ejecuta estos comandos:
+
+      psql -U postgres -c "DROP DATABASE IF EXISTS medhistory;"
+      psql -U postgres -c "CREATE DATABASE medhistory;"
+      psql -U postgres -d medhistory -f database/reinstalar_completo.sql
+
+   3. Introduce la contraseña cuando te la pida: 
+
+
+PASO 3: VERIFICAR QUE LA BASE DE DATOS ESTÁ CORRECTA
+----------------------------------------------------------------
+Ejecuta este comando en psql o Query Tool de pgAdmin:
+
+    \d antecedentes_familiares
+
+Debes ver una columna llamada "edad_diagnostico" (SIN TILDE, SIN ACENTO)
+Si ves "edad_diagnóstico" (CON TILDE), algo salió mal.
+
+También verifica:
+
+    SELECT COUNT(*) FROM medicos;
+    SELECT COUNT(*) FROM pacientes;
+    SELECT COUNT(*) FROM antecedentes_familiares;
+
+Deberías obtener:
+- 4 médicos
+- 7 pacientes
+- Al menos 5 antecedentes familiares
+
+
+PASO 4: VERIFICAR LOS ARCHIVOS PHP
+----------------------------------------------------------------
+NO NECESITAS HACER NADA, solo verifica que estos archivos existan:
+
+✅ backend/src/dao/AntecedentesFamiliaresDAO.php (con __DIR__)
+✅ backend/src/dao/EnfermedadesCatalogoDAO.php (con __DIR__)
+✅ backend/src/dao/PerfilSaludDAO.php (con __DIR__)
+✅ backend/src/dao/AuditoriaDAO.php (con __DIR__)
+✅ backend/src/dao/RecordatorioDAO.php (con __DIR__)
+✅ backend/src/controllers/AntecedentesController.php (acepta edad_diagnostico)
+✅ frontend/static/js/mis-pacientes.js (NUEVO ARCHIVO)
+✅ frontend/static/js/antecedentes.js (actualizado)
+
+
+PASO 5: LIMPIAR CACHÉ DEL NAVEGADOR
+----------------------------------------------------------------
+🚨 MUY IMPORTANTE 🚨
+
+1. Abre tu navegador en http://medhistory.local
+2. Presiona Ctrl + Shift + R (Windows) o Cmd + Shift + R (Mac)
+   Esto recarga la página sin caché
+3. Alternativamente:
+   - Chrome/Edge: F12 → Network → Disable cache (checkbox)
+   - Firefox: F12 → Network → Disable cache
+
+
+PASO 6: PROBAR QUE TODO FUNCIONA
+----------------------------------------------------------------
+1. Inicia sesión como médico general:
+   - Email: elena.fernandez@clinica.com
+   - Contraseña: medico123
+
+   O cualquier otro médico de estos:
+   - carlos.lopez@clinica.com / medico123
+   - ana.martinez@clinica.com / medico123
+   - miguel.rodriguez@clinica.com / medico123 (Cardiólogo)
+   - laura.garcia@clinica.com / medico123 (Dermatóloga)
+   - pedro.sanchez@clinica.com / medico123 (Traumatólogo)
+   - isabel.diaz@clinica.com / medico123 (Ginecóloga)
+
+2. Ve a la pestaña "Mis Pacientes"
+
+3. Deberías ver:
+   ✅ Un buscador en la parte superior
+   ✅ Una lista de pacientes a la izquierda
+   ✅ Un panel de información a la derecha
+
+4. Selecciona un paciente (ej: Maria Gonzalez)
+
+5. Debes ver:
+   ✅ Su perfil de salud (altura, peso, IMC)
+   ✅ Sus antecedentes familiares (si tiene)
+   ✅ Dos botones: "Gestionar Perfil de Salud" y "Gestionar Antecedentes"
+
+6. Click en "Gestionar Antecedentes Familiares":
+   ✅ Se abre un modal
+   ✅ Puedes añadir un nuevo antecedente
+   ✅ Debes ver el campo "Edad al diagnóstico"
+
+7. Añade un antecedente de prueba:
+   - Paciente: (el seleccionado)
+   - Enfermedad: Hipertensión Arterial
+   - Parentesco: padre
+   - Lado familiar: paterno
+   - Edad al diagnóstico: 55
+   - Notas: "Prueba después de actualización"
+   - Click en "Registrar Antecedente"
+
+8. Si ves un mensaje verde "Antecedente registrado correctamente", ¡TODO FUNCIONA! ✅
+
+
+===============================================================================
+❌ SOLUCIÓN DE PROBLEMAS COMUNES
+===============================================================================
+
+PROBLEMA 1: Error "No such column edad_diagnóstico"
+-------------------------------------------------------
+CAUSA: La base de datos no se actualizó correctamente
+SOLUCIÓN:
+   1. Ejecuta: psql -U postgres -d medhistory -f database/fix_columna_edad.sql
+   2. O ejecuta manualmente en pgAdmin:
+      ALTER TABLE antecedentes_familiares 
+      RENAME COLUMN "edad_diagnóstico" TO edad_diagnostico;
+
+
+PROBLEMA 2: "Failed to open stream: config/database.php"
+-------------------------------------------------------
+CAUSA: Los archivos PHP no se actualizaron por Git
+SOLUCIÓN:
+   1. Verifica que todos los DAO tengan líneas como:
+      require_once __DIR__ . '/../config/database.php';
+   2. Si no, haz: git fetch origin y git reset --hard origin/main
+
+
+PROBLEMA 3: "Error al cargar antecedentes: SyntaxError"
+-------------------------------------------------------
+CAUSA: El navegador está usando archivos JavaScript antiguos en caché
+SOLUCIÓN:
+   1. Presiona Ctrl + Shift + Delete
+   2. Selecciona "Cached images and files"
+   3. Click en "Clear data"
+   4. Recarga con Ctrl + F5
+
+
+PROBLEMA 4: No veo la nueva interfaz de "Mis Pacientes"
+-------------------------------------------------------
+CAUSA: Git no descargó frontend/static/js/mis-pacientes.js
+SOLUCIÓN:
+   1. Ejecuta: git status
+   2. Si no ves el archivo, ejecuta: git pull --rebase
+   3. Si aún no aparece, pídeme el archivo mis-pacientes.js
+
+
+PROBLEMA 5: Los pacientes no cargan / "No autorizado"
+-------------------------------------------------------
+CAUSA: La sesión no está iniciada o expiró
+SOLUCIÓN:
+   1. Cierra sesión (Logout)
+   2. Inicia sesión de nuevo como médico
+   3. Si persiste, verifica que en datos_prueba.sql hay médicos con tipo 'general'
+
+
+===============================================================================
+📞 SI TODO FALLA...
+===============================================================================
+
+Ejecuta este "reset total":
+
+# PowerShell (como ADMIN)
+cd C:\web\medHistory
+git fetch origin
+git reset --hard origin/main
+psql -U postgres -c "DROP DATABASE IF EXISTS medhistory;"
+psql -U postgres -c "CREATE DATABASE medhistory;"
+psql -U postgres -d medhistory -f database\reinstalar_completo.sql
+
+# Luego en el navegador:
+Ctrl + Shift + Delete → Clear ALL cache → Reload
+
+Si aún no funciona, avísame, algo raro pasó.
+
+
+===============================================================================
+📁 ARCHIVOS ELIMINADOS (ya no existen, no los busques)
+===============================================================================
+
+❌ database/actualizar_antecedentes.sql (reemplazado por reinstalar_completo.sql)
+❌ database/poblar_antecedentes.sql (incluido en completar_antecedentes.sql)
+❌ database/limpiar_base_datos.sql (incluido en reinstalar_completo.sql)
+❌ database/ejecutar_act_antecedentes.ps1 (ya no se necesita)
+❌ database/ejecutar_completar_antecedentes.ps1 (ya no se necesita)
+❌ database/ejecutar_completar_perfiles.ps1 (ya no se necesita)
+❌ database/test_pacientexx.sql (archivo temporal de testing)
+❌ test_response.txt (archivo temporal de debugging)
+
+
+===============================================================================
+✅ CHECKLIST FINAL
+===============================================================================
+
+[ ] Base de datos reinstalada desde cero
+[ ] Comando \d antecedentes_familiares muestra "edad_diagnostico" (sin tilde)
+[ ] Hay 4 médicos en la BD
+[ ] Hay 7 pacientes en la BD
+[ ] Login como médico funciona
+[ ] Veo la nueva interfaz de "Mis Pacientes" con buscador
+[ ] Puedo seleccionar un paciente y ver su info
+[ ] Los modales de perfil y antecedentes se abren
+[ ] Puedo añadir un nuevo antecedente sin errores
+[ ] La consola del navegador (F12) no muestra errores rojos
+
+
+===============================================================================
+🎉 SI PASASTE TODOS LOS CHECKPOINTS, ¡FELICIDADES! ESTÁS AL DÍA
+===============================================================================
+
+Notas adicionales:
+- El sistema ahora usa paths absolutos con __DIR__ en PHP
+- La columna edad_diagnostico (sin tilde) evita problemas de UTF-8
+- La nueva interfaz mejora la UX para gestión de pacientes
+- Los médicos generales solo ven sus pacientes asignados
+- Los modales evitan navegación innecesaria entre formularios
+
+===============================================================================
+🔑 CREDENCIALES DE PRUEBA
+===============================================================================
+
+MÉDICOS GENERALES (contraseña: medico123):
+- elena.fernandez@clinica.com
+- carlos.lopez@clinica.com
+- ana.martinez@clinica.com
+
+MÉDICOS ESPECIALISTAS (contraseña: medico123):
+- miguel.rodriguez@clinica.com (Cardiólogo)
+- laura.garcia@clinica.com (Dermatóloga)
+- pedro.sanchez@clinica.com (Traumatólogo)
+- isabel.diaz@clinica.com (Ginecóloga)
+
+PACIENTES (contraseña: Paciente123):
+- maria.perez@email.com (Maria Perez Garcia - DNI: 12345678A)
+- jose.martin@email.com (Jose Martin Lopez - DNI: 23456789B)
+- laura.ruiz@email.com (Laura Ruiz Herrera - DNI: 34567890C)
+- antonio.sanchez@email.com (Antonio Sanchez Verde - DNI: 45678901D)
+- patricia.moreno@email.com (Patricia Moreno Castro - DNI: 56789012E)
+
+ADMINISTRADOR (contraseña: admin123):
+- claudia.mateo@clinica.com
+
+¡A seguir desarrollando! 💪
+
+---
+Creado por: Claudia y Yousra
+Fecha: 7 de marzo de 2026

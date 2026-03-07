@@ -1,0 +1,129 @@
+=======================================================================
+  CREDENCIALES DE ACCESO - MEDHISTORY
+=======================================================================
+Fecha de actualización: 7 de marzo de 2026
+
+=======================================================================
+👨‍⚕️ MÉDICOS GENERALES
+=======================================================================
+Contraseña: medico123
+
+Email                              | Nombre Completo           | Num. Colegiado
+-----------------------------------|---------------------------|---------------
+elena.fernandez@clinica.com        | Elena Fernandez Sanchez  | MG-001234
+carlos.lopez@clinica.com           | Carlos Lopez Jimenez     | MG-002345
+ana.martinez@clinica.com           | Ana Martinez Ruiz        | MG-003456
+
+
+=======================================================================
+👨‍⚕️ MÉDICOS ESPECIALISTAS
+=======================================================================
+Contraseña: medico123
+
+Email                              | Nombre Completo           | Especialidad     | Num. Colegiado
+-----------------------------------|---------------------------|------------------|---------------
+miguel.rodriguez@clinica.com       | Miguel Rodriguez Gomez    | Cardiología      | CD-005678
+laura.garcia@clinica.com           | Laura Garcia Santos       | Dermatología     | DM-006789
+pedro.sanchez@clinica.com          | Pedro Sanchez Moreno      | Traumatología    | TR-007890
+isabel.diaz@clinica.com            | Isabel Diaz Fernandez     | Ginecología      | GN-008901
+roberto.navarro@clinica.com        | Roberto Navarro Torres    | Neurología       | NR-009012
+
+
+=======================================================================
+👤 PACIENTES
+=======================================================================
+Contraseña: Paciente123
+
+Email                              | Nombre Completo           | DNI         | Médico Asignado
+-----------------------------------|---------------------------|-------------|------------------------
+maria.perez@email.com              | Maria Perez Garcia        | 12345678A   | Elena Fernandez (MG-001234)
+jose.martin@email.com              | Jose Martin Lopez         | 23456789B   | Carlos Lopez (MG-002345)
+laura.ruiz@email.com               | Laura Ruiz Herrera        | 34567890C   | Ana Martinez (MG-003456)
+antonio.sanchez@email.com          | Antonio Sanchez Verde     | 45678901D   | Elena Fernandez (MG-001234)
+patricia.moreno@email.com          | Patricia Moreno Castro    | 56789012E   | Carlos Lopez (MG-002345)
+francisco.jimenez@email.com        | Francisco Jimenez Ortiz   | 67890123F   | Ana Martinez (MG-003456)
+carmen.ramirez@email.com           | Carmen Ramirez Blanco     | 78901234G   | Elena Fernandez (MG-001234)
+david.torres@email.com             | David Torres Vega         | 89012345H   | Carlos Lopez (MG-002345)
+sofia.romero@email.com             | Sofia Romero Iglesias     | 90123456I   | Ana Martinez (MG-003456)
+miguel.fernandez@email.com         | Miguel Fernandez Cruz     | 01234567J   | Elena Fernandez (MG-001234)
+
+
+=======================================================================
+🔧 ADMINISTRADORES
+=======================================================================
+Contraseña: password
+
+Email                              | Nombre Completo           
+-----------------------------------|---------------------------
+claudia.mateo@clinica.com          | Claudia Mateo             
+yousra.jebari@clinica.com          | Yousra Jebari
+
+
+=======================================================================
+📋 NOTAS IMPORTANTES
+=======================================================================
+
+1. Todas las contraseñas están hasheadas con bcrypt en la base de datos
+2. Los médicos generales SOLO ven sus pacientes asignados
+3. Los médicos especialistas pueden ver todos los pacientes
+4. Los pacientes solo acceden a su propio perfil
+5. El administrador puede gestionar médicos y ver estadísticas
+
+6. Para cambiar contraseñas:
+   - Genera el hash con: php -r "echo password_hash('nueva_contraseña', PASSWORD_BCRYPT);"
+   - Actualiza en la BD: UPDATE medicos SET contrasena_hash = 'nuevo_hash' WHERE email = 'email@clinica.com';
+
+
+=======================================================================
+🚀 INICIO RÁPIDO
+=======================================================================
+
+1. Para login como médico:
+   URL: http://medhistory.local/frontend/static/medico.html
+   Usuario: elena.fernandez@clinica.com
+   Contraseña: medico123
+
+2. Para login como paciente:
+   URL: http://medhistory.local/frontend/static/paciente.html
+   Usuario: maria.perez@email.com
+   Contraseña: Paciente123
+
+3. Para login como admin:
+   URL: http://medhistory.local/frontend/static/admin.html
+   Usuarios: 
+   - claudia.mateo@clinica.com
+   - yousra.jebari@clinica.com
+   Contraseña: password
+
+
+=======================================================================
+✅ VERIFICAR ACCESO
+=======================================================================
+
+Si no puedes iniciar sesión:
+
+1. Verifica que la base de datos esté actualizada:
+   psql -U postgres -d medhistory -c "SELECT email, contrasena_hash FROM medicos LIMIT 1;"
+
+2. Verifica que el hash coincida:
+   - Todos los médicos deben tener el hash: $2y$10$Joc080WMq2rrLGPLGwUQ2O7wKUgjmmgTavdOT/xYLD44c43mXWvta
+   - Todos los pacientes deben tener el hash: $2y$10$1ra02Z0q35KcTdfr.5HF1OCWBTgj.vrth1IsghM0TiB2f5V59oJVO
+
+3. Si los hashes son diferentes, ejecuta:
+   psql -U postgres -d medhistory -f database/reinstalar_completo.sql
+   psql -U postgres -d medhistory -f database/datos_prueba.sql
+
+
+=======================================================================
+🎯 CREDENCIALES HASH (para verificación manual)
+=======================================================================
+
+medico123      → $2y$10$Joc080WMq2rrLGPLGwUQ2O7wKUgjmmgTavdOT/xYLD44c43mXWvta
+Paciente123    → $2y$10$1ra02Z0q35KcTdfr.5HF1OCWBTgj.vrth1IsghM0TiB2f5V59oJVO
+password       → $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+
+
+=======================================================================
+
+Última actualización: 7 de marzo de 2026, 06:30 AM
+Autoras: Claudia Mateo & Yousra Jebari

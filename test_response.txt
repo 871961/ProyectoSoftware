@@ -1,9 +1,0 @@
-﻿<br />
-<b>Warning</b>:  require_once(config/database.php): Failed to open stream: No such file or directory in <b>C:\web\medHistory\backend\src\dao\AntecedentesFamiliaresDAO.php</b> on line <b>9</b><br />
-<br />
-<b>Fatal error</b>:  Uncaught Error: Failed opening required 'config/database.php' (include_path='C:\xampp\php\PEAR') in C:\web\medHistory\backend\src\dao\AntecedentesFamiliaresDAO.php:9
-Stack trace:
-#0 C:\web\medHistory\backend\src\controllers\AntecedentesController.php(11): require_once()
-#1 {main}
-  thrown in <b>C:\web\medHistory\backend\src\dao\AntecedentesFamiliaresDAO.php</b> on line <b>9</b><br />
-
