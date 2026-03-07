@@ -6,8 +6,8 @@
  * Autoras: Yousra y Claudia
  */
 
-require_once 'config/database.php';
-require_once 'vo/PerfilSaludVO.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../vo/PerfilSaludVO.php';
 
 class PerfilSaludDAO {
     private $db;

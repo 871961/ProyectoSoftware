@@ -6,8 +6,8 @@
  * Autoras: Yousra y Claudia
  */
 
-require_once 'config/database.php';
-require_once 'vo/AuditoriaVO.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../vo/AuditoriaVO.php';
 
 class AuditoriaDAO {
     private $db;
