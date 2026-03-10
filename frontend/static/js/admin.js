@@ -574,7 +574,7 @@ class AdminPanel {
         try {
             const tbody = document.querySelector('#tabla-auditoria tbody');
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-500);"><i class="fas fa-spinner fa-spin"></i> Cargando logs de auditoría...</td></tr>';
-            
+
             const response = await this.apiCall('logs', 'GET');
 
             if (response.success) {
