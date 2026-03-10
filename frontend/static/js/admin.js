@@ -572,13 +572,20 @@ class AdminPanel {
 
     async loadAuditoria() {
         try {
+            const tbody = document.querySelector('#tabla-auditoria tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-500);"><i class="fas fa-spinner fa-spin"></i> Cargando logs de auditoría...</td></tr>';
+            
             const response = await this.apiCall('logs', 'GET');
 
             if (response.success) {
                 this.renderAuditoriaTable(response.data);
+            } else {
+                throw new Error(response.mensaje || 'Error al cargar logs');
             }
         } catch (error) {
-            this.showAlert('Error al cargar logs de auditoría', 'error');
+            const tbody = document.querySelector('#tabla-auditoria tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Error al cargar logs de auditoría</td></tr>';
+            this.showAlert('Error al cargar logs de auditoría: ' + error.message, 'error');
         }
     }
 
@@ -586,18 +593,32 @@ class AdminPanel {
         const tbody = document.querySelector('#tabla-auditoria tbody');
         tbody.innerHTML = '';
 
+        if (!logs || logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-500);"><i class="fas fa-info-circle"></i> No hay logs de auditoría registrados</td></tr>';
+            return;
+        }
+
         logs.forEach(log => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${this.formatDateTime(log.fecha_hora)}</td>
-                <td>${log.usuario_responsable || 'Sistema'}</td>
-                <td>${log.accion}</td>
-                <td>${log.tabla_afectada}</td>
-                <td>${log.registro_id}</td>
-                <td><small>${log.detalles}</small></td>
+                <td><strong>${log.usuario_responsable || 'Sistema'}</strong></td>
+                <td><span class="badge badge-${this.getAccionBadgeClass(log.accion)}">${log.accion}</span></td>
+                <td><code>${log.tabla_afectada}</code></td>
+                <td>${log.registro_id || '-'}</td>
+                <td><small>${log.detalles || '-'}</small></td>
             `;
             tbody.appendChild(row);
         });
+    }
+
+    getAccionBadgeClass(accion) {
+        const accionUpper = accion.toUpperCase();
+        if (accionUpper.includes('CREAR')) return 'success';
+        if (accionUpper.includes('ACTUALIZAR') || accionUpper.includes('MODIFICAR')) return 'info';
+        if (accionUpper.includes('ELIMINAR') || accionUpper.includes('BAJA')) return 'danger';
+        if (accionUpper.includes('LOGIN')) return 'primary';
+        return 'secondary';
     }
 
     toggleEspecialidadField() {

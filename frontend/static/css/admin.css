@@ -469,6 +469,42 @@ body {
     border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
+/* Badges de auditoría */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-success {
+    background: rgba(5, 150, 105, 0.15);
+    color: var(--medical-green);
+}
+
+.badge-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+}
+
+.badge-danger {
+    background: rgba(220, 38, 38, 0.15);
+    color: var(--medical-red);
+}
+
+.badge-primary {
+    background: rgba(99, 102, 241, 0.15);
+    color: #6366f1;
+}
+
+.badge-secondary {
+    background: rgba(107, 114, 128, 0.15);
+    color: var(--gray-600);
+}
+
 /* Botones renovados */
 .btn {
     padding: 0.75rem 1.5rem;

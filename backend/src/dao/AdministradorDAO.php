@@ -191,9 +191,9 @@ class AdministradorDAO {
             $sql = "SELECT al.*, 
                            COALESCE(p.nombre || ' ' || p.apellidos, 
                                    m.nombre || ' ' || m.apellidos, 
-                                   a.nombre || ' ' || a.apellidos) as usuario_responsable
+                                   a.nombre || ' ' || a.apellidos, 'Sistema') as usuario_responsable
                     FROM auditoria_logs al
-                    LEFT JOIN pacientes p ON al.id_paciente = p.id_paciente
+                    LEFT JOIN pacientes p ON al.id_paciente = p.dni
                     LEFT JOIN medicos m ON al.id_medico = m.id_medico
                     LEFT JOIN administradores a ON al.id_admin = a.id_admin
                     ORDER BY al.fecha_hora DESC

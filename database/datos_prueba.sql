@@ -4,8 +4,8 @@
 
 -- 1. ADMINISTRADORES (2)
 INSERT INTO administradores (nombre, apellidos, email, contrasena_hash) VALUES
-('Claudia', 'Mateo', 'claudia.mateo@clinica.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
-('Yousra', 'Jebari', 'yousra.jebari@clinica.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+('Claudia', 'Mateo', 'claudia.mateo@clinica.com', '$2y$10$16XQkWJVuYPT7dyV72i7ceBTpx2uFggqarDF3CeIXgk7KfzOxBnuq'),
+('Yousra', 'Jebari', 'yousra.jebari@clinica.com', '$2y$10$16XQkWJVuYPT7dyV72i7ceBTpx2uFggqarDF3CeIXgk7KfzOxBnuq');
 
 -- 2. MEDICOS GENERALES (3)
 INSERT INTO medicos (nombre, apellidos, email, contrasena_hash, telefono, num_colegiado, tipo_medico) VALUES
@@ -155,19 +155,30 @@ INSERT INTO recordatorios (id_consulta, fecha_hora, tipo_recordatorio, razon, es
 INSERT INTO auditoria_logs (id_admin, accion, tabla_afectada, registro_id, detalles) VALUES
 (1, 'CREAR_MEDICO', 'medicos', '1', 'Creacion de medico general: Elena Fernandez Sanchez'),
 (1, 'CREAR_MEDICO', 'medicos', '4', 'Creacion de medico especialista Cardiologia: Miguel Rodriguez'),
-(1, 'CREAR_MEDICO', 'medicos', '8', 'Creacion de medico especialista Neurologia: Roberto Navarro');
+(1, 'CREAR_MEDICO', 'medicos', '8', 'Creacion de medico especialista Neurologia: Roberto Navarro'),
+(1, 'CREAR_PACIENTE', 'pacientes', '12345678A', 'Registro inicial de paciente Maria Perez Garcia'),
+(1, 'CREAR_PACIENTE', 'pacientes', '23456789B', 'Registro inicial de paciente Jose Martin Lopez'),
+(3, 'ACTUALIZAR_MEDICO', 'medicos', '2', 'Actualizacion de telefono de contacto'),
+(1, 'MODIFICAR_CONFIGURACION', 'sistema', 'config_general', 'Cambio en parametros del sistema');
 
 INSERT INTO auditoria_logs (id_medico, accion, tabla_afectada, registro_id, detalles) VALUES
 (1, 'CREAR_CONSULTA', 'consultas', '1', 'Nueva consulta con paciente 12345678A - Resfriado comun'),
 (4, 'CREAR_CONSULTA', 'consultas', '4', 'Valoracion cardiologica preventiva - paciente 45678901D'),
-(2, 'CREAR_CONSULTA', 'consultas', '2', 'Control hipertension paciente 23456789B');
+(2, 'CREAR_CONSULTA', 'consultas', '2', 'Control hipertension paciente 23456789B'),
+(3, 'CREAR_CONSULTA', 'consultas', '3', 'Revision anual - paciente 34567890C'),
+(1, 'ACTUALIZAR_CONSULTA', 'consultas', '1', 'Modificacion de tratamiento prescrito'),
+(2, 'CREAR_RECORDATORIO', 'recordatorios', '2', 'Recordatorio de control de tension arterial'),
+(5, 'ACTUALIZAR_PERFIL_PACIENTE', 'perfiles_salud', '5', 'Actualizacion de alergias del paciente');
 
 INSERT INTO auditoria_logs (id_paciente, accion, tabla_afectada, registro_id, detalles) VALUES
 ('12345678A', 'ACTUALIZAR_PERFIL', 'perfiles_salud', '1', 'Actualizacion de datos de perfil de salud'),
 ('23456789B', 'ACTUALIZAR_PERFIL', 'perfiles_salud', '2', 'Actualizacion de actividad fisica'),
-('90123456I', 'CREAR_PERFIL', 'perfiles_salud', '9', 'Creacion de perfil de salud inicial');
+('90123456I', 'CREAR_PERFIL', 'perfiles_salud', '9', 'Creacion de perfil de salud inicial'),
+('34567890C', 'VER_HISTORIAL', 'consultas', 'historial', 'Consulta de historial medico personal'),
+('45678901D', 'ACTUALIZAR_DATOS', 'pacientes', '45678901D', 'Actualizacion de direccion de contacto');
 
 -- FIN
+
 
 
 

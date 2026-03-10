@@ -51,7 +51,7 @@ miguel.fernandez@email.com         | Miguel Fernandez Cruz     | 01234567J   | E
 =======================================================================
 🔧 ADMINISTRADORES
 =======================================================================
-Contraseña: password
+Contraseña: admin123
 
 Email                              | Nombre Completo           
 -----------------------------------|---------------------------
@@ -93,7 +93,7 @@ yousra.jebari@clinica.com          | Yousra Jebari
    Usuarios: 
    - claudia.mateo@clinica.com
    - yousra.jebari@clinica.com
-   Contraseña: password
+   Contraseña: admin123
 
 
 =======================================================================
@@ -120,7 +120,7 @@ Si no puedes iniciar sesión:
 
 medico123      → $2y$10$Joc080WMq2rrLGPLGwUQ2O7wKUgjmmgTavdOT/xYLD44c43mXWvta
 Paciente123    → $2y$10$1ra02Z0q35KcTdfr.5HF1OCWBTgj.vrth1IsghM0TiB2f5V59oJVO
-password       → $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+admin123       → $2y$10$16XQkWJVuYPT7dyV72i7ceBTpx2uFggqarDF3CeIXgk7KfzOxBnuq
 
 
 =======================================================================
