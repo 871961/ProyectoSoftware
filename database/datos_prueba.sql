@@ -1,4 +1,4 @@
--- Datos de Prueba - MedHistory
+﻿-- Datos de Prueba - MedHistory
 -- Ejecutar despues de reinstalar_completo.sql o schema.sql
 -- Fecha: 7 de marzo de 2026
 

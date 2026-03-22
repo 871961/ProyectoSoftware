@@ -7,6 +7,7 @@ console.log('*** dashboard-medico.js cargado ***');
 
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
+const RECORDATORIOS_API = '/backend/src/controllers/RecordatoriosController.php';
 
 class SidebarManager {
     constructor() {
@@ -122,6 +123,20 @@ class MedicoDashboard {
         this.saludImcLabel = document.getElementById('saludImcLabelMedico');
         this.saludImcCard = document.getElementById('saludImcCardMedico');
         this.isSaving = false;
+
+        // Recordatorios
+        this.recordatorioForm = document.getElementById('recordatorioForm');
+        this.recordatorioConsultaSelect = document.getElementById('recordatorioConsulta');
+        this.recordatorioTitulo = document.getElementById('recordatorioTitulo');
+        this.recordatorioTipo = document.getElementById('recordatorioTipo');
+        this.recordatorioFecha = document.getElementById('recordatorioFecha');
+        this.recordatorioHora = document.getElementById('recordatorioHora');
+        this.recordatorioPrioridad = document.getElementById('recordatorioPrioridad');
+        this.recordatorioDescripcion = document.getElementById('recordatorioDescripcion');
+        this.recordatoriosList = document.getElementById('recordatoriosDoctorList');
+        this.recordatorioMessage = document.getElementById('recordatorioMessage');
+        this.recordatorioSection = document.getElementById('recordatorioSection');
+        this.recordatorioIdHidden = document.getElementById('recordatorioId');
     }
 
     async init() {
@@ -137,6 +152,7 @@ class MedicoDashboard {
         this.bindEvents();
         await this.cargarSesion();
         await Promise.all([this.cargarPacientes(), this.cargarConsultas()]);
+        await this.cargarRecordatoriosMedico();
     }
 
     bindEvents() {
@@ -155,6 +171,7 @@ class MedicoDashboard {
         this.saludPacienteSelect?.addEventListener('change', () => this.cargarPerfilSaludSeleccionado());
         this.saludAlturaInput?.addEventListener('input', () => this.actualizarImcVisual());
         this.saludPesoInput?.addEventListener('input', () => this.actualizarImcVisual());
+        this.recordatorioForm?.addEventListener('submit', (e) => this.crearRecordatorio(e));
     }
 
     toggleConsultaPanel(forceOpen = null) {
@@ -183,6 +200,22 @@ class MedicoDashboard {
         } catch (_error) {
             throw new Error('Respuesta no valida del servidor. Recarga la pagina e intentalo otra vez.');
         }
+        if (!response.ok || !payload.success) {
+            throw new Error(payload.mensaje || `Error HTTP ${response.status}`);
+        }
+        return payload;
+    }
+
+    async apiRecordatorios(accion, method = 'GET', data = null, params = {}) {
+        const query = new URLSearchParams({ accion, ...params }).toString();
+        const url = `${RECORDATORIOS_API}?${query}`;
+        const options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (data) options.body = JSON.stringify(data);
+
+        const response = await fetch(url, options);
+        const raw = await response.text();
+        let payload = null;
+        try { payload = raw ? JSON.parse(raw) : null; } catch (_e) { throw new Error('Respuesta no valida del servidor'); }
         if (!response.ok || !payload.success) {
             throw new Error(payload.mensaje || `Error HTTP ${response.status}`);
         }
@@ -249,6 +282,153 @@ class MedicoDashboard {
                 const healthOption = option.cloneNode(true);
                 this.saludPacienteSelect.appendChild(healthOption);
             }
+        });
+    }
+
+    updateRecordatorioConsultasSelect() {
+        if (!this.recordatorioConsultaSelect) return;
+        this.recordatorioConsultaSelect.innerHTML = '<option value=\"\">Selecciona una consulta...</option>';
+        if (!this.consultas || !this.consultas.length) {
+            this.recordatorioConsultaSelect.disabled = true;
+            this.setRecordatorioMessage('Primero registra una consulta para poder crear recordatorios.', true);
+            this.mostrarRecordatorioForm(false);
+            return;
+        }
+        this.recordatorioConsultaSelect.disabled = false;
+        this.setRecordatorioMessage('', false);
+        this.consultas.forEach((c) => {
+            const option = document.createElement('option');
+            const paciente = `${c.paciente_nombre || ''} ${c.paciente_apellidos || ''}`.trim() || c.id_paciente;
+            const fecha = this.formatearFecha(c.fecha);
+            option.value = c.id_consulta;
+            option.textContent = `${fecha} - ${paciente} - ${c.diagnostico || 'sin diagnóstico'}`;
+            this.recordatorioConsultaSelect.appendChild(option);
+        });
+    }
+
+    mostrarRecordatorioForm(show) {
+        if (!this.recordatorioSection) return;
+        if (show) {
+            this.recordatorioSection.classList.remove('hidden');
+        } else {
+            this.recordatorioSection.classList.add('hidden');
+        }
+    }
+
+    setRecordatorioMessage(text, isError = false) {
+        if (!this.recordatorioMessage) return;
+        this.recordatorioMessage.textContent = text;
+        this.recordatorioMessage.className = isError
+            ? 'text-sm text-red-600 mt-2'
+            : 'text-sm text-emerald-600 mt-2';
+    }
+
+    async crearRecordatorio(e) {
+        e.preventDefault();
+        if (!this.recordatorioConsultaSelect || !this.recordatorioTitulo || !this.recordatorioFecha) return;
+
+        const data = {
+            id_recordatorio: this.recordatorioIdHidden?.value || null,
+            id_consulta: this.recordatorioConsultaSelect.value,
+            titulo: this.recordatorioTitulo.value,
+            tipo: this.recordatorioTipo?.value || 'otro',
+            fecha_recordatorio: this.recordatorioFecha.value,
+            hora_recordatorio: this.recordatorioHora?.value || null,
+            descripcion: this.recordatorioDescripcion?.value || ''
+        };
+
+        if (!data.id_consulta || !data.titulo || !data.fecha_recordatorio) {
+            this.setRecordatorioMessage('Completa consulta, título y fecha.', true);
+            return;
+        }
+
+        try {
+            this.setRecordatorioMessage('Guardando...', false);
+            if (data.id_recordatorio) {
+                await this.apiRecordatorios('actualizar', 'POST', data);
+                this.setRecordatorioMessage('Recordatorio actualizado', false);
+            } else {
+                await this.apiRecordatorios('crear', 'POST', data);
+                this.setRecordatorioMessage('Recordatorio creado', false);
+            }
+            this.recordatorioForm?.reset();
+            if (this.recordatorioIdHidden) this.recordatorioIdHidden.value = '';
+            await this.cargarRecordatoriosMedico();
+            this.mostrarRecordatorioForm(false);
+        } catch (error) {
+            this.setRecordatorioMessage(error.message, true);
+        }
+    }
+
+    async cargarRecordatoriosMedico() {
+        if (!this.recordatoriosList) return;
+        try {
+            const res = await this.apiRecordatorios('listar_medico', 'GET');
+            this.renderRecordatoriosDoctor(res.data || []);
+        } catch (error) {
+            this.recordatoriosList.innerHTML = `<p class="text-sm text-red-600">${error.message}</p>`;
+        }
+    }
+
+    renderRecordatoriosDoctor(list) {
+        if (!this.recordatoriosList) return;
+        if (!list.length) {
+            this.recordatoriosList.innerHTML = '<p class="text-sm text-gray-500">Sin recordatorios creados.</p>';
+            return;
+        }
+
+        this.recordatoriosList.innerHTML = '';
+        list.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'p-4 border border-gray-200 rounded-xl bg-white shadow-sm flex flex-col gap-1';
+            card.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-700 font-medium">${item.tipo_recordatorio || item.tipo || 'Otro'}</span>
+                    </div>
+                    <span class="text-xs text-gray-500">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : ''}</span>
+                </div>
+                <p class="font-semibold text-gray-900">${item.razon || item.titulo || 'Recordatorio'}</p>
+                <p class="text-sm text-gray-600 line-clamp-2">${item.descripcion || ''}</p>
+                <p class="text-xs text-gray-500">Paciente: ${item.paciente_nombre || ''} ${item.paciente_apellidos || ''} (${item.id_paciente || ''})</p>
+                <p class="text-xs text-gray-500">Estado: ${item.estado}</p>
+                <div class="flex gap-2 pt-2">
+                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-medium hover:bg-gray-200" data-edit-recordatorio="${item.id_recordatorio}">Editar</button>
+                    <button class="px-3 py-1.5 rounded-lg bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100" data-delete-recordatorio="${item.id_recordatorio}">Eliminar</button>
+                </div>
+            `;
+            this.recordatoriosList.appendChild(card);
+        });
+
+        this.recordatoriosList.querySelectorAll('[data-edit-recordatorio]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-edit-recordatorio');
+                const item = list.find(i => String(i.id_recordatorio) === String(id));
+                if (!item) return;
+                if (this.recordatorioIdHidden) this.recordatorioIdHidden.value = item.id_recordatorio;
+                this.recordatorioConsultaSelect.value = item.id_consulta;
+                this.recordatorioTitulo.value = item.razon || item.titulo || '';
+                this.recordatorioFecha.value = item.fecha_recordatorio || (item.fecha_hora ? item.fecha_hora.substring(0,10) : '');
+                this.recordatorioHora.value = item.hora_recordatorio || (item.fecha_hora ? item.fecha_hora.substring(11,16) : '');
+                this.recordatorioTipo.value = item.tipo_recordatorio || 'otro';
+                this.recordatorioPrioridad.value = item.prioridad || 'media';
+                this.recordatorioDescripcion.value = item.descripcion || '';
+                this.mostrarRecordatorioForm(true);
+                this.recordatorioSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        });
+
+        this.recordatoriosList.querySelectorAll('[data-delete-recordatorio]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-delete-recordatorio');
+                if (!confirm('¿Eliminar este recordatorio?')) return;
+                try {
+                    await this.apiRecordatorios('eliminar', 'POST', { id_recordatorio: id });
+                    await this.cargarRecordatoriosMedico();
+                } catch (error) {
+                    this.setRecordatorioMessage(error.message, true);
+                }
+            });
         });
     }
 
@@ -394,6 +574,7 @@ class MedicoDashboard {
             const res = await this.api('mis_consultas', 'GET', null, params);
             this.consultas = res.data || [];
             this.renderConsultas();
+            this.updateRecordatorioConsultasSelect();
         } catch (error) {
             this.setMessage(error.message, true);
         }
@@ -423,6 +604,9 @@ class MedicoDashboard {
                 <td class="px-4 py-3 text-sm text-gray-700">
                     <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium" data-edit-id="${consulta.id_consulta}">Editar</button>
                     <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 font-medium ml-2" data-delete-id="${consulta.id_consulta}">Eliminar</button>
+                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-medium ml-2" data-reminder-id="${consulta.id_consulta}">Crear recordatorio</button>
+                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium ml-2" data-view-recordatorios="${consulta.id_consulta}">Ver recordatorios</button>
+                    <div class="mt-2 space-y-1 hidden" data-recordatorios-container="${consulta.id_consulta}"></div>
                 </td>
             `;
             this.consultasBody.appendChild(row);
@@ -440,6 +624,54 @@ class MedicoDashboard {
                 await this.eliminarConsulta(id);
             });
         });
+        this.consultasBody.querySelectorAll('[data-reminder-id]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-reminder-id');
+                if (this.recordatorioConsultaSelect) {
+                    this.recordatorioConsultaSelect.value = id;
+                    if (this.recordatorioIdHidden) this.recordatorioIdHidden.value = '';
+                    this.recordatorioForm?.reset();
+                    this.recordatorioConsultaSelect.value = id;
+                    this.mostrarRecordatorioForm(true);
+                    this.recordatorioSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+        this.consultasBody.querySelectorAll('[data-view-recordatorios]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-view-recordatorios');
+                await this.mostrarRecordatoriosDeConsulta(id);
+            });
+        });
+    }
+
+    async mostrarRecordatoriosDeConsulta(idConsulta) {
+        if (!idConsulta) return;
+        try {
+            const res = await this.apiRecordatorios('listar_por_consulta', 'GET', null, { id_consulta: idConsulta });
+            const cont = document.querySelector(`[data-recordatorios-container="${idConsulta}"]`);
+            if (!cont) return;
+            cont.innerHTML = '';
+            if (!res.data || !res.data.length) {
+                cont.innerHTML = '<span class="text-xs text-gray-500">Sin recordatorios.</span>';
+            } else {
+                res.data.forEach(r => {
+                    const chip = document.createElement('div');
+                    chip.className = 'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700';
+                    chip.innerHTML = `
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="font-semibold">${r.razon || r.titulo || 'Recordatorio'}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">${r.tipo_recordatorio || 'Otro'}</span>
+                        </div>
+                        <div class="text-[11px] text-gray-500">${r.fecha_hora ? r.fecha_hora.replace('T',' ').substring(0,16) : ''}</div>
+                    `;
+                    cont.appendChild(chip);
+                });
+            }
+            cont.classList.remove('hidden');
+        } catch (error) {
+            alert('No se pudieron cargar los recordatorios: ' + error.message);
+        }
     }
 
     async eliminarConsulta(idConsulta) {
@@ -469,7 +701,6 @@ class MedicoDashboard {
         this.form.elements.fecha.value = this.toInputDateTime(consulta.fecha);
         this.form.elements.diagnostico.value = consulta.diagnostico || '';
         this.form.elements.tratamiento.value = consulta.tratamiento || '';
-        this.form.elements.resultados.value = consulta.resultados || '';
         this.form.elements.observaciones.value = consulta.observaciones || '';
 
         if (this.submitBtn) this.submitBtn.textContent = 'Actualizar consulta';
@@ -499,7 +730,6 @@ class MedicoDashboard {
             fecha: this.toSqlDateTime(formData.get('fecha')),
             diagnostico: formData.get('diagnostico'),
             tratamiento: formData.get('tratamiento'),
-            resultados: formData.get('resultados'),
             observaciones: formData.get('observaciones')
         };
 

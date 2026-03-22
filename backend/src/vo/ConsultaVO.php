@@ -13,7 +13,6 @@ class ConsultaVO {
     private $fecha;
     private $diagnostico;
     private $tratamiento;
-    private $resultados;
     private $observaciones;
     private $medico_nombre;
     private $medico_apellidos;
@@ -29,7 +28,6 @@ class ConsultaVO {
             $this->fecha = $datos['fecha'] ?? null;
             $this->diagnostico = $datos['diagnostico'] ?? '';
             $this->tratamiento = $datos['tratamiento'] ?? '';
-            $this->resultados = $datos['resultados'] ?? '';
             $this->observaciones = $datos['observaciones'] ?? '';
             $this->medico_nombre = $datos['medico_nombre'] ?? '';
             $this->medico_apellidos = $datos['medico_apellidos'] ?? '';
@@ -46,7 +44,6 @@ class ConsultaVO {
     public function getFecha() { return $this->fecha; }
     public function getDiagnostico() { return $this->diagnostico; }
     public function getTratamiento() { return $this->tratamiento; }
-    public function getResultados() { return $this->resultados; }
     public function getObservaciones() { return $this->observaciones; }
     public function getMedicoNombre() { return $this->medico_nombre; }
     public function getMedicoApellidos() { return $this->medico_apellidos; }
@@ -61,7 +58,6 @@ class ConsultaVO {
     public function setFecha($fecha) { $this->fecha = $fecha; }
     public function setDiagnostico($diagnostico) { $this->diagnostico = $diagnostico; }
     public function setTratamiento($tratamiento) { $this->tratamiento = $tratamiento; }
-    public function setResultados($resultados) { $this->resultados = $resultados; }
     public function setObservaciones($observaciones) { $this->observaciones = $observaciones; }
     public function setMedicoNombre($nombre) { $this->medico_nombre = $nombre; }
     public function setMedicoApellidos($apellidos) { $this->medico_apellidos = $apellidos; }
@@ -77,7 +73,6 @@ class ConsultaVO {
             'fecha' => $this->fecha,
             'diagnostico' => $this->diagnostico,
             'tratamiento' => $this->tratamiento,
-            'resultados' => $this->resultados,
             'observaciones' => $this->observaciones,
             'medico_nombre' => $this->medico_nombre,
             'medico_apellidos' => $this->medico_apellidos,

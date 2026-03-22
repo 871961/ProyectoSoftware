@@ -21,8 +21,8 @@ class ConsultaDAO {
      */
     public function insertar(ConsultaVO $consulta) {
         try {
-            $sql = "INSERT INTO consultas (id_paciente, id_medico, fecha, diagnostico, tratamiento, resultados, observaciones) 
-                    VALUES (:id_paciente, :id_medico, :fecha, :diagnostico, :tratamiento, :resultados, :observaciones)";
+            $sql = "INSERT INTO consultas (id_paciente, id_medico, fecha, diagnostico, tratamiento, observaciones) 
+                    VALUES (:id_paciente, :id_medico, :fecha, :diagnostico, :tratamiento, :observaciones)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id_paciente', $consulta->getIdPaciente());
@@ -30,7 +30,6 @@ class ConsultaDAO {
             $stmt->bindParam(':fecha', $consulta->getFecha());
             $stmt->bindParam(':diagnostico', $consulta->getDiagnostico());
             $stmt->bindParam(':tratamiento', $consulta->getTratamiento());
-            $stmt->bindParam(':resultados', $consulta->getResultados());
             $stmt->bindParam(':observaciones', $consulta->getObservaciones());
             
             $resultado = $stmt->execute();
@@ -138,13 +137,12 @@ class ConsultaDAO {
     public function actualizar(ConsultaVO $consulta) {
         try {
             $sql = "UPDATE consultas SET diagnostico = :diagnostico, tratamiento = :tratamiento, 
-                    resultados = :resultados, observaciones = :observaciones 
+                    observaciones = :observaciones 
                     WHERE id_consulta = :id_consulta";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':diagnostico', $consulta->getDiagnostico());
             $stmt->bindParam(':tratamiento', $consulta->getTratamiento());
-            $stmt->bindParam(':resultados', $consulta->getResultados());
             $stmt->bindParam(':observaciones', $consulta->getObservaciones());
             $stmt->bindParam(':id_consulta', $consulta->getIdConsulta());
             
@@ -170,7 +168,6 @@ class ConsultaDAO {
                     SET fecha = :fecha,
                         diagnostico = :diagnostico,
                         tratamiento = :tratamiento,
-                        resultados = :resultados,
                         observaciones = :observaciones
                     WHERE id_consulta = :id_consulta AND id_medico = :id_medico";
 
@@ -178,7 +175,6 @@ class ConsultaDAO {
             $stmt->bindParam(':fecha', $consulta->getFecha());
             $stmt->bindParam(':diagnostico', $consulta->getDiagnostico());
             $stmt->bindParam(':tratamiento', $consulta->getTratamiento());
-            $stmt->bindParam(':resultados', $consulta->getResultados());
             $stmt->bindParam(':observaciones', $consulta->getObservaciones());
             $stmt->bindParam(':id_consulta', $consulta->getIdConsulta());
             $stmt->bindParam(':id_medico', $id_medico);

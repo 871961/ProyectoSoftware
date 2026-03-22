@@ -304,6 +304,10 @@
                 <form id="medicoForm">
                     <div class="form-row">
                         <div class="form-group">
+                            <label for="medico-dni" class="required">DNI</label>
+                            <input type="text" id="medico-dni" name="dni" required placeholder="Ej: 12345678A">
+                        </div>
+                        <div class="form-group">
                             <label for="medico-nombre" class="required">Nombre</label>
                             <input type="text" id="medico-nombre" name="nombre" required placeholder="Ej: Carlos">
                         </div>
@@ -396,6 +400,11 @@
             </div>
             <div class="modal-body">
                 <form id="pacienteForm">
+                    <div class="form-group">
+                        <label for="paciente-dni" class="required">DNI/NIE</label>
+                        <input type="text" id="paciente-dni" name="dni" required placeholder="Ej: 12345678A"
+                            pattern="[0-9XYZxyz][0-9]{7}[A-Za-z]">
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="paciente-nombre" class="required">Nombre</label>

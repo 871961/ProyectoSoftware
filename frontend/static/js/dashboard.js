@@ -6,6 +6,7 @@
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
 const ANTECEDENTES_API = '/backend/src/controllers/AntecedentesController.php';
+const RECORDATORIOS_API = '/backend/src/controllers/RecordatoriosController.php';
 
 class SidebarManager {
     constructor() {
@@ -63,6 +64,10 @@ class PacienteDashboard {
         this.saludImcCard = document.getElementById('saludImcCardPaciente');
 
         this.antecedentesContainer = document.getElementById('antecedentesPacienteLista');
+
+        // Recordatorios
+        this.recordatoriosList = document.getElementById('recordatoriosPacienteList');
+        this.recordatoriosEmpty = document.getElementById('recordatoriosPacienteEmpty');
     }
 
     async init() {
@@ -73,7 +78,7 @@ class PacienteDashboard {
         new SidebarManager().init();
         this.bindEvents();
         await this.cargarSesion();
-        await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud(), this.cargarAntecedentes()]);
+        await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud(), this.cargarAntecedentes(), this.cargarRecordatorios()]);
         this.mostrarVista('inicio');
     }
 
@@ -134,6 +139,22 @@ class PacienteDashboard {
         } catch (_error) {
             throw new Error('Respuesta no valida del servidor.');
         }
+        if (!response.ok || !payload.success) {
+            throw new Error(payload?.mensaje || `Error HTTP ${response.status}`);
+        }
+        return payload;
+    }
+
+    async apiRecordatorios(accion, method = 'GET', data = null, params = {}) {
+        const query = new URLSearchParams({ accion, ...params }).toString();
+        const url = `${RECORDATORIOS_API}?${query}`;
+        const options = { method, headers: { 'Content-Type': 'application/json' } };
+        if (data) options.body = JSON.stringify(data);
+
+        const response = await fetch(url, options);
+        const raw = await response.text();
+        let payload = null;
+        try { payload = raw ? JSON.parse(raw) : null; } catch (_e) { throw new Error('Respuesta no valida del servidor'); }
         if (!response.ok || !payload.success) {
             throw new Error(payload?.mensaje || `Error HTTP ${response.status}`);
         }
@@ -378,6 +399,79 @@ class PacienteDashboard {
             'tía': 'bg-amber-100 text-amber-700'
         };
         return colores[parentesco?.toLowerCase()] || 'bg-gray-100 text-gray-700';
+    }
+
+    async cargarRecordatorios() {
+        if (!this.recordatoriosList) return;
+        try {
+            const res = await this.apiRecordatorios('listar_paciente', 'GET', null, { pendientes: '0' });
+            this.renderRecordatorios(res.data || []);
+        } catch (error) {
+            this.recordatoriosList.innerHTML = `<p class="text-sm text-red-600">No se pudieron cargar los recordatorios: ${error.message}</p>`;
+        }
+    }
+
+    renderRecordatorios(list) {
+        if (!this.recordatoriosList) return;
+        if (!list.length) {
+            this.recordatoriosList.innerHTML = '';
+            if (this.recordatoriosEmpty) {
+                this.recordatoriosEmpty.textContent = 'No tienes recordatorios.';
+                this.recordatoriosEmpty.classList.remove('hidden');
+            }
+            return;
+        }
+        this.recordatoriosEmpty?.classList.add('hidden');
+        this.recordatoriosList.innerHTML = '';
+
+        list.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col gap-2';
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <p class="text-xs text-gray-500">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : this.formatearFecha(item.fecha_recordatorio)}</p>
+                        <h4 class="text-base font-semibold text-gray-900">${item.razon || item.titulo || 'Recordatorio'}</h4>
+                        <p class="text-sm text-gray-600">${item.descripcion || ''}</p>
+                        <p class="text-xs text-gray-500">Creado por: ${item.medico_nombre || 'Tu mÃ©dico'} ${item.medico_apellidos || ''}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full ${this.getPrioridadChip(item.prioridad)}">${item.prioridad || 'media'}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-700">${item.tipo_recordatorio || item.tipo || 'Otro'}</span>
+                    <span class="px-2 py-1 text-xs rounded-full ${this.getEstadoChip(item.estado)}">${item.estado}</span>
+                    <span class="text-xs text-gray-500">${item.tiempo_restante || ''}</span>
+                </div>
+                <!-- Solo vista: sin acciones para el paciente -->
+            `;
+            this.recordatoriosList.appendChild(card);
+        });
+
+    }
+
+    getPrioridadChip(prioridad) {
+        const map = {
+            'urgente': 'bg-red-100 text-red-700',
+            'alta': 'bg-orange-100 text-orange-700',
+            'media': 'bg-yellow-100 text-yellow-700',
+            'baja': 'bg-green-100 text-green-700'
+        };
+        return map[prioridad] || 'bg-gray-100 text-gray-700';
+    }
+
+    getEstadoChip(estado) {
+        const e = (estado || '').toString().toLowerCase();
+        const map = {
+            'pendiente': 'bg-amber-50 text-amber-700',
+            'completado': 'bg-emerald-50 text-emerald-700',
+            'vencido': 'bg-red-50 text-red-700',
+            'cancelado': 'bg-gray-100 text-gray-700'
+        };
+        return map[e] || 'bg-gray-100 text-gray-700';
+    }
+
+    async completarRecordatorio(id) {
+        // Paciente ya no marca completado en esta vista
     }
 
     async cargarConsultas() {

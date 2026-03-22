@@ -129,7 +129,6 @@ try {
                 'fecha' => !empty($input['fecha']) ? $input['fecha'] : date('Y-m-d H:i:s'),
                 'diagnostico' => $diagnostico,
                 'tratamiento' => trim($input['tratamiento'] ?? ''),
-                'resultados' => trim($input['resultados'] ?? ''),
                 'observaciones' => trim($input['observaciones'] ?? '')
             ]);
 
@@ -166,7 +165,6 @@ try {
                 'fecha' => !empty($input['fecha']) ? $input['fecha'] : $consultaExistente->getFecha(),
                 'diagnostico' => $diagnostico,
                 'tratamiento' => trim($input['tratamiento'] ?? ''),
-                'resultados' => trim($input['resultados'] ?? ''),
                 'observaciones' => trim($input['observaciones'] ?? '')
             ]);
 
