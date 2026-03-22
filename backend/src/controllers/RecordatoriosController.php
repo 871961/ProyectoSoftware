@@ -102,12 +102,18 @@ try {
                 'estado' => RecordatorioVO::ESTADO_PENDIENTE
             ]);
 
-            $idNuevo = $dao->insertar($recordatorio);
+            $idNuevo = $dao->insertar(
+                $recordatorio,
+                $consulta->getIdMedico(),
+                $consulta->getIdPaciente()
+            );
 
+            $rec = $dao->obtenerPorId($idNuevo);
             sendJson([
                 'success' => true,
                 'mensaje' => 'Recordatorio creado',
-                'id_recordatorio' => $idNuevo
+                'id_recordatorio' => $idNuevo,
+                'recordatorio' => $rec
             ]);
             break;
 
@@ -245,6 +251,7 @@ try {
 function mapTipo($tipoEntrada) {
     $map = [
         'medicamento' => RecordatorioVO::TIPO_MEDICACION,
+        'medicacion' => RecordatorioVO::TIPO_MEDICACION,
         'medicación' => RecordatorioVO::TIPO_MEDICACION,
         'control' => RecordatorioVO::TIPO_CONTROL,
         'cita' => RecordatorioVO::TIPO_CITA,

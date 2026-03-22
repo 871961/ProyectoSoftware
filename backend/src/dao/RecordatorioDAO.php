@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 /**
  * Archivo: RecordatorioDAO.php
- * Descripción: DAO alineado con el schema (recordatorios vinculados a consultas)
+ * Descripcion: DAO alineado con el schema (recordatorios vinculados a consultas)
  * Fecha: Marzo 2026
  */
 
@@ -15,11 +15,11 @@ class RecordatorioDAO {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function insertar(RecordatorioVO $recordatorio) {
+    public function insertar(RecordatorioVO $recordatorio, $id_medico = null, $id_paciente = null) {
         try {
             $errores = $recordatorio->validar();
             if (!empty($errores)) {
-                throw new Exception("Datos inválidos: " . implode(", ", $errores));
+                throw new Exception("Datos invalidos: " . implode(", ", $errores));
             }
 
             $this->db->beginTransaction();
@@ -40,11 +40,24 @@ class RecordatorioDAO {
             $id = $stmt->fetchColumn();
             $recordatorio->setIdRecordatorio($id);
 
-            $this->registrarAuditoria('INSERT', 'recordatorios', $id, 'Creación de recordatorio');
+            // Cerrar la transaccion principal antes de cualquier auditoria
             $this->db->commit();
+
+            // Auditoria en operacion aparte para no invalidar la insercion si falla
+            $this->registrarAuditoria(
+                'INSERT',
+                'recordatorios',
+                $id,
+                'Creacion de recordatorio',
+                $id_medico,
+                $id_paciente
+            );
+
             return $id;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             throw $e;
         }
     }
@@ -112,7 +125,7 @@ class RecordatorioDAO {
     public function actualizarEstado($id_recordatorio, $nuevo_estado) {
         $validos = [RecordatorioVO::ESTADO_PENDIENTE, RecordatorioVO::ESTADO_COMPLETADO];
         if (!in_array($nuevo_estado, $validos)) {
-            throw new Exception("Estado no válido: $nuevo_estado");
+            throw new Exception("Estado no valido: $nuevo_estado");
         }
         $sql = "UPDATE recordatorios SET estado = :estado WHERE id_recordatorio = :id_recordatorio";
         $stmt = $this->db->prepare($sql);
@@ -122,7 +135,7 @@ class RecordatorioDAO {
     public function actualizar(RecordatorioVO $r) {
         $errores = $r->validar();
         if (!empty($errores)) {
-            throw new Exception("Datos inválidos: " . implode(', ', $errores));
+            throw new Exception("Datos invalidos: " . implode(', ', $errores));
         }
         $sql = "UPDATE recordatorios 
                 SET fecha_hora = :fecha_hora,
@@ -150,20 +163,39 @@ class RecordatorioDAO {
         ]);
     }
 
-    private function registrarAuditoria($accion, $tabla, $registro_id, $detalles, $id_responsable = null) {
+    private function registrarAuditoria($accion, $tabla, $registro_id, $detalles, $id_medico = null, $id_paciente = null) {
         try {
-            $sql = "INSERT INTO auditoria_logs (accion, tabla_afectada, registro_id, detalles, usuario_responsable)
-                    VALUES (:accion, :tabla, :registro_id, :detalles, :usuario_responsable)";
+            // La tabla auditoria_logs obliga a un unico autor. Si no tenemos datos, salimos.
+            if ($id_medico === null && $id_paciente === null) {
+                return;
+            }
+
+            if ($id_medico !== null) {
+                $sql = "INSERT INTO auditoria_logs (id_medico, accion, tabla_afectada, registro_id, detalles)
+                        VALUES (:id_medico, :accion, :tabla, :registro_id, :detalles)";
+                $params = [
+                    ':id_medico' => $id_medico,
+                    ':accion' => $accion,
+                    ':tabla' => $tabla,
+                    ':registro_id' => $registro_id,
+                    ':detalles' => $detalles
+                ];
+            } else {
+                $sql = "INSERT INTO auditoria_logs (id_paciente, accion, tabla_afectada, registro_id, detalles)
+                        VALUES (:id_paciente, :accion, :tabla, :registro_id, :detalles)";
+                $params = [
+                    ':id_paciente' => $id_paciente,
+                    ':accion' => $accion,
+                    ':tabla' => $tabla,
+                    ':registro_id' => $registro_id,
+                    ':detalles' => $detalles
+                ];
+            }
+
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':accion' => $accion,
-                ':tabla' => $tabla,
-                ':registro_id' => $registro_id,
-                ':detalles' => $detalles,
-                ':usuario_responsable' => $id_responsable ?? 'Sistema'
-            ]);
+            $stmt->execute($params);
         } catch (Exception $e) {
-            error_log("Error en auditoría: " . $e->getMessage());
+            error_log("Error en auditoria: " . $e->getMessage());
         }
     }
 }

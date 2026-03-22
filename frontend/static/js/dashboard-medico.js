@@ -131,7 +131,6 @@ class MedicoDashboard {
         this.recordatorioTipo = document.getElementById('recordatorioTipo');
         this.recordatorioFecha = document.getElementById('recordatorioFecha');
         this.recordatorioHora = document.getElementById('recordatorioHora');
-        this.recordatorioPrioridad = document.getElementById('recordatorioPrioridad');
         this.recordatorioDescripcion = document.getElementById('recordatorioDescripcion');
         this.recordatoriosList = document.getElementById('recordatoriosDoctorList');
         this.recordatorioMessage = document.getElementById('recordatorioMessage');
@@ -354,6 +353,7 @@ class MedicoDashboard {
             this.recordatorioForm?.reset();
             if (this.recordatorioIdHidden) this.recordatorioIdHidden.value = '';
             await this.cargarRecordatoriosMedico();
+            await this.mostrarRecordatoriosDeConsulta(data.id_consulta);
             this.mostrarRecordatorioForm(false);
         } catch (error) {
             this.setRecordatorioMessage(error.message, true);
@@ -411,7 +411,6 @@ class MedicoDashboard {
                 this.recordatorioFecha.value = item.fecha_recordatorio || (item.fecha_hora ? item.fecha_hora.substring(0,10) : '');
                 this.recordatorioHora.value = item.hora_recordatorio || (item.fecha_hora ? item.fecha_hora.substring(11,16) : '');
                 this.recordatorioTipo.value = item.tipo_recordatorio || 'otro';
-                this.recordatorioPrioridad.value = item.prioridad || 'media';
                 this.recordatorioDescripcion.value = item.descripcion || '';
                 this.mostrarRecordatorioForm(true);
                 this.recordatorioSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -1,4 +1,4 @@
-/*
+﻿/*
     Archivo: dashboard.js
     Descripcion: Dashboard paciente con historial de consultas en cards y detalle
 */
@@ -68,6 +68,13 @@ class PacienteDashboard {
         // Recordatorios
         this.recordatoriosList = document.getElementById('recordatoriosPacienteList');
         this.recordatoriosEmpty = document.getElementById('recordatoriosPacienteEmpty');
+        this.notificationBell = document.getElementById('notificationBell');
+        this.notificationBadge = document.getElementById('notificationBadge');
+        this.notificationPanel = document.getElementById('notificationPanel');
+        this.notificationList = document.getElementById('notificationList');
+        this.notificationEmpty = document.getElementById('notificationEmpty');
+        this.closeNotificationPanelBtn = document.getElementById('closeNotificationPanel');
+        this.dismissedKey = 'recordatorios_dismissed';
     }
 
     async init() {
@@ -107,6 +114,15 @@ class PacienteDashboard {
         this.saludReloadBtn?.addEventListener('click', () => this.cargarPerfilSalud());
         this.saludAlturaInput?.addEventListener('input', () => this.actualizarImcVisual());
         this.saludPesoInput?.addEventListener('input', () => this.actualizarImcVisual());
+
+        // Notificaciones (campana)
+        this.notificationBell?.addEventListener('click', () => this.toggleNotificationPanel());
+        this.closeNotificationPanelBtn?.addEventListener('click', () => this.toggleNotificationPanel(false));
+        document.addEventListener('click', (e) => {
+            if (!this.notificationPanel || !this.notificationBell) return;
+            const inside = this.notificationPanel.contains(e.target) || this.notificationBell.contains(e.target);
+            if (!inside) this.toggleNotificationPanel(false);
+        });
     }
 
     mostrarVista(vista) {
@@ -312,7 +328,7 @@ class PacienteDashboard {
             try {
                 payload = raw ? JSON.parse(raw) : null;
             } catch (_error) {
-                throw new Error('Respuesta no válida del servidor.');
+                throw new Error('Respuesta no vÃ¡lida del servidor.');
             }
 
             if (!response.ok || !payload.success) {
@@ -342,7 +358,7 @@ class PacienteDashboard {
                 <div class="text-center py-8 text-gray-500">
                     <i data-lucide="info" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
                     <p>No tienes antecedentes familiares registrados.</p>
-                    <p class="text-sm mt-1">Tu médico puede añadirlos durante la consulta.</p>
+                    <p class="text-sm mt-1">Tu mÃ©dico puede aÃ±adirlos durante la consulta.</p>
                 </div>
             `;
             if (typeof lucide !== 'undefined') {
@@ -359,14 +375,16 @@ class PacienteDashboard {
 
             const parentescoColor = this.obtenerColorParentesco(ant.parentesco);
             const ladoFamiliar = ant.lado_familiar ? `<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">${ant.lado_familiar}</span>` : '';
-            const edadDiagnostico = (ant.edad_diagnostico || ant.edad_diagnóstico) ? `<span class="text-sm text-gray-600">Diagnosticado a los ${ant.edad_diagnostico || ant.edad_diagnóstico} años</span>` : '';
+            const edadDiagnostico = ant.edad_diagnostico
+                ? `<span class="text-sm text-gray-600">Diagnosticado a los ${ant.edad_diagnostico} años</span>`
+                : '';
             const notas = ant.notas_adicionales ? `<p class="text-sm text-gray-600 mt-2 italic">${ant.notas_adicionales}</p>` : '';
 
             card.innerHTML = `
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="flex-1">
                         <h4 class="text-lg font-semibold text-gray-900">${ant.nombre_patologia || 'Sin nombre'}</h4>
-                        <p class="text-xs text-gray-500 mt-0.5">${ant.categoria || 'Sin categoría'}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">${ant.categoria || 'Sin categorÃ­a'}</p>
                     </div>
                     <span class="text-xs px-2.5 py-1 rounded-full ${parentescoColor} font-medium whitespace-nowrap">
                         ${ant.parentesco}
@@ -395,8 +413,8 @@ class PacienteDashboard {
             'abuela': 'bg-purple-100 text-purple-700',
             'hermano': 'bg-green-100 text-green-700',
             'hermana': 'bg-green-100 text-green-700',
-            'tío': 'bg-amber-100 text-amber-700',
-            'tía': 'bg-amber-100 text-amber-700'
+            'tÃ­o': 'bg-amber-100 text-amber-700',
+            'tÃ­a': 'bg-amber-100 text-amber-700'
         };
         return colores[parentesco?.toLowerCase()] || 'bg-gray-100 text-gray-700';
     }
@@ -405,7 +423,9 @@ class PacienteDashboard {
         if (!this.recordatoriosList) return;
         try {
             const res = await this.apiRecordatorios('listar_paciente', 'GET', null, { pendientes: '0' });
-            this.renderRecordatorios(res.data || []);
+            const data = res.data || [];
+            this.renderRecordatorios(data);
+            this.renderNotifications(data);
         } catch (error) {
             this.recordatoriosList.innerHTML = `<p class="text-sm text-red-600">No se pudieron cargar los recordatorios: ${error.message}</p>`;
         }
@@ -413,7 +433,10 @@ class PacienteDashboard {
 
     renderRecordatorios(list) {
         if (!this.recordatoriosList) return;
-        if (!list.length) {
+        const dismissed = this.getDismissed();
+        const filtered = list.filter((item) => !dismissed.has(String(item.id_recordatorio)));
+
+        if (!filtered.length) {
             this.recordatoriosList.innerHTML = '';
             if (this.recordatoriosEmpty) {
                 this.recordatoriosEmpty.textContent = 'No tienes recordatorios.';
@@ -424,7 +447,7 @@ class PacienteDashboard {
         this.recordatoriosEmpty?.classList.add('hidden');
         this.recordatoriosList.innerHTML = '';
 
-        list.forEach((item) => {
+        filtered.forEach((item) => {
             const card = document.createElement('div');
             card.className = 'p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col gap-2';
             card.innerHTML = `
@@ -433,32 +456,45 @@ class PacienteDashboard {
                         <p class="text-xs text-gray-500">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : this.formatearFecha(item.fecha_recordatorio)}</p>
                         <h4 class="text-base font-semibold text-gray-900">${item.razon || item.titulo || 'Recordatorio'}</h4>
                         <p class="text-sm text-gray-600">${item.descripcion || ''}</p>
-                        <p class="text-xs text-gray-500">Creado por: ${item.medico_nombre || 'Tu mÃ©dico'} ${item.medico_apellidos || ''}</p>
+                        <p class="text-xs text-gray-500">Creado por: ${item.medico_nombre || 'Tu medico'} ${item.medico_apellidos || ''}</p>
                     </div>
-                    <span class="px-2 py-1 text-xs rounded-full ${this.getPrioridadChip(item.prioridad)}">${item.prioridad || 'media'}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">${item.estado || ''}</span>
+                        ${item.estado === 'Completado' ? `<button class="text-gray-400 hover:text-red-500" data-dismiss="${item.id_recordatorio}" title="Ocultar"><i data-lucide="x" class="w-4 h-4"></i></button>` : ''}
+                    </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-700">${item.tipo_recordatorio || item.tipo || 'Otro'}</span>
                     <span class="px-2 py-1 text-xs rounded-full ${this.getEstadoChip(item.estado)}">${item.estado}</span>
                     <span class="text-xs text-gray-500">${item.tiempo_restante || ''}</span>
                 </div>
-                <!-- Solo vista: sin acciones para el paciente -->
+                <div class="flex items-center gap-2 mt-1">
+                    ${item.estado === 'Completado' ? '<span class="text-xs text-emerald-700">Marcado como completado</span>' : `<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100" data-completar="${item.id_recordatorio}">¡Listo! Confirmar</button>`}
+                </div>
             `;
             this.recordatoriosList.appendChild(card);
         });
 
+        this.recordatoriosList.querySelectorAll('[data-completar]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-completar');
+                await this.completarRecordatorio(id, btn);
+            });
+        });
+
+        this.recordatoriosList.querySelectorAll('[data-dismiss]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-dismiss');
+                this.dismissRecordatorio(id);
+            });
+        });
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
-    getPrioridadChip(prioridad) {
-        const map = {
-            'urgente': 'bg-red-100 text-red-700',
-            'alta': 'bg-orange-100 text-orange-700',
-            'media': 'bg-yellow-100 text-yellow-700',
-            'baja': 'bg-green-100 text-green-700'
-        };
-        return map[prioridad] || 'bg-gray-100 text-gray-700';
-    }
-
+    // Panel de notificaciones (campana)
     getEstadoChip(estado) {
         const e = (estado || '').toString().toLowerCase();
         const map = {
@@ -470,8 +506,115 @@ class PacienteDashboard {
         return map[e] || 'bg-gray-100 text-gray-700';
     }
 
-    async completarRecordatorio(id) {
-        // Paciente ya no marca completado en esta vista
+    async completarRecordatorio(id, btn = null) {
+        if (!id) return;
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Marcando...';
+        }
+        try {
+            await this.apiRecordatorios('completar', 'POST', { id_recordatorio: id });
+            await this.cargarRecordatorios();
+        } catch (error) {
+            alert('No se pudo marcar el recordatorio: ' + error.message);
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '¡Listo! Confirmar';
+            }
+        }
+    }
+
+    // Notificaciones (campana)
+    toggleNotificationPanel(forceState = null) {
+        if (!this.notificationPanel) return;
+        const shouldOpen = forceState !== null ? forceState : this.notificationPanel.classList.contains('hidden');
+        this.notificationPanel.classList.toggle('hidden', !shouldOpen);
+        if (shouldOpen && typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    renderNotifications(list) {
+        if (!this.notificationList || !this.notificationBadge) return;
+        const dismissed = this.getDismissed();
+        const pending = list.filter(
+            (item) => item.estado !== 'Completado' && !dismissed.has(String(item.id_recordatorio))
+        );
+
+        if (pending.length) {
+            this.notificationBadge.textContent = pending.length > 9 ? '9+' : pending.length;
+            this.notificationBadge.classList.remove('hidden');
+        } else {
+            this.notificationBadge.classList.add('hidden');
+        }
+
+        if (!pending.length) {
+            this.notificationList.innerHTML = '';
+            this.notificationEmpty?.classList.remove('hidden');
+            return;
+        }
+
+        this.notificationEmpty?.classList.add('hidden');
+        this.notificationList.innerHTML = '';
+        pending.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'flex items-start gap-3 px-4 py-3 hover:bg-gray-50';
+            row.innerHTML = `
+                <div class="p-2 rounded-lg bg-blue-50 text-blue-700">
+                    <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-900">${item.razon || 'Recordatorio'}</p>
+                    <p class="text-xs text-gray-600">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : ''}</p>
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                    <button class="text-xs font-medium text-blue-700 hover:text-blue-900" data-ver-noti="${item.id_recordatorio}">Ver</button>
+                    <button class="text-xs font-medium text-emerald-700 hover:text-emerald-900" data-completar-noti="${item.id_recordatorio}">Completar</button>
+                </div>
+            `;
+            this.notificationList.appendChild(row);
+        });
+
+        this.notificationList.querySelectorAll('[data-completar-noti]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-completar-noti');
+                await this.completarRecordatorio(id, btn);
+                this.toggleNotificationPanel(false);
+            });
+        });
+
+        this.notificationList.querySelectorAll('[data-ver-noti]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                this.toggleNotificationPanel(false);
+                this.recordatoriosList?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    // Dismiss de recordatorios completados (solo UI)
+    getDismissed() {
+        try {
+            const raw = localStorage.getItem(this.dismissedKey);
+            const arr = raw ? JSON.parse(raw) : [];
+            return new Set(arr.map(String));
+        } catch (_e) {
+            return new Set();
+        }
+    }
+
+    saveDismissed(set) {
+        localStorage.setItem(this.dismissedKey, JSON.stringify(Array.from(set)));
+    }
+
+    dismissRecordatorio(id) {
+        const set = this.getDismissed();
+        set.add(String(id));
+        this.saveDismissed(set);
+        this.cargarRecordatorios();
     }
 
     async cargarConsultas() {
@@ -519,8 +662,8 @@ class PacienteDashboard {
                     </div>
                     <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">Consulta</span>
                 </div>
-                <p class="text-sm text-gray-500 mb-2">Médico: <span class="text-gray-700 font-medium">${medico}</span></p>
-                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">Diagnóstico:</span> ${diagnostico}</p>
+                <p class="text-sm text-gray-500 mb-2">MÃ©dico: <span class="text-gray-700 font-medium">${medico}</span></p>
+                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">DiagnÃ³stico:</span> ${diagnostico}</p>
                 <p class="text-sm text-gray-600 mt-2 line-clamp-1"><span class="font-semibold text-gray-800">Tratamiento:</span> ${tratamiento}</p>
                 <div class="mt-4 text-sm text-blue-700 font-medium group-hover:text-blue-800">Ver detalle completo</div>
             `;
@@ -597,3 +740,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     const app = new PacienteDashboard();
     await app.init();
 });
+
+

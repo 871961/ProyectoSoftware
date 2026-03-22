@@ -14,7 +14,7 @@ class RecordatorioVO {
     private $estado;
 
     // Tipos permitidos (según schema.sql)
-    const TIPO_MEDICACION = 'Medicación';
+    const TIPO_MEDICACION = 'Medicacion';
     const TIPO_CONTROL    = 'Control';
     const TIPO_CITA       = 'Cita';
     const TIPO_OTRO       = 'Otro';

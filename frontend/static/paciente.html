@@ -148,10 +148,24 @@
                 <div class="flex items-center space-x-4">
 
                     <!-- Notifications -->
-                    <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                    </button>
+                    <div class="relative">
+                        <button id="notificationBell" class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <span id="notificationBadge" class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 text-[11px] flex items-center justify-center bg-red-500 text-white rounded-full ring-2 ring-white hidden">0</span>
+                        </button>
+                        <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
+                            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                                <p class="text-sm font-semibold text-gray-900">Recordatorios</p>
+                                <button id="closeNotificationPanel" class="text-gray-400 hover:text-gray-600">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div id="notificationList" class="max-h-80 overflow-y-auto divide-y divide-gray-100">
+                                <!-- Items renderizados por JS -->
+                            </div>
+                            <div id="notificationEmpty" class="px-4 py-3 text-sm text-gray-500">Sin recordatorios.</div>
+                        </div>
+                    </div>
 
                     <!-- User Profile -->
                     <div class="flex items-center space-x-3 pl-4 border-l border-gray-200">
