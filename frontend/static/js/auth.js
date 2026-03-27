@@ -19,7 +19,7 @@
 // MODULE: FORM VALIDATOR
 // ========================================
 
-class FormValidajtor {
+class FormValidator {
     /**
      * Validate email format
      * @param {string} email - Email address to validate
