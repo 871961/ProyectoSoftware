@@ -19,7 +19,7 @@
 // MODULE: FORM VALIDATOR
 // ========================================
 
-class FormValidator {
+class FormValidajtor {
     /**
      * Validate email format
      * @param {string} email - Email address to validate
@@ -27,7 +27,7 @@ class FormValidator {
      */
     static isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return e kmailRegex.test(email);
+        return emailRegex.test(email);
     }
 
     /**
