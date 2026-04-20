@@ -274,8 +274,14 @@ class DependientesManager {
             const consultasRes = await this.api('obtener_consultas', 'GET', null, { id: dep.id_dependiente });
             const vacunasRes = await this.api('obtener_vacunas', 'GET', null, { id: dep.id_dependiente });
 
+            const consultas = (consultasRes && consultasRes.data) ? consultasRes.data : [];
+            const vacunas = (vacunasRes && vacunasRes.data) ? vacunasRes.data : [];
+
             // **NUEVO: Renderizar perfil de salud del dependiente**
             this.renderizarPerfilSaludDependiente(perfilRes.data || {}, dep);
+
+            // **NUEVO: Actualizar resumen superior (evitar textos de adulto)**
+            this.actualizarResumenDependiente(consultas, vacunas, dep);
 
             // Render actividad reciente (consultas + vacunas)
             const recentEl = document.getElementById('recentPediatricActivity');
@@ -633,6 +639,60 @@ class DependientesManager {
     }
 
     /**
+     * Actualiza las tarjetas superiores del resumen pediatrico
+     */
+    actualizarResumenDependiente(consultas, vacunas, dependiente) {
+        const pediatraAsignado = document.getElementById('pediatraAsignado');
+        if (pediatraAsignado) {
+            pediatraAsignado.textContent = dependiente.pediatra_nombre_completo || 'Pediatra no asignado';
+        }
+
+        const nextReviewEl = document.getElementById('pediatricNextReviewDate');
+        if (nextReviewEl) {
+            const hoy = new Date();
+            const proximas = (consultas || [])
+                .filter(c => c.fecha && new Date(c.fecha) >= hoy)
+                .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            if (proximas.length > 0) {
+                const fecha = new Date(proximas[0].fecha).toLocaleDateString('es-ES');
+                nextReviewEl.textContent = fecha;
+            } else {
+                nextReviewEl.textContent = 'Sin programar';
+            }
+        }
+
+        const lastVaccineName = document.getElementById('pediatricLastVaccineName');
+        const lastVaccineDate = document.getElementById('pediatricLastVaccineDate');
+        const vacunasOrdenadas = (vacunas || [])
+            .filter(v => v.fecha_administracion)
+            .sort((a, b) => new Date(b.fecha_administracion) - new Date(a.fecha_administracion));
+        if (vacunasOrdenadas.length > 0) {
+            const ultima = vacunasOrdenadas[0];
+            const fecha = new Date(ultima.fecha_administracion).toLocaleDateString('es-ES');
+            if (lastVaccineName) lastVaccineName.textContent = ultima.nombre_vacuna || 'Vacuna registrada';
+            if (lastVaccineDate) lastVaccineDate.textContent = fecha;
+        } else {
+            if (lastVaccineName) lastVaccineName.textContent = 'Sin registros';
+            if (lastVaccineDate) lastVaccineDate.textContent = '--';
+        }
+
+        const lastRecordEl = document.getElementById('childLastRecord');
+        const lastRecordMeta = document.getElementById('childPercentile');
+        const consultasOrdenadas = (consultas || [])
+            .filter(c => c.fecha)
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        if (consultasOrdenadas.length > 0) {
+            const ultimaConsulta = consultasOrdenadas[0];
+            const fecha = new Date(ultimaConsulta.fecha).toLocaleDateString('es-ES');
+            if (lastRecordEl) lastRecordEl.textContent = ultimaConsulta.diagnostico || 'Consulta medica';
+            if (lastRecordMeta) lastRecordMeta.textContent = `Actualizado: ${fecha}`;
+        } else {
+            if (lastRecordEl) lastRecordEl.textContent = 'Sin registros';
+            if (lastRecordMeta) lastRecordMeta.textContent = '--';
+        }
+    }
+
+    /**
      * Limpia los datos del perfil de salud pediátrico al volver al perfil del tutor
      */
     limpiarPerfilSaludDependiente() {
@@ -665,6 +725,24 @@ class DependientesManager {
         if (vaccinationList) {
             vaccinationList.innerHTML = '<p class="text-sm text-gray-500 italic text-center py-4">Datos de vacunación para menores</p>';
         }
+
+        const pediatraAsignado = document.getElementById('pediatraAsignado');
+        if (pediatraAsignado) pediatraAsignado.textContent = '';
+
+        const nextReviewEl = document.getElementById('pediatricNextReviewDate');
+        if (nextReviewEl) nextReviewEl.textContent = '';
+
+        const lastVaccineName = document.getElementById('pediatricLastVaccineName');
+        if (lastVaccineName) lastVaccineName.textContent = '';
+
+        const lastVaccineDate = document.getElementById('pediatricLastVaccineDate');
+        if (lastVaccineDate) lastVaccineDate.textContent = '';
+
+        const lastRecordEl = document.getElementById('childLastRecord');
+        if (lastRecordEl) lastRecordEl.textContent = '';
+
+        const lastRecordMeta = document.getElementById('childPercentile');
+        if (lastRecordMeta) lastRecordMeta.textContent = '';
     }
 
     /**

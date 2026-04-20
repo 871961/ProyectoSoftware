@@ -108,6 +108,9 @@ class PacienteDashboard {
             this.mostrarVista('perfil_salud');
         });
 
+        const sidebarNav = this.sidebar?.querySelector('nav');
+        sidebarNav?.addEventListener('click', (e) => this.bloquearSidebarSiDependiente(e), true);
+
         this.closeModalBtn?.addEventListener('click', () => this.closeDetailModal());
         this.modal?.addEventListener('click', (e) => {
             if (e.target === this.modal) this.closeDetailModal();
@@ -125,6 +128,20 @@ class PacienteDashboard {
             const inside = this.notificationPanel.contains(e.target) || this.notificationBell.contains(e.target);
             if (!inside) this.toggleNotificationPanel(false);
         });
+    }
+
+    bloquearSidebarSiDependiente(event) {
+        if (!window.viewingDependiente) return;
+        event.preventDefault();
+        event.stopPropagation();
+        alert('Debes salir del modulo de dependientes primero.');
+    }
+
+    async salirModoDependiente() {
+        if (!window.viewingDependiente) return;
+        if (window.dependientesManager && typeof window.dependientesManager.volverAMiPerfil === 'function') {
+            await window.dependientesManager.volverAMiPerfil();
+        }
     }
 
     mostrarVista(vista) {
@@ -837,16 +854,16 @@ class PacienteDashboard {
 
         // Elementos del perfil pediátrico que deben mostrarse como 'No aplica' para adultos
         const elementos = {
-            'pediatraAsignado': 'No aplica - Paciente adulto',
-            'childStatus': 'Adulto',
-            'childLastRecord': 'No aplica',
-            'childPercentile': 'No aplica - Adulto',
-            'childGrowthStatus': 'No aplica - Adulto',
-            'childIMCStatus': 'No aplica - Adulto',
-            'nextVaccination': 'Consultar con médico general',
-            'recentGrowthTitle': 'No aplica para adultos',
-            'recentGrowthDetails': 'Los datos de crecimiento son para menores',
-            'recentGrowthDate': '--'
+            'pediatraAsignado': '',
+            'childStatus': '',
+            'childLastRecord': '',
+            'childPercentile': '',
+            'childGrowthStatus': '',
+            'childIMCStatus': '',
+            'nextVaccination': '',
+            'recentGrowthTitle': '',
+            'recentGrowthDetails': '',
+            'recentGrowthDate': ''
         };
 
         Object.entries(elementos).forEach(([id, texto]) => {

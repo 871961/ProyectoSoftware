@@ -485,45 +485,8 @@
                         </div>
                     </form>
                 </div>
-    </div>
-    </section>
-    <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
-        <div class="p-2 bg-emerald-50 rounded-lg">
-            <i data-lucide="stethoscope" class="w-5 h-5 text-emerald-600"></i>
-        </div>
-        <div class="flex-1">
-            <p class="font-medium text-gray-900">Consulta pediátrica programada</p>
-            <p class="text-sm text-gray-600 mt-1">Control de crecimiento y desarrollo - 20 de febrero
-            </p>
-            <p class="text-xs text-gray-500 mt-2">Cargando fecha...</p>
-        </div>
-    </div>
-
-    <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
-        <div class="p-2 bg-blue-50 rounded-lg">
-            <i data-lucide="syringe" class="w-5 h-5 text-blue-600"></i>
-        </div>
-        <div class="flex-1">
-            <p class="font-medium text-gray-900">Vacuna Triple Viral administrada</p>
-            <p class="text-sm text-gray-600 mt-1">Aplicada correctamente - Sin reacciones adversas</p>
-            <p class="text-xs text-gray-500 mt-2">Hace 1 semana</p>
-        </div>
-    </div>
-
-    <div class="flex items-start space-x-4">
-        <div class="p-2 bg-amber-50 rounded-lg">
-            <i data-lucide="ruler" class="w-5 h-5 text-amber-600"></i>
-        </div>
-        <div class="flex-1">
-            <p id="recentGrowthTitle" class="font-medium text-gray-900">Cargando actividad...</p>
-            <p id="recentGrowthDetails" class="text-sm text-gray-600 mt-1">--</p>
-            <p id="recentGrowthDate" class="text-xs text-gray-500 mt-2">--</p>
-        </div>
-    </div>
-    </div>
-    </div>
+        </section>
     </main>
-    </div>
 
     <!-- Minimal Pediatric View (placeholders dinámicos para dependientes) -->
     <main id="pediatricView" class="view-section flex-1 p-4 lg:p-8">
@@ -536,26 +499,6 @@
                     <h1 id="childName" class="text-3xl font-bold text-gray-900">Cargando...</h1>
                     <p id="childAge" class="text-gray-600">Edad y última actualización</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Próxima Revisión</h3>
-                <p id="pediatricNextReviewDate" class="text-2xl font-bold text-gray-900 mb-2">Cargando...</p>
-                <p id="pediatraAsignado" class="text-sm text-gray-600">Cargando pediatra...</p>
-            </div>
-
-            <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Última Vacuna</h3>
-                <p id="pediatricLastVaccineName" class="text-2xl font-bold text-gray-900 mb-2">Cargando...</p>
-                <p id="pediatricLastVaccineDate" class="text-sm text-gray-600">Cargando...</p>
-            </div>
-
-            <div class="stat-card pediatric-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Último Registro</h3>
-                <p id="childLastRecord" class="text-2xl font-bold text-gray-900 mb-2">Cargando...</p>
-                <p id="childPercentile" class="text-sm text-gray-600">--</p>
             </div>
         </div>
 
@@ -609,6 +552,8 @@
             </div>
         </div>
     </main>
+
+    </div>
 
     <!-- Modal: Add Dependent -->
     <div id="addDependentModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
