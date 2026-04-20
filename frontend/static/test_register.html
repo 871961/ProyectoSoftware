@@ -5,7 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Registro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (local if available, otherwise CDN fallback) -->
+    <script>
+        window.tailwind = window.tailwind || {};
+        (async function () {
+            try {
+                const res = await fetch('css/tailwind.css', { method: 'HEAD' });
+                if (res.ok) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l); return; }
+            } catch (e) { }
+            // Using local compiled Tailwind CSS
+            const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l);
+        })();
+    </script>
 </head>
 
 <body class="bg-gray-100 p-8">

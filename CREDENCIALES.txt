@@ -4,7 +4,7 @@
 Fecha de actualización: 7 de marzo de 2026
 
 =======================================================================
-👨‍⚕️ MÉDICOS GENERALES
+MÉDICOS GENERALES
 =======================================================================
 Contraseña: medico123
 
@@ -16,7 +16,7 @@ ana.martinez@clinica.com           | Ana Martinez Ruiz        | MG-003456
 
 
 =======================================================================
-👨‍⚕️ MÉDICOS ESPECIALISTAS
+MÉDICOS ESPECIALISTAS
 =======================================================================
 Contraseña: medico123
 
@@ -60,7 +60,7 @@ yousra.jebari@clinica.com          | Yousra Jebari
 
 
 =======================================================================
-📋 NOTAS IMPORTANTES
+NOTAS IMPORTANTES
 =======================================================================
 
 1. Todas las contraseñas están hasheadas con bcrypt en la base de datos
@@ -75,7 +75,7 @@ yousra.jebari@clinica.com          | Yousra Jebari
 
 
 =======================================================================
-🚀 INICIO RÁPIDO
+INICIO RÁPIDO
 =======================================================================
 
 1. Para login como médico:

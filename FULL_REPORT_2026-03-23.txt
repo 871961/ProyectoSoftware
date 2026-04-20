@@ -1,0 +1,127 @@
+Informe completo — MedHistory (2026-03-23)
+
+1) Resumen de cambios (extraído de `CHANGES_SUMMARY.txt`)
+
+---
+
+Resumen de cambios aplicados (hasta 2026-03-23)
+
+1) JavaScript / Frontend
+- Archivo: frontend/static/js/dependientes.js
+  - Corregido: se añadió `async` a la función `volverAMiPerfil()` para evitar "await is only valid in async functions".
+
+2) Tailwind / CSS
+- Archivos añadidos/compilados:
+  - frontend/src/styles/tailwind.css  (input con "@tailwind base; @tailwind components; @tailwind utilities")
+  - frontend/static/css/tailwind.css  (archivo compilado generado con PostCSS + Tailwind v2.2.19)
+- Archivos de configuración:
+  - frontend/package.json: scripts `build:css` y `dev:css`; dependencias ajustadas para usar `tailwindcss@2.2.19`, `postcss`, `postcss-cli`, `autoprefixer`.
+  - frontend/postcss.config.cjs: configurado para `require('tailwindcss')` y `require('autoprefixer')`.
+  - frontend/tailwind.config.cjs: configurado `purge` para `./static/**/*.html`, `./static/js/**/*.js`, `./src/**/*.js`.
+
+3) HTML / carga de estilos
+- Archivos modificados para usar CSS local compilado en vez del script CDN:
+  - frontend/static/index.html
+  - frontend/static/login.html
+  - frontend/static/register.html
+  - frontend/static/test_register.html
+  - frontend/static/paciente.html
+  - frontend/static/medico.html
+  Cambios: se reemplazaron los bloques que cargaban `https://cdn.tailwindcss.com` por un enlace directo a `css/tailwind.css`.
+
+4) Otros
+- frontend/static/images/favicon.svg agregado y link en `paciente.html`.
+
+5) Comandos ejecutados localmente
+- `npm install` (en `frontend`) — instaló dependencias necesarias.
+- `npm run build:css` — compiló `static/css/tailwind.css` con PostCSS + Tailwind v2.2.19.
+
+6) Estado y recomendaciones
+- Estado: la hoja `frontend/static/css/tailwind.css` está generada y los HTML cargan la versión local.
+- Pendiente: verificar manualmente en navegador que el modal "Añadir Hijo/Dependiente" abre correctamente (acción de UI).
+- Recomendado para producción: integrar el build CSS en el pipeline/CI (ejecutar `npm run build:css` antes del deploy) y comprobar `purge` para incluir todas las plantillas dinámicas si existen otras rutas.
+
+---
+
+2) Mensajes del asistente (transcripción)
+
+---
+
+Además, se incluye la transcripción completa de los mensajes del asistente hoy (extraído de `ASSISTANT_MESSAGES_2026-03-23.txt`):
+
+1) "Voy a añadir scripts npm automáticos y actualizar `frontend/package.json`, luego ejecutaré la compilación del CSS para verificar."
+
+2) "Actualizo `frontend/package.json` para añadir `postinstall/prepare/predeploy` y agrego `frontend/README_BUILD.md` con instrucciones. Luego compilo CSS para verificar."
+
+3) "He añadido scripts automáticos en `frontend/package.json` (`postinstall`, `prepare`, `predeploy`) y un archivo `frontend/README_BUILD.md` explicando que ejecutar `npm install` dentro de `frontend` ya compilará el CSS automáticamente. También ejecuté `npm run build:css` para verificar que la compilación funciona."
+
+4) "Voy a crear `package.json` en la raíz con scripts para instalar y compilar el `frontend`, y luego ejecutaré el build final para verificar."
+
+5) "Listo — añadí `package.json` en la raíz con scripts automáticos. Verifiqué el build ejecutando el script de la raíz y la compilación de CSS se lanzó correctamente. ¿Quieres que además agregue una acción de GitHub (`.github/workflows/ci.yml`) que ejecute este build en cada push/PR?"
+
+6) "Voy a añadir una GitHub Action que ejecute la instalación y el build del frontend en cada push/PR. Luego actualizaré la lista de TODO."
+
+7) "He añadido la GitHub Action en `.github/workflows/ci.yml`. Resumen rápido: en push/PR a `main`/`master` ejecuta `npm ci` y `npm run build:frontend`, y sube `frontend/static/css/tailwind.css` como artefacto. ¿Quieres que también cree un badge de estado en el `README.md` o que lo publique en un branch/PR?"
+
+---
+
+3) Archivos añadidos o modificados por el asistente hoy
+
+- `frontend/static/js/dependientes.js` (corrección `async`)
+- `frontend/src/styles/tailwind.css` (nuevo, input de Tailwind)
+- `frontend/static/css/tailwind.css` (generado, compilado)
+- `frontend/package.json` (scripts añadidos: `postinstall`, `prepare`, `predeploy`)
+- `frontend/postcss.config.cjs` (config PostCSS)
+- `frontend/tailwind.config.cjs` (config Tailwind purge)
+- `frontend/README_BUILD.md` (nuevo, instrucciones de build)
+- `c:\\web\\medHistory\\package.json` (nuevo en la raíz para automatizar `frontend` install/build)
+- `.github/workflows/ci.yml` (nuevo workflow para CI)
+- `c:\\web\\medHistory\\ASSISTANT_MESSAGES_2026-03-23.txt` (registro de mensajes del asistente)
+- `c:\\web\\medHistory\\FULL_REPORT_2026-03-23.txt` (este archivo)
+
+4) Comandos exactos que puedes ejecutar localmente (copia y pega)
+
+PowerShell / Windows (desde la raíz del repo):
+
+```powershell
+cd C:\\web\\medHistory
+npm ci
+# Esto ejecutará el `postinstall` del root, que instala y compila el frontend
+```
+
+Si quieres ejecutar solo el frontend manualmente:
+
+```powershell
+cd C:\\web\\medHistory\\frontend
+npm install
+npm run build:css
+```
+
+O usando los scripts del root desde la raíz:
+
+```powershell
+cd C:\\web\\medHistory
+npm run install:frontend
+npm run build:frontend
+```
+
+5) Detalles del workflow CI añadido
+
+- Archivo: `.github/workflows/ci.yml`
+- Qué hace:
+  - En push/PR a `main`/`master` instala Node, ejecuta `npm ci` y `npm run build:frontend` (usa los scripts del root).
+  - Sube el CSS compilado `frontend/static/css/tailwind.css` como artefacto.
+
+6) Estado de la lista TODO (captura rápida)
+
+- He marcado la mayoría de tareas como completadas. Pendiente: verificar manualmente el modal "Añadir Hijo/Dependiente" en navegador.
+
+7) Recomendaciones y próximos pasos sugeridos
+
+- Probar en navegador local `frontend/static/paciente.html` y pulsar "Añadir Hijo/Dependiente" para confirmar que el modal funciona.
+- Añadir el badge del workflow en `README.md` si deseas visibilidad del CI.
+- Integrar `npm run build:frontend` en cualquier pipeline de deploy que uses en producción.
+
+---
+
+Fin del informe (generado automáticamente por el asistente). Si quieres que incluya también los diffs completos de cada archivo modificado, dime y los agregaré en secciones separadas.

@@ -1,0 +1,41 @@
+Resumen de cambios aplicados (hasta 2026-03-23)
+
+1) JavaScript / Frontend
+- Archivo: frontend/static/js/dependientes.js
+  - Corregido: se añadió `async` a la función `volverAMiPerfil()` para evitar "await is only valid in async functions".
+
+2) Tailwind / CSS
+- Archivos añadidos/compilados:
+  - frontend/src/styles/tailwind.css  (input con "@tailwind base; @tailwind components; @tailwind utilities")
+  - frontend/static/css/tailwind.css  (archivo compilado generado con PostCSS + Tailwind v2.2.19)
+- Archivos de configuración:
+  - frontend/package.json: scripts `build:css` y `dev:css`; dependencias ajustadas para usar `tailwindcss@2.2.19`, `postcss`, `postcss-cli`, `autoprefixer`.
+  - frontend/postcss.config.cjs: configurado para `require('tailwindcss')` y `require('autoprefixer')`.
+  - frontend/tailwind.config.cjs: configurado `purge` para `./static/**/*.html`, `./static/js/**/*.js`, `./src/**/*.js`; inicialmente habilitada opción `mode: 'jit'`, luego removida para estabilidad.
+
+3) HTML / carga de estilos
+- Archivos modificados para usar CSS local compilado en vez del script CDN:
+  - frontend/static/index.html
+  - frontend/static/login.html
+  - frontend/static/register.html
+  - frontend/static/test_register.html
+  - frontend/static/paciente.html
+  - frontend/static/medico.html
+  Cambios: se reemplazaron los bloques que cargaban `https://cdn.tailwindcss.com` por un enlace directo a `css/tailwind.css`.
+
+4) Otros
+- frontend/static/images/favicon.svg agregado y link en `paciente.html`.
+
+5) Comandos ejecutados localmente en el entorno del repositorio
+- `npm install` (en `frontend`) — instaló dependencias necesarias.
+- `npm run build:css` — compiló `static/css/tailwind.css` con PostCSS + Tailwind v2.2.19.
+
+6) Estado y recomendaciones
+- Estado: la hoja `frontend/static/css/tailwind.css` está generada y los HTML cargan la versión local.
+- Pendiente: verificar manualmente en navegador que el modal "Añadir Hijo/Dependiente" abre correctamente (acción de UI). Recomiendo probar en el entorno local o servidor web estático.
+- Recomendado para producción: integrar el build CSS en el pipeline/CI (ejecutar `npm run build:css` antes del deploy) y comprobar `purge` para incluir todas las plantillas dinámicas si existen otras rutas.
+
+Si quieres, puedo:
+- Añadir un `README_BUILD.txt` con instrucciones rápidas de build y deploy. 
+- Añadir un script npm `predeploy` que compile CSS automáticamente.
+- Abrir y probar el modal `Añadir Hijo/Dependiente` (requiere abrir la app en navegador).

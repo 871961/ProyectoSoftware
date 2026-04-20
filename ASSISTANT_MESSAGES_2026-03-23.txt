@@ -1,0 +1,29 @@
+Mensajes del asistente (desde el primer mensaje del 2026-03-23)
+
+1) "Voy a añadir scripts npm automáticos y actualizar `frontend/package.json`, luego ejecutaré la compilación del CSS para verificar."
+
+2) "Actualizo `frontend/package.json` para añadir `postinstall/prepare/predeploy` y agrego `frontend/README_BUILD.md` con instrucciones. Luego compilo CSS para verificar."
+
+3) "He añadido scripts automáticos en `frontend/package.json` (`postinstall`, `prepare`, `predeploy`) y un archivo `frontend/README_BUILD.md` explicando que ejecutar `npm install` dentro de `frontend` ya compilará el CSS automáticamente. También ejecuté `npm run build:css` para verificar que la compilación funciona.
+
+Siguiente paso recomendado: ¿quieres que añada un `predeploy` en el root (por ejemplo para CI) o que haga un pequeño script de inicialización en la raíz para entornos Windows?"
+
+4) "Voy a crear `package.json` en la raíz con scripts para instalar y compilar el `frontend`, y luego ejecutaré el build final para verificar."
+
+5) "Listo — añadí `package.json` en la raíz con scripts automáticos:
+
+- `postinstall`: instala y compila el `frontend` (ejecuta `npm --prefix frontend install` y `npm --prefix frontend run build:css`).
+- `predeploy`: compila el `frontend` (ejecuta `npm --prefix frontend run build:css`).
+
+Verifiqué el build ejecutando el script de la raíz y la compilación de CSS se lanzó correctamente.
+
+¿Quieres que además agregue una acción de GitHub (`.github/workflows/ci.yml`) que ejecute este build en cada push/PR?"
+
+6) "Voy a añadir una GitHub Action que ejecute la instalación y el build del frontend en cada push/PR. Luego actualizaré la lista de TODO."
+
+7) "He añadido la GitHub Action en `.github/workflows/ci.yml`. Resumen rápido:
+
+- Qué hace: en push/PR a `main`/`master` ejecuta `npm ci` y `npm run build:frontend`, y sube `frontend/static/css/tailwind.css` como artefacto.
+- Ya actualicé la TODO (`Añadir GitHub Action CI`: completado).
+
+¿Quieres que también cree un badge de estado en el `README.md` o que lo publique en un branch/PR?"

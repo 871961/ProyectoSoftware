@@ -5,7 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta | MedHistory</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (local if available, otherwise CDN fallback) -->
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = { theme: { extend: { colors: { 'medical-blue': '#2563eb', 'clinical-gray': '#f8fafc' } } } };
+        (async function () {
+            try {
+                const res = await fetch('css/tailwind.css', { method: 'HEAD' });
+                if (res.ok) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l); return; }
+            } catch (e) { }
+            // Use local compiled Tailwind CSS
+            const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l);
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

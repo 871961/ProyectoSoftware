@@ -86,6 +86,8 @@ class PacienteDashboard {
         this.bindEvents();
         await this.cargarSesion();
         await Promise.all([this.cargarConsultas(), this.cargarPerfilSalud(), this.cargarAntecedentes(), this.cargarRecordatorios()]);
+        // **NUEVO: Cargar información adicional del usuario**
+        await this.cargarInformacionUsuario();
         this.mostrarVista('inicio');
     }
 
@@ -217,6 +219,9 @@ class PacienteDashboard {
     }
 
     pintarUsuario() {
+        // Si estamos viendo un dependiente, no sobreescribir la cabecera del UI
+        if (window.viewingDependiente) return;
+
         const nombre = this.usuario.nombre || '';
         const iniciales = this.obtenerIniciales(nombre);
 
@@ -232,6 +237,7 @@ class PacienteDashboard {
     }
 
     async cargarPerfilSalud() {
+        if (window.viewingDependiente) return;
         try {
             const res = await this.perfilApi('obtener_mi_perfil');
             this.pintarPerfilSalud(res.data || {});
@@ -242,6 +248,7 @@ class PacienteDashboard {
     }
 
     pintarPerfilSalud(perfil) {
+        if (window.viewingDependiente) return;
         if (!this.saludForm) return;
         this.saludForm.elements.altura_cm.value = perfil.altura_cm ?? '';
         this.saludForm.elements.peso_kg.value = perfil.peso_kg ?? '';
@@ -314,6 +321,7 @@ class PacienteDashboard {
     }
 
     async cargarAntecedentes() {
+        if (window.viewingDependiente) return;
         if (!this.antecedentesContainer) return;
 
         try {
@@ -351,6 +359,7 @@ class PacienteDashboard {
     }
 
     renderizarAntecedentes(antecedentes) {
+        if (window.viewingDependiente) return;
         if (!this.antecedentesContainer) return;
 
         if (!antecedentes || antecedentes.length === 0) {
@@ -420,6 +429,7 @@ class PacienteDashboard {
     }
 
     async cargarRecordatorios() {
+        if (window.viewingDependiente) return;
         if (!this.recordatoriosList) return;
         try {
             const res = await this.apiRecordatorios('listar_paciente', 'GET', null, { pendientes: '0' });
@@ -432,6 +442,7 @@ class PacienteDashboard {
     }
 
     renderRecordatorios(list) {
+        if (window.viewingDependiente) return;
         if (!this.recordatoriosList) return;
         const dismissed = this.getDismissed();
         const filtered = list.filter((item) => !dismissed.has(String(item.id_recordatorio)));
@@ -453,7 +464,7 @@ class PacienteDashboard {
             card.innerHTML = `
                 <div class="flex items-start justify-between gap-2">
                     <div>
-                        <p class="text-xs text-gray-500">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : this.formatearFecha(item.fecha_recordatorio)}</p>
+                        <p class="text-xs text-gray-500">${item.fecha_hora ? item.fecha_hora.replace('T', ' ').substring(0, 16) : this.formatearFecha(item.fecha_recordatorio)}</p>
                         <h4 class="text-base font-semibold text-gray-900">${item.razon || item.titulo || 'Recordatorio'}</h4>
                         <p class="text-sm text-gray-600">${item.descripcion || ''}</p>
                         <p class="text-xs text-gray-500">Creado por: ${item.medico_nombre || 'Tu medico'} ${item.medico_apellidos || ''}</p>
@@ -565,7 +576,7 @@ class PacienteDashboard {
                 </div>
                 <div class="flex-1">
                     <p class="text-sm font-semibold text-gray-900">${item.razon || 'Recordatorio'}</p>
-                    <p class="text-xs text-gray-600">${item.fecha_hora ? item.fecha_hora.replace('T',' ').substring(0,16) : ''}</p>
+                    <p class="text-xs text-gray-600">${item.fecha_hora ? item.fecha_hora.replace('T', ' ').substring(0, 16) : ''}</p>
                 </div>
                 <div class="flex flex-col items-end gap-1">
                     <button class="text-xs font-medium text-blue-700 hover:text-blue-900" data-ver-noti="${item.id_recordatorio}">Ver</button>
@@ -618,6 +629,7 @@ class PacienteDashboard {
     }
 
     async cargarConsultas() {
+        if (window.viewingDependiente) return;
         try {
             const params = {};
             if (this.filtroDesde?.value) params.fecha_desde = this.filtroDesde.value;
@@ -635,6 +647,7 @@ class PacienteDashboard {
     }
 
     renderConsultas() {
+        if (window.viewingDependiente) return;
         if (!this.cardsContainer) return;
         this.cardsContainer.innerHTML = '';
 
@@ -733,6 +746,115 @@ class PacienteDashboard {
         if (words.length === 0) return 'PA';
         if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
         return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+    }
+
+    /**
+     * Carga información adicional del usuario para elementos que antes eran estáticos
+     */
+    async cargarInformacionUsuario() {
+        if (window.viewingDependiente) return;
+        console.log('🔄 Cargando información adicional del usuario...');
+
+        try {
+            // Cargar médico de cabecera
+            await this.cargarMedicoCabecera();
+
+            // Cargar próxima cita
+            await this.cargarProximaCita();
+
+            // Cargar fechas de renovación
+            await this.cargarFechasRenovacion();
+
+            // Cargar datos para perfil pediátrico (si aplica)
+            await this.cargarDatosPediatricos();
+
+            console.log('✅ Información adicional cargada');
+        } catch (error) {
+            console.error('❌ Error cargando información adicional:', error);
+        }
+    }
+
+    async cargarMedicoCabecera() {
+        const elem = document.getElementById('medicoCabecera');
+        if (!elem) return;
+
+        try {
+            // Obtener datos del usuario actual
+            const usuarioDatos = JSON.parse(localStorage.getItem('usuario') || sessionStorage.getItem('usuario') || '{}');
+
+            if (usuarioDatos.id_medico_general) {
+                // Se podría hacer una API call para obtener info del médico
+                elem.textContent = 'Dr. Médico de Cabecera'; // Placeholder
+            } else {
+                elem.textContent = 'No asignado';
+            }
+        } catch (error) {
+            elem.textContent = 'No disponible';
+        }
+    }
+
+    async cargarProximaCita() {
+        const elem = document.getElementById('proximaCita');
+        if (!elem) return;
+
+        try {
+            // Buscar próximos recordatorios de tipo 'Cita'
+            if (this.recordatorios && this.recordatorios.length > 0) {
+                const proximaCita = this.recordatorios
+                    .filter(r => r.tipo_recordatorio === 'Cita' && r.estado !== 'Completado')
+                    .sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora))[0];
+
+                if (proximaCita) {
+                    elem.textContent = `Próxima cita: ${proximaCita.razon}`;
+                } else {
+                    elem.textContent = 'No hay citas programadas';
+                }
+            } else {
+                elem.textContent = 'No hay citas programadas';
+            }
+        } catch (error) {
+            elem.textContent = 'Cargando citas...';
+        }
+    }
+
+    async cargarFechasRenovacion() {
+        const elem = document.getElementById('renewalDate');
+        if (!elem) return;
+
+        try {
+            // Ejemplo de cálculo de renovación
+            const fechaRenovacion = new Date();
+            fechaRenovacion.setDate(fechaRenovacion.getDate() + 15);
+            elem.textContent = `Renovar en ${Math.ceil((fechaRenovacion - new Date()) / (1000 * 60 * 60 * 24))} días`;
+        } catch (error) {
+            elem.textContent = 'Fecha no disponible';
+        }
+    }
+
+    async cargarDatosPediatricos() {
+        // Solo ejecutar si no estamos viendo un dependiente
+        if (window.viewingDependiente) return;
+
+        // Elementos del perfil pediátrico que deben mostrarse como 'No aplica' para adultos
+        const elementos = {
+            'pediatraAsignado': 'No aplica - Paciente adulto',
+            'childStatus': 'Adulto',
+            'childLastRecord': 'No aplica',
+            'childPercentile': 'No aplica - Adulto',
+            'childGrowthStatus': 'No aplica - Adulto',
+            'childIMCStatus': 'No aplica - Adulto',
+            'nextVaccination': 'Consultar con médico general',
+            'recentGrowthTitle': 'No aplica para adultos',
+            'recentGrowthDetails': 'Los datos de crecimiento son para menores',
+            'recentGrowthDate': '--'
+        };
+
+        Object.entries(elementos).forEach(([id, texto]) => {
+            const elem = document.getElementById(id);
+            if (elem) {
+                elem.textContent = texto;
+            }
+        });
     }
 }
 

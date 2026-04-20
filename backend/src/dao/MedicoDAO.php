@@ -362,6 +362,99 @@ class MedicoDAO {
     }
     
     /**
+     * Obtiene un pediatra disponible (con menos dependientes asignados)
+     * Para asignación automática de nuevos dependientes
+     */
+    public function obtenerPediatraDisponible() {
+        try {
+            $sql = "SELECT m.*
+                    FROM medicos m
+                    INNER JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    WHERE me.especialidad = 'Pediatra' AND m.activo = TRUE
+                    ORDER BY me.dependientes_asignados ASC, RANDOM()
+                    LIMIT 1";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            $resultado = $stmt->fetch();
+
+            if ($resultado) {
+                return new MedicoVO($resultado);
+            }
+
+            return null;
+
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener pediatra disponible: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtiene todos los pediatras activos
+     */
+    public function obtenerPediatras() {
+        try {
+            $sql = "SELECT m.*, me.especialidad, me.dependientes_asignados
+                    FROM medicos m
+                    INNER JOIN medicos_especialistas me ON m.id_medico = me.id_medico
+                    WHERE me.especialidad = 'Pediatra' AND m.activo = TRUE
+                    ORDER BY m.apellidos, m.nombre";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            $medicos = [];
+            while ($fila = $stmt->fetch()) {
+                $medicos[] = new MedicoVO($fila);
+            }
+
+            return $medicos;
+
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener pediatras: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Incrementa el contador de dependientes asignados a un pediatra
+     */
+    public function incrementarDependientesAsignados($id_pediatra) {
+        try {
+            $sql = "UPDATE medicos_especialistas
+                    SET dependientes_asignados = dependientes_asignados + 1
+                    WHERE id_medico = :id_medico";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_pediatra);
+
+            return $stmt->execute();
+
+        } catch (PDOException $e) {
+            throw new Exception("Error al incrementar dependientes asignados: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Decrementa el contador de dependientes asignados a un pediatra
+     */
+    public function decrementarDependientesAsignados($id_pediatra) {
+        try {
+            $sql = "UPDATE medicos_especialistas
+                    SET dependientes_asignados = GREATEST(0, dependientes_asignados - 1)
+                    WHERE id_medico = :id_medico";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id_medico', $id_pediatra);
+
+            return $stmt->execute();
+
+        } catch (PDOException $e) {
+            throw new Exception("Error al decrementar dependientes asignados: " . $e->getMessage());
+        }
+    }
+
+    /**
      * Registra acción en auditoría
      */
     private function registrarAuditoria($accion, $tabla, $registro_id, $id_admin = null) {
