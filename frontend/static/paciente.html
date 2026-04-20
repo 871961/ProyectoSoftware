@@ -485,73 +485,75 @@
                         </div>
                     </form>
                 </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <!-- Minimal Pediatric View (placeholders dinámicos para dependientes) -->
-    <main id="pediatricView" class="view-section flex-1 p-4 lg:p-8">
-        <div class="mb-6">
-            <div class="flex items-center space-x-3 mb-4">
-                <div class="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl">
-                    <i data-lucide="baby" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h1 id="childName" class="text-3xl font-bold text-gray-900">Cargando...</h1>
-                    <p id="childAge" class="text-gray-600">Edad y última actualización</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="lg:col-span-2">
-                <div id="vaccinationCalendar" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="space-y-3" id="vaccinationList">
-                        <p class="text-sm text-gray-500 italic text-center py-4">Cargando cartilla de vacunación...</p>
+        <!-- Minimal Pediatric View (placeholders dinámicos para dependientes) -->
+        <main id="pediatricView" class="view-section flex-1 p-4 lg:p-8">
+            <div class="mb-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl">
+                        <i data-lucide="baby" class="w-6 h-6 text-white"></i>
                     </div>
-                </div>
-                <!-- Recent Pediatric Activity placeholder (populated by JS) -->
-                <div id="recentPediatricActivity" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
-                    <div class="space-y-4">
-                        <p class="text-sm text-gray-500">Cargando actividad...</p>
+                    <div>
+                        <h1 id="childName" class="text-3xl font-bold text-gray-900">Cargando...</h1>
+                        <p id="childAge" class="text-gray-600">Edad y última actualización</p>
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Crecimiento</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">Peso</span>
-                                <span id="childWeight" class="text-sm font-bold text-gray-900">-- kg</span>
-                            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="lg:col-span-2">
+                    <div id="vaccinationCalendar" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="space-y-3" id="vaccinationList">
+                            <p class="text-sm text-gray-500 italic text-center py-4">Cargando cartilla de vacunación...
+                            </p>
                         </div>
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">Talla</span>
-                                <span id="childHeight" class="text-sm font-bold text-gray-900">-- cm</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">IMC</span>
-                                <span id="childIMC" class="text-sm font-bold text-gray-900">--</span>
-                            </div>
+                    </div>
+                    <!-- Recent Pediatric Activity placeholder (populated by JS) -->
+                    <div id="recentPediatricActivity"
+                        class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-500">Cargando actividad...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Alergias</h3>
-                    <div id="childAllergiesContainer" class="space-y-3">
-                        <p class="text-sm text-gray-500 italic">Cargando alergias...</p>
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Crecimiento</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Peso</span>
+                                    <span id="childWeight" class="text-sm font-bold text-gray-900">-- kg</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Talla</span>
+                                    <span id="childHeight" class="text-sm font-bold text-gray-900">-- cm</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-600">IMC</span>
+                                    <span id="childIMC" class="text-sm font-bold text-gray-900">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Alergias</h3>
+                        <div id="childAllergiesContainer" class="space-y-3">
+                            <p class="text-sm text-gray-500 italic">Cargando alergias...</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
     </div>
 

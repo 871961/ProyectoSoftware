@@ -1,0 +1,212 @@
+:root {
+    --kid-sky: #38bdf8;
+    --kid-mint: #34d399;
+    --kid-sun: #fbbf24;
+    --kid-rose: #fb7185;
+    --kid-ink: #0f172a;
+    --kid-ink-soft: #475569;
+    --kid-shell: #ffffff;
+    --kid-border: #e2e8f0;
+    --kid-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+* {
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+}
+
+.kid-bg {
+    background: linear-gradient(120deg, #f0fbff 0%, #fff7ed 45%, #f0fdf4 100%);
+    color: var(--kid-ink);
+    position: relative;
+    overflow-x: hidden;
+}
+
+.kid-orbit {
+    position: fixed;
+    inset: -40% -10% auto;
+    height: 60vh;
+    background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.25), transparent 55%),
+        radial-gradient(circle at 80% 30%, rgba(52, 211, 153, 0.18), transparent 60%),
+        radial-gradient(circle at 50% 80%, rgba(251, 191, 36, 0.2), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.kid-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.kid-header {
+    padding: 24px 0 12px;
+}
+
+.kid-main {
+    padding-bottom: 64px;
+}
+
+.kid-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--kid-sky), var(--kid-mint));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 22px rgba(56, 189, 248, 0.25);
+}
+
+.kid-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--kid-shell);
+    border: 1px solid var(--kid-border);
+    color: var(--kid-ink);
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(148, 163, 184, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kid-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(148, 163, 184, 0.28);
+}
+
+.kid-card {
+    background: var(--kid-shell);
+    border-radius: 24px;
+    border: 1px solid var(--kid-border);
+    padding: 24px;
+    box-shadow: var(--kid-shadow);
+    animation: kidFadeUp 0.4s ease;
+}
+
+.kid-hero {
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(52, 211, 153, 0.12));
+}
+
+.kid-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--kid-rose), var(--kid-sun));
+    color: white;
+    font-size: 28px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 26px rgba(251, 113, 133, 0.35);
+}
+
+.kid-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.04);
+    color: var(--kid-ink-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.kid-grid {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .kid-grid {
+        grid-template-columns: 1.4fr 1fr;
+    }
+}
+
+.kid-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kid-metric {
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px dashed rgba(148, 163, 184, 0.6);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.kid-metric-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--kid-ink-soft);
+    margin-bottom: 6px;
+}
+
+.kid-metric-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--kid-ink);
+}
+
+.kid-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(251, 113, 133, 0.12);
+    color: #be123c;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.kid-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.kid-info-label {
+    color: var(--kid-ink-soft);
+    font-weight: 600;
+}
+
+.kid-info-value {
+    color: var(--kid-ink);
+    font-weight: 700;
+}
+
+.kid-error {
+    margin: 16px 0 24px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: rgba(248, 113, 113, 0.12);
+    color: #b91c1c;
+    font-weight: 600;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+@keyframes kidFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

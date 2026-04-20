@@ -188,17 +188,9 @@ class DependientesManager {
 
     async verDependiente(id) {
         console.log('👁️ EJECUTANDO verDependiente con ID:', id);
-        try {
-            console.log('📞 Llamando API para obtener dependiente...');
-            const res = await this.api('obtener', 'GET', null, { id });
-            console.log('📨 Respuesta API obtener dependiente:', res);
-            this.dependienteActual = res.data;
-            console.log('✅ Dependiente actual asignado:', this.dependienteActual);
-            await this.mostrarVistaDependiente();
-        } catch (error) {
-            console.error('❌ Error en verDependiente:', error);
-            alert('Error al cargar dependiente: ' + error.message);
-        }
+        if (!id) return;
+        sessionStorage.setItem('dependiente_id', String(id));
+        window.location.href = `dependiente.html?id=${encodeURIComponent(String(id))}`;
     }
 
     async mostrarVistaDependiente() {
