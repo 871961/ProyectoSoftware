@@ -16,6 +16,7 @@ class ChatMedicosUI {
         this.searchDebounceTimer = null;
         this.searchTerm = '';
         this.selectedFile = null;
+        this.previewObjectUrl = null;
 
         this.contactListEl = document.getElementById('chatContactList');
         this.messagesEl = document.getElementById('chatMessages');
@@ -33,6 +34,7 @@ class ChatMedicosUI {
         this.attachmentPreviewEl = document.getElementById('chatAttachmentPreview');
         this.removeAttachmentBtn = null;
         this.mensajesTabEl = document.getElementById('tab-mensajes');
+        this.navMensajesBadgeEl = document.getElementById('navMensajesBadge');
     }
 
     async init() {
@@ -155,6 +157,7 @@ class ChatMedicosUI {
 
             this.contactos = resMedicos.data || [];
             this.conversaciones = resConversaciones.data || [];
+            this.actualizarBadgeMensajes();
 
             if (this.contactoActivo) {
                 const sigueVisible = this.contactos.some((m) => Number(m.id_medico) === Number(this.contactoActivo.id_medico));
@@ -235,9 +238,9 @@ class ChatMedicosUI {
 
             const activo = this.contactoActivo && Number(this.contactoActivo.id_medico) === Number(c.id_medico);
             if (activo) {
-                btn.classList.add('bg-cyan-900/60', 'border-cyan-400', 'shadow-lg', 'scale-[1.01]');
+                btn.classList.add('bg-cyan-50', 'border-cyan-300', 'shadow-sm');
             } else {
-                btn.classList.add('bg-slate-800/70', 'border-slate-700', 'hover:bg-slate-700/80', 'hover:translate-x-0.5');
+                btn.classList.add('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:translate-x-0.5');
             }
 
             const nombreCompleto = `${c.nombre || ''} ${c.apellidos || ''}`.trim();
@@ -257,19 +260,19 @@ class ChatMedicosUI {
             top.className = 'flex items-center justify-between gap-2';
 
             const title = document.createElement('p');
-            title.className = 'font-semibold text-slate-50 text-sm truncate';
+            title.className = 'font-semibold text-slate-800 text-sm truncate';
             title.textContent = nombreCompleto || `Medico ${c.id_medico}`;
             top.appendChild(title);
 
             if (c.no_leidos > 0) {
                 const badge = document.createElement('span');
-                badge.className = 'px-2 py-0.5 rounded-full bg-cyan-500 text-white text-xs font-semibold';
+                badge.className = 'px-2 py-0.5 rounded-full bg-red-600 text-white text-xs font-semibold';
                 badge.textContent = String(c.no_leidos);
                 top.appendChild(badge);
             }
 
             const sub = document.createElement('p');
-            sub.className = 'text-xs text-slate-300 mt-1 truncate';
+            sub.className = 'text-xs text-slate-500 mt-1 truncate';
             const colegiado = c.num_colegiado ? ` · Col. ${c.num_colegiado}` : '';
             sub.textContent = `${c.especialidad || 'Medico'}${colegiado}`;
 
@@ -323,6 +326,9 @@ class ChatMedicosUI {
     renderMensajes(mensajes, autoScroll) {
         if (!this.messagesEl) return;
 
+        const distanciaAlFinal = this.messagesEl.scrollHeight - this.messagesEl.scrollTop - this.messagesEl.clientHeight;
+        const estabaCercaDelFinal = distanciaAlFinal < 120;
+
         this.messagesEl.innerHTML = '';
 
         if (!mensajes.length) {
@@ -333,14 +339,30 @@ class ChatMedicosUI {
             return;
         }
 
+        let ultimoDia = null;
+
         mensajes.forEach((m) => {
+            const diaClave = this.obtenerClaveDia(m.enviado_en);
+            if (diaClave && diaClave !== ultimoDia) {
+                const separadorRow = document.createElement('div');
+                separadorRow.className = 'flex justify-center my-2';
+
+                const separador = document.createElement('span');
+                separador.className = 'px-3 py-1 rounded-full text-[11px] font-medium bg-slate-200 text-slate-600';
+                separador.textContent = this.formatearEtiquetaDia(m.enviado_en);
+
+                separadorRow.appendChild(separador);
+                this.messagesEl.appendChild(separadorRow);
+                ultimoDia = diaClave;
+            }
+
             const propio = Number(m.id_emisor) === Number(this.usuario.id);
             const row = document.createElement('div');
             row.className = `flex ${propio ? 'justify-end' : 'justify-start'}`;
 
             const bubble = document.createElement('div');
             bubble.className = propio
-                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg'
+                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-[#d9fdd3] text-slate-800 shadow-sm border border-[#c5ebbf]'
                 : 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-900 shadow-md';
 
             const text = document.createElement('p');
@@ -354,7 +376,7 @@ class ChatMedicosUI {
                 fileCard.target = '_blank';
                 fileCard.rel = 'noopener noreferrer';
                 fileCard.className = propio
-                    ? 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-white/15 hover:bg-white/20 border border-white/20'
+                    ? 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-[#c8f7bf] hover:bg-[#bef0b4] border border-[#a8dfa0]'
                     : 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-cyan-50 hover:bg-cyan-100 border border-cyan-100';
 
                 const icon = document.createElement('span');
@@ -365,11 +387,11 @@ class ChatMedicosUI {
                 info.className = 'min-w-0';
 
                 const name = document.createElement('p');
-                name.className = propio ? 'text-xs font-semibold text-white truncate' : 'text-xs font-semibold text-slate-800 truncate';
+                name.className = propio ? 'text-xs font-semibold text-slate-800 truncate' : 'text-xs font-semibold text-slate-800 truncate';
                 name.textContent = m.nombre_archivo || 'Adjunto';
 
                 const size = document.createElement('p');
-                size.className = propio ? 'text-[11px] text-cyan-100' : 'text-[11px] text-slate-500';
+                size.className = propio ? 'text-[11px] text-slate-600' : 'text-[11px] text-slate-500';
                 size.textContent = this.formatearTamano(m.tamano_bytes);
 
                 info.appendChild(name);
@@ -378,12 +400,29 @@ class ChatMedicosUI {
                 fileCard.appendChild(icon);
                 fileCard.appendChild(info);
                 bubble.appendChild(fileCard);
+
+                if (this.esImagenAdjunta(m.nombre_archivo)) {
+                    const imageWrap = document.createElement('a');
+                    imageWrap.href = m.archivo_url;
+                    imageWrap.target = '_blank';
+                    imageWrap.rel = 'noopener noreferrer';
+                    imageWrap.className = 'block mt-2';
+
+                    const img = document.createElement('img');
+                    img.src = m.archivo_url;
+                    img.alt = m.nombre_archivo || 'Imagen adjunta';
+                    img.className = 'max-h-48 rounded-lg border border-black/10 object-cover';
+                    img.loading = 'lazy';
+
+                    imageWrap.appendChild(img);
+                    bubble.appendChild(imageWrap);
+                }
             }
 
             const meta = document.createElement('p');
-            meta.className = propio ? 'text-[11px] text-blue-100 mt-1' : 'text-[11px] text-gray-500 mt-1';
+            meta.className = propio ? 'text-[11px] text-slate-600 mt-1' : 'text-[11px] text-gray-500 mt-1';
 
-            const fecha = this.formatearFecha(m.enviado_en);
+            const fecha = this.formatearHora(m.enviado_en);
             const estado = propio ? (m.leido_en ? 'Leido' : 'Enviado') : 'Recibido';
             meta.textContent = `${fecha} · ${estado}`;
             bubble.appendChild(meta);
@@ -392,8 +431,11 @@ class ChatMedicosUI {
             this.messagesEl.appendChild(row);
         });
 
-        if (autoScroll) {
-            this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+        if (autoScroll || estabaCercaDelFinal) {
+            this.messagesEl.scrollTo({
+                top: this.messagesEl.scrollHeight,
+                behavior: autoScroll ? 'auto' : 'smooth'
+            });
         }
     }
 
@@ -484,6 +526,12 @@ class ChatMedicosUI {
 
     renderAttachmentPreview() {
         if (!this.attachmentPreviewEl) return;
+
+        if (this.previewObjectUrl) {
+            URL.revokeObjectURL(this.previewObjectUrl);
+            this.previewObjectUrl = null;
+        }
+
         if (!this.selectedFile) {
             this.attachmentPreviewEl.classList.add('hidden');
             this.attachmentPreviewEl.textContent = '';
@@ -519,6 +567,15 @@ class ChatMedicosUI {
         info.appendChild(badge);
         info.appendChild(textWrap);
 
+        if (this.esImagenAdjunta(this.selectedFile.name)) {
+            this.previewObjectUrl = URL.createObjectURL(this.selectedFile);
+            const thumb = document.createElement('img');
+            thumb.src = this.previewObjectUrl;
+            thumb.alt = 'Vista previa';
+            thumb.className = 'w-12 h-12 rounded-lg object-cover border border-slate-200';
+            info.insertBefore(thumb, textWrap);
+        }
+
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'w-7 h-7 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center';
@@ -551,6 +608,62 @@ class ChatMedicosUI {
         if (file.endsWith('.pdf')) return '[PDF]';
         if (file.endsWith('.doc') || file.endsWith('.docx')) return '[DOC]';
         return '[FILE]';
+    }
+
+    esImagenAdjunta(name) {
+        const file = String(name || '').toLowerCase();
+        return file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg');
+    }
+
+    obtenerClaveDia(value) {
+        if (!value) return null;
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return null;
+        return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    }
+
+    formatearEtiquetaDia(value) {
+        if (!value) return '';
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return '';
+
+        const hoy = new Date();
+        const hoyClave = `${hoy.getFullYear()}-${hoy.getMonth() + 1}-${hoy.getDate()}`;
+        const diaClave = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+
+        if (diaClave === hoyClave) {
+            return 'Hoy';
+        }
+
+        return d.toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    formatearHora(value) {
+        if (!value) return '-';
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return value;
+        return d.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    actualizarBadgeMensajes() {
+        if (!this.navMensajesBadgeEl) return;
+        const total = (this.conversaciones || []).reduce((acc, item) => acc + Number(item.no_leidos || 0), 0);
+        if (total > 0) {
+            this.navMensajesBadgeEl.textContent = total > 99 ? '99+' : String(total);
+            this.navMensajesBadgeEl.classList.remove('hidden');
+            this.navMensajesBadgeEl.classList.add('inline-flex');
+        } else {
+            this.navMensajesBadgeEl.textContent = '0';
+            this.navMensajesBadgeEl.classList.add('hidden');
+            this.navMensajesBadgeEl.classList.remove('inline-flex');
+        }
     }
 }
 
