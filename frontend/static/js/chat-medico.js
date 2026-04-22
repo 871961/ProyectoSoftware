@@ -238,9 +238,9 @@ class ChatMedicosUI {
 
             const activo = this.contactoActivo && Number(this.contactoActivo.id_medico) === Number(c.id_medico);
             if (activo) {
-                btn.classList.add('bg-cyan-50', 'border-cyan-300', 'shadow-sm');
+                btn.classList.add('bg-blue-100', 'border-blue-300', 'shadow-sm', 'scale-[1.01]');
             } else {
-                btn.classList.add('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:translate-x-0.5');
+                btn.classList.add('bg-white', 'border-slate-200', 'hover:bg-blue-50', 'hover:translate-x-0.5');
             }
 
             const nombreCompleto = `${c.nombre || ''} ${c.apellidos || ''}`.trim();
@@ -358,12 +358,12 @@ class ChatMedicosUI {
 
             const propio = Number(m.id_emisor) === Number(this.usuario.id);
             const row = document.createElement('div');
-            row.className = `flex ${propio ? 'justify-end' : 'justify-start'}`;
+            row.className = `flex ${propio ? 'justify-end' : 'justify-start'} items-end`;
 
             const bubble = document.createElement('div');
             bubble.className = propio
-                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-[#d9fdd3] text-slate-800 shadow-sm border border-[#c5ebbf]'
-                : 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-900 shadow-md';
+                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-[#d9fdd3] text-slate-800 shadow-sm border border-[#bde9b4] hover:shadow-md transition-shadow'
+                : 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-900 shadow-md hover:shadow-lg transition-shadow';
 
             const text = document.createElement('p');
             text.className = 'text-sm whitespace-pre-wrap break-words';
@@ -565,6 +565,10 @@ class ChatMedicosUI {
         textWrap.appendChild(fileName);
         textWrap.appendChild(fileSize);
         info.appendChild(badge);
+                const author = document.createElement('p');
+                author.className = propio ? 'text-[11px] font-semibold text-emerald-700 mb-1' : 'text-[11px] font-semibold text-cyan-700 mb-1';
+                author.textContent = propio ? 'Tu' : (this.activeTitleEl?.textContent || 'Medico');
+                bubble.appendChild(author);
         info.appendChild(textWrap);
 
         if (this.esImagenAdjunta(this.selectedFile.name)) {
