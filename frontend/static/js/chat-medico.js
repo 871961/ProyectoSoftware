@@ -31,6 +31,7 @@ class ChatMedicosUI {
         this.attachBtnEl = document.getElementById('chatAttachBtn');
         this.fileInputEl = document.getElementById('chatFileInput');
         this.attachmentPreviewEl = document.getElementById('chatAttachmentPreview');
+        this.removeAttachmentBtn = null;
         this.mensajesTabEl = document.getElementById('tab-mensajes');
     }
 
@@ -78,6 +79,8 @@ class ChatMedicosUI {
             this.selectedFile = f;
             this.renderAttachmentPreview();
         });
+
+        this.renderAttachmentPreview();
     }
 
     iniciarAutoRefresh() {
@@ -193,7 +196,12 @@ class ChatMedicosUI {
         const mapaConversaciones = new Map();
         this.conversaciones.forEach((c) => mapaConversaciones.set(Number(c.id_contacto), c));
 
-        const mezclados = this.contactos.map((m) => {
+        const unicos = new Map();
+        this.contactos.forEach((m) => {
+            unicos.set(Number(m.id_medico), m);
+        });
+
+        const mezclados = Array.from(unicos.values()).map((m) => {
             const conv = mapaConversaciones.get(Number(m.id_medico));
             return {
                 id_medico: Number(m.id_medico),
@@ -223,13 +231,13 @@ class ChatMedicosUI {
         mezclados.forEach((c) => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'w-full text-left p-3 rounded-xl border transition-all';
+            btn.className = 'w-full text-left p-3 rounded-xl border transition-all duration-200';
 
             const activo = this.contactoActivo && Number(this.contactoActivo.id_medico) === Number(c.id_medico);
             if (activo) {
-                btn.classList.add('bg-cyan-900/60', 'border-cyan-400', 'shadow-lg');
+                btn.classList.add('bg-cyan-900/60', 'border-cyan-400', 'shadow-lg', 'scale-[1.01]');
             } else {
-                btn.classList.add('bg-slate-800/70', 'border-slate-700', 'hover:bg-slate-700/80');
+                btn.classList.add('bg-slate-800/70', 'border-slate-700', 'hover:bg-slate-700/80', 'hover:translate-x-0.5');
             }
 
             const nombreCompleto = `${c.nombre || ''} ${c.apellidos || ''}`.trim();
@@ -255,7 +263,7 @@ class ChatMedicosUI {
 
             if (c.no_leidos > 0) {
                 const badge = document.createElement('span');
-                badge.className = 'px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold';
+                badge.className = 'px-2 py-0.5 rounded-full bg-cyan-500 text-white text-xs font-semibold';
                 badge.textContent = String(c.no_leidos);
                 top.appendChild(badge);
             }
@@ -479,10 +487,53 @@ class ChatMedicosUI {
         if (!this.selectedFile) {
             this.attachmentPreviewEl.classList.add('hidden');
             this.attachmentPreviewEl.textContent = '';
+            this.attachmentPreviewEl.innerHTML = '';
             return;
         }
-        const text = `${this.iconoPorArchivo(this.selectedFile.name)} ${this.selectedFile.name} (${this.formatearTamano(this.selectedFile.size)})`;
-        this.attachmentPreviewEl.textContent = text;
+        this.attachmentPreviewEl.classList.remove('hidden');
+        this.attachmentPreviewEl.innerHTML = '';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'flex items-center justify-between gap-3';
+
+        const info = document.createElement('div');
+        info.className = 'min-w-0 flex items-center gap-2';
+
+        const badge = document.createElement('span');
+        badge.className = 'text-xs font-semibold px-2 py-1 rounded-full bg-slate-900 text-white';
+        badge.textContent = this.iconoPorArchivo(this.selectedFile.name);
+
+        const textWrap = document.createElement('div');
+        textWrap.className = 'min-w-0';
+
+        const fileName = document.createElement('p');
+        fileName.className = 'text-xs font-medium text-slate-700 truncate';
+        fileName.textContent = this.selectedFile.name;
+
+        const fileSize = document.createElement('p');
+        fileSize.className = 'text-[11px] text-slate-500';
+        fileSize.textContent = this.formatearTamano(this.selectedFile.size);
+
+        textWrap.appendChild(fileName);
+        textWrap.appendChild(fileSize);
+        info.appendChild(badge);
+        info.appendChild(textWrap);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'w-7 h-7 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center';
+        removeBtn.title = 'Quitar archivo';
+        removeBtn.setAttribute('aria-label', 'Quitar archivo');
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => {
+            this.selectedFile = null;
+            if (this.fileInputEl) this.fileInputEl.value = '';
+            this.renderAttachmentPreview();
+        });
+
+        wrap.appendChild(info);
+        wrap.appendChild(removeBtn);
+        this.attachmentPreviewEl.appendChild(wrap);
         this.attachmentPreviewEl.classList.remove('hidden');
     }
 

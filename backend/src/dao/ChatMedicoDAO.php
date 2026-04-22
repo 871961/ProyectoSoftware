@@ -88,21 +88,23 @@ class ChatMedicoDAO {
         }
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
+        $params = [
             ':id_emisor' => $idEmisor,
             ':id_receptor' => $idReceptor,
             ':mensaje_cifrado' => $mensajeCifrado,
             ':nonce' => $nonce,
             ':tag' => $tag,
             ':algoritmo' => $algoritmo
-        ]);
+        ];
 
         if ($usaAdjuntos) {
-            $stmt->bindValue(':tipo_contenido', $tipoContenido);
-            $stmt->bindValue(':nombre_archivo', $nombreArchivo);
-            $stmt->bindValue(':ruta_archivo', $rutaArchivo);
-            $stmt->bindValue(':tamano_bytes', $tamanoBytes, $tamanoBytes === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $params[':tipo_contenido'] = $tipoContenido;
+            $params[':nombre_archivo'] = $nombreArchivo;
+            $params[':ruta_archivo'] = $rutaArchivo;
+            $params[':tamano_bytes'] = $tamanoBytes;
         }
+
+        $stmt->execute($params);
 
         $fila = $stmt->fetch(PDO::FETCH_ASSOC);
 
