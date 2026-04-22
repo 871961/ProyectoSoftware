@@ -217,6 +217,24 @@ SOLUCIÓN:
    3. Si persiste, verifica que en datos_prueba.sql hay médicos con tipo 'general'
 
 
+PROBLEMA 6: Chat médico muestra "falta CHAT_ENCRYPTION_KEY"
+-------------------------------------------------------
+CAUSA: No está configurada la clave de cifrado del chat
+SOLUCIÓN:
+   1. Genera una clave segura (32 bytes):
+      PowerShell:
+      [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 } | ForEach-Object { [byte]$_ }))
+   2. Configura la variable de entorno en Apache (VirtualHost o httpd.conf):
+      SetEnv CHAT_ENCRYPTION_KEY "<TU_CLAVE_BASE64>"
+   3. Reinicia Apache y prueba de nuevo.
+
+NOTA DE SEGURIDAD PARA ENTORNO SANITARIO
+-------------------------------------------------------
+- Usa HTTPS obligatorio en despliegue real (TLS 1.2+).
+- Mantén la clave de cifrado fuera de Git y rota la clave según política interna.
+- El chat está diseñado para coordinación asistencial: evita incluir datos clínicos innecesarios.
+
+
 ===============================================================================
 📞 SI TODO FALLA...
 ===============================================================================

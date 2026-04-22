@@ -11,6 +11,7 @@
 
 -- Limpieza (opcional - comentar si no quieres borrar datos existentes)
 DROP TABLE IF EXISTS auditoria_logs CASCADE;
+DROP TABLE IF EXISTS chat_mensajes CASCADE;
 DROP TABLE IF EXISTS recordatorios CASCADE;
 DROP TABLE IF EXISTS consultas CASCADE;
 DROP TABLE IF EXISTS antecedentes_familiares CASCADE;
@@ -168,6 +169,24 @@ CREATE TABLE consultas (
 -- RECORDATORIOS Y AUDITORÍA
 -- =============================================================================
 
+-- Chat seguro medico-medico (contenido cifrado en reposo)
+CREATE TABLE chat_mensajes (
+    id_mensaje SERIAL PRIMARY KEY,
+    id_emisor INT NOT NULL,
+    id_receptor INT NOT NULL,
+    mensaje_cifrado TEXT NOT NULL,
+    nonce VARCHAR(64) NOT NULL,
+    tag VARCHAR(64) NOT NULL,
+    algoritmo VARCHAR(32) NOT NULL DEFAULT 'aes-256-gcm',
+    enviado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leido_en TIMESTAMP,
+    eliminado_por_emisor BOOLEAN DEFAULT FALSE,
+    eliminado_por_receptor BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_chat_emisor FOREIGN KEY (id_emisor) REFERENCES medicos(id_medico),
+    CONSTRAINT fk_chat_receptor FOREIGN KEY (id_receptor) REFERENCES medicos(id_medico),
+    CONSTRAINT chk_chat_distinto_autor CHECK (id_emisor <> id_receptor)
+);
+
 -- Recordatorios asociados a consultas
 CREATE TABLE recordatorios (
     id_recordatorio SERIAL PRIMARY KEY,
@@ -223,6 +242,8 @@ CREATE INDEX idx_administradores_email ON administradores(email);
 CREATE INDEX idx_consultas_paciente ON consultas(id_paciente);
 CREATE INDEX idx_consultas_medico ON consultas(id_medico);
 CREATE INDEX idx_consultas_fecha ON consultas(fecha);
+CREATE INDEX idx_chat_emisor_receptor_fecha ON chat_mensajes(id_emisor, id_receptor, enviado_en DESC);
+CREATE INDEX idx_chat_receptor_leido ON chat_mensajes(id_receptor, leido_en);
 CREATE INDEX idx_recordatorios_fecha ON recordatorios(fecha_hora);
 CREATE INDEX idx_auditoria_fecha ON auditoria_logs(fecha_hora);
 
@@ -239,6 +260,7 @@ COMMENT ON TABLE perfiles_salud IS 'Información detallada de salud de cada paci
 COMMENT ON TABLE enfermedades_catalogo IS 'Catálogo de enfermedades para antecedentes familiares';
 COMMENT ON TABLE antecedentes_familiares IS 'Historial familiar de enfermedades de cada paciente';
 COMMENT ON TABLE consultas IS 'Registro de todas las consultas médicas realizadas';
+COMMENT ON TABLE chat_mensajes IS 'Mensajeria cifrada medico-medico para coordinacion asistencial';
 COMMENT ON TABLE recordatorios IS 'Recordatorios asociados a consultas (medicación, citas, controles)';
 COMMENT ON TABLE auditoria_logs IS 'Log de auditoría para trazabilidad y cumplimiento legal';
 
