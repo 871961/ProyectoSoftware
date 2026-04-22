@@ -309,6 +309,10 @@ try {
 
             aplicarRateLimitChat();
 
+            if (!$dao->soportaAdjuntos()) {
+                throw new Exception('Tu base de datos aun no tiene aplicada la migracion de adjuntos del chat. Ejecuta database/chat_medicos_seguro.sql antes de enviar archivos.');
+            }
+
             $idReceptor = (int) ($_POST['id_receptor'] ?? 0);
             $mensaje = trim((string) ($_POST['mensaje'] ?? ''));
 

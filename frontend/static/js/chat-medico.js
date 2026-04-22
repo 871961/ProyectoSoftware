@@ -227,9 +227,9 @@ class ChatMedicosUI {
 
             const activo = this.contactoActivo && Number(this.contactoActivo.id_medico) === Number(c.id_medico);
             if (activo) {
-                btn.classList.add('bg-cyan-900/50', 'border-cyan-600', 'shadow-sm');
+                btn.classList.add('bg-cyan-900/60', 'border-cyan-400', 'shadow-lg');
             } else {
-                btn.classList.add('bg-slate-800/60', 'border-slate-700', 'hover:bg-slate-700/70');
+                btn.classList.add('bg-slate-800/70', 'border-slate-700', 'hover:bg-slate-700/80');
             }
 
             const nombreCompleto = `${c.nombre || ''} ${c.apellidos || ''}`.trim();
@@ -249,7 +249,7 @@ class ChatMedicosUI {
             top.className = 'flex items-center justify-between gap-2';
 
             const title = document.createElement('p');
-            title.className = 'font-semibold text-slate-100 text-sm truncate';
+            title.className = 'font-semibold text-slate-50 text-sm truncate';
             title.textContent = nombreCompleto || `Medico ${c.id_medico}`;
             top.appendChild(title);
 
@@ -332,8 +332,8 @@ class ChatMedicosUI {
 
             const bubble = document.createElement('div');
             bubble.className = propio
-                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-cyan-600 text-white shadow-sm'
-                : 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-900 shadow-sm';
+                ? 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg'
+                : 'max-w-[78%] px-3 py-2.5 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-900 shadow-md';
 
             const text = document.createElement('p');
             text.className = 'text-sm whitespace-pre-wrap break-words';
@@ -346,8 +346,8 @@ class ChatMedicosUI {
                 fileCard.target = '_blank';
                 fileCard.rel = 'noopener noreferrer';
                 fileCard.className = propio
-                    ? 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-cyan-500/30 hover:bg-cyan-500/40'
-                    : 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-slate-100 hover:bg-slate-200';
+                    ? 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-white/15 hover:bg-white/20 border border-white/20'
+                    : 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-cyan-50 hover:bg-cyan-100 border border-cyan-100';
 
                 const icon = document.createElement('span');
                 icon.className = 'text-base';

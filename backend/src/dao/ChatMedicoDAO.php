@@ -8,9 +8,26 @@ require_once __DIR__ . '/../config/database.php';
 
 class ChatMedicoDAO {
     private $db;
+    private $supportsAttachmentColumns = null;
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+    }
+
+    private function chatSupportsAttachmentColumns() {
+        if ($this->supportsAttachmentColumns !== null) {
+            return $this->supportsAttachmentColumns;
+        }
+
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_name = 'chat_mensajes'
+                  AND column_name IN ('tipo_contenido', 'nombre_archivo', 'ruta_archivo', 'tamano_bytes')";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $this->supportsAttachmentColumns = ((int)$stmt->fetchColumn() >= 4);
+
+        return $this->supportsAttachmentColumns;
     }
 
     public function listarMedicosDisponibles($idMedicoActual, $busqueda = '') {
@@ -49,12 +66,26 @@ class ChatMedicoDAO {
         return $stmt->fetchColumn();
     }
 
+    public function soportaAdjuntos() {
+        return $this->chatSupportsAttachmentColumns();
+    }
+
     public function crearMensaje($idEmisor, $idReceptor, $mensajeCifrado, $nonce, $tag, $algoritmo, $tipoContenido = 'texto', $nombreArchivo = null, $rutaArchivo = null, $tamanoBytes = null) {
-        $sql = "INSERT INTO chat_mensajes
-                    (id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes)
-                VALUES
-                    (:id_emisor, :id_receptor, :mensaje_cifrado, :nonce, :tag, :algoritmo, :tipo_contenido, :nombre_archivo, :ruta_archivo, :tamano_bytes)
-                RETURNING id_mensaje, enviado_en";
+        $usaAdjuntos = $this->chatSupportsAttachmentColumns();
+
+        if ($usaAdjuntos) {
+            $sql = "INSERT INTO chat_mensajes
+                        (id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes)
+                    VALUES
+                        (:id_emisor, :id_receptor, :mensaje_cifrado, :nonce, :tag, :algoritmo, :tipo_contenido, :nombre_archivo, :ruta_archivo, :tamano_bytes)
+                    RETURNING id_mensaje, enviado_en";
+        } else {
+            $sql = "INSERT INTO chat_mensajes
+                        (id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo)
+                    VALUES
+                        (:id_emisor, :id_receptor, :mensaje_cifrado, :nonce, :tag, :algoritmo)
+                    RETURNING id_mensaje, enviado_en";
+        }
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -63,12 +94,15 @@ class ChatMedicoDAO {
             ':mensaje_cifrado' => $mensajeCifrado,
             ':nonce' => $nonce,
             ':tag' => $tag,
-            ':algoritmo' => $algoritmo,
-            ':tipo_contenido' => $tipoContenido,
-            ':nombre_archivo' => $nombreArchivo,
-            ':ruta_archivo' => $rutaArchivo,
-            ':tamano_bytes' => $tamanoBytes
+            ':algoritmo' => $algoritmo
         ]);
+
+        if ($usaAdjuntos) {
+            $stmt->bindValue(':tipo_contenido', $tipoContenido);
+            $stmt->bindValue(':nombre_archivo', $nombreArchivo);
+            $stmt->bindValue(':ruta_archivo', $rutaArchivo);
+            $stmt->bindValue(':tamano_bytes', $tamanoBytes, $tamanoBytes === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        }
 
         $fila = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -87,7 +121,12 @@ class ChatMedicoDAO {
     }
 
     public function obtenerConversacion($idMedicoA, $idMedicoB, $limite = 100) {
-        $sql = "SELECT id_mensaje, id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes, enviado_en, leido_en
+        $usaAdjuntos = $this->chatSupportsAttachmentColumns();
+        $camposAdjuntos = $usaAdjuntos
+            ? ", tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes"
+            : ", 'texto' AS tipo_contenido, NULL AS nombre_archivo, NULL AS ruta_archivo, NULL::INT AS tamano_bytes";
+
+        $sql = "SELECT id_mensaje, id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo{$camposAdjuntos}, enviado_en, leido_en
                 FROM chat_mensajes
                 WHERE (
                     id_emisor = :id_a AND id_receptor = :id_b AND eliminado_por_emisor = FALSE
@@ -155,7 +194,12 @@ class ChatMedicoDAO {
     }
 
         public function obtenerMensajePorIdParaMedico($idMensaje, $idMedico) {
-                $sql = "SELECT id_mensaje, id_emisor, id_receptor, nombre_archivo, ruta_archivo, tamano_bytes, tipo_contenido
+            $usaAdjuntos = $this->chatSupportsAttachmentColumns();
+            $camposAdjuntos = $usaAdjuntos
+                ? ", nombre_archivo, ruta_archivo, tamano_bytes, tipo_contenido"
+                : ", NULL AS nombre_archivo, NULL AS ruta_archivo, NULL::INT AS tamano_bytes, 'texto' AS tipo_contenido";
+
+            $sql = "SELECT id_mensaje, id_emisor, id_receptor{$camposAdjuntos}
                                 FROM chat_mensajes
                                 WHERE id_mensaje = :id_mensaje
                                     AND (
