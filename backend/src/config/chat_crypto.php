@@ -5,10 +5,36 @@
  * Nota: Configurar CHAT_ENCRYPTION_KEY en el entorno del servidor.
  */
 
+function runningInLocalEnvironment() {
+    $host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? ''));
+    return strpos($host, 'localhost') !== false
+        || strpos($host, '127.0.0.1') !== false
+        || strpos($host, '.local') !== false;
+}
+
+function getLocalChatKeyPath() {
+    return __DIR__ . '/chat_key.local.txt';
+}
+
+function loadOrCreateLocalChatKey() {
+    $path = getLocalChatKeyPath();
+    if (is_file($path)) {
+        return trim((string) file_get_contents($path));
+    }
+
+    $newKey = base64_encode(random_bytes(32));
+    @file_put_contents($path, $newKey, LOCK_EX);
+    return $newKey;
+}
+
 function getChatEncryptionKey() {
     $rawKey = trim((string) getenv('CHAT_ENCRYPTION_KEY'));
     if ($rawKey === '') {
-        throw new Exception('No se puede iniciar chat seguro: falta CHAT_ENCRYPTION_KEY');
+        if (runningInLocalEnvironment()) {
+            $rawKey = loadOrCreateLocalChatKey();
+        } else {
+            throw new Exception('No se puede iniciar chat seguro: falta CHAT_ENCRYPTION_KEY');
+        }
     }
 
     $decoded = base64_decode($rawKey, true);

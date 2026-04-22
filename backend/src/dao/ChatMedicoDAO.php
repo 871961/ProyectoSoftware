@@ -13,15 +13,32 @@ class ChatMedicoDAO {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function listarMedicosDisponibles($idMedicoActual) {
-        $sql = "SELECT m.id_medico, m.nombre, m.apellidos, m.tipo_medico, COALESCE(me.especialidad, 'Medico General') AS especialidad
+    public function listarMedicosDisponibles($idMedicoActual, $busqueda = '') {
+        $sql = "SELECT m.id_medico, m.nombre, m.apellidos, m.num_colegiado, m.tipo_medico, COALESCE(me.especialidad, 'Medico General') AS especialidad
                 FROM medicos m
                 LEFT JOIN medicos_especialistas me ON me.id_medico = m.id_medico
-                WHERE m.activo = TRUE AND m.id_medico <> :id_medico
+                WHERE m.activo = TRUE
+                  AND m.id_medico <> :id_medico";
+
+        $params = [':id_medico' => $idMedicoActual];
+        $busqueda = trim((string) $busqueda);
+
+        if ($busqueda !== '') {
+            $sql .= "
+                  AND (
+                    lower(m.nombre) LIKE lower(:q_like)
+                   OR lower(m.apellidos) LIKE lower(:q_like)
+                   OR lower(m.nombre || ' ' || m.apellidos) LIKE lower(:q_like)
+                     OR m.num_colegiado ILIKE :q_like
+                  )";
+            $params[':q_like'] = '%' . $busqueda . '%';
+        }
+
+        $sql .= "
                 ORDER BY m.apellidos, m.nombre";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id_medico' => $idMedicoActual]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -32,11 +49,11 @@ class ChatMedicoDAO {
         return $stmt->fetchColumn();
     }
 
-    public function crearMensaje($idEmisor, $idReceptor, $mensajeCifrado, $nonce, $tag, $algoritmo) {
+    public function crearMensaje($idEmisor, $idReceptor, $mensajeCifrado, $nonce, $tag, $algoritmo, $tipoContenido = 'texto', $nombreArchivo = null, $rutaArchivo = null, $tamanoBytes = null) {
         $sql = "INSERT INTO chat_mensajes
-                    (id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo)
+                    (id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes)
                 VALUES
-                    (:id_emisor, :id_receptor, :mensaje_cifrado, :nonce, :tag, :algoritmo)
+                    (:id_emisor, :id_receptor, :mensaje_cifrado, :nonce, :tag, :algoritmo, :tipo_contenido, :nombre_archivo, :ruta_archivo, :tamano_bytes)
                 RETURNING id_mensaje, enviado_en";
 
         $stmt = $this->db->prepare($sql);
@@ -46,7 +63,11 @@ class ChatMedicoDAO {
             ':mensaje_cifrado' => $mensajeCifrado,
             ':nonce' => $nonce,
             ':tag' => $tag,
-            ':algoritmo' => $algoritmo
+            ':algoritmo' => $algoritmo,
+            ':tipo_contenido' => $tipoContenido,
+            ':nombre_archivo' => $nombreArchivo,
+            ':ruta_archivo' => $rutaArchivo,
+            ':tamano_bytes' => $tamanoBytes
         ]);
 
         $fila = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,14 +76,18 @@ class ChatMedicoDAO {
             $idEmisor,
             'CHAT_SEND',
             isset($fila['id_mensaje']) ? $fila['id_mensaje'] : null,
-            ['id_receptor' => (int)$idReceptor]
+            [
+                'id_receptor' => (int)$idReceptor,
+                'tipo_contenido' => $tipoContenido,
+                'nombre_archivo' => $nombreArchivo
+            ]
         );
 
         return $fila;
     }
 
     public function obtenerConversacion($idMedicoA, $idMedicoB, $limite = 100) {
-        $sql = "SELECT id_mensaje, id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, enviado_en, leido_en
+        $sql = "SELECT id_mensaje, id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo, tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes, enviado_en, leido_en
                 FROM chat_mensajes
                 WHERE (
                     id_emisor = :id_a AND id_receptor = :id_b AND eliminado_por_emisor = FALSE
@@ -128,6 +153,26 @@ class ChatMedicoDAO {
         $stmt->execute([':id_medico' => $idMedico]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+        public function obtenerMensajePorIdParaMedico($idMensaje, $idMedico) {
+                $sql = "SELECT id_mensaje, id_emisor, id_receptor, nombre_archivo, ruta_archivo, tamano_bytes, tipo_contenido
+                                FROM chat_mensajes
+                                WHERE id_mensaje = :id_mensaje
+                                    AND (
+                                        (id_emisor = :id_medico AND eliminado_por_emisor = FALSE)
+                                        OR
+                                        (id_receptor = :id_medico AND eliminado_por_receptor = FALSE)
+                                    )
+                                LIMIT 1";
+
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                        ':id_mensaje' => $idMensaje,
+                        ':id_medico' => $idMedico
+                ]);
+
+                return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
 
     public function registrarEventoChat($idMedico, $accion, $registroId = null, $detalles = []) {
         $this->registrarAuditoria($idMedico, $accion, $registroId, $detalles);

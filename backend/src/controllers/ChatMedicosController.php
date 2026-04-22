@@ -88,6 +88,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once '../dao/ChatMedicoDAO.php';
 require_once '../config/chat_crypto.php';
 
+function getChatUploadsBasePath() {
+    return dirname(__DIR__, 3) . '/uploads/chat';
+}
+
+function ensureChatUploadDirectory($idMedico) {
+    $base = getChatUploadsBasePath();
+    if (!is_dir($base)) {
+        @mkdir($base, 0775, true);
+    }
+
+    $folder = $base . '/medico_' . (int)$idMedico;
+    if (!is_dir($folder)) {
+        @mkdir($folder, 0775, true);
+    }
+
+    return $folder;
+}
+
+function getAllowedAttachmentMimeMap() {
+    return [
+        'image/png' => 'png',
+        'image/jpeg' => 'jpg',
+        'application/pdf' => 'pdf',
+        'application/msword' => 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx'
+    ];
+}
+
+function sanitizeFilename($name) {
+    $name = preg_replace('/[^A-Za-z0-9._-]/', '_', (string)$name);
+    return trim($name, '._-');
+}
+
+function streamAttachmentAndExit($absolutePath, $downloadName) {
+    if (!is_file($absolutePath) || !is_readable($absolutePath)) {
+        sendJson(['success' => false, 'mensaje' => 'Archivo no disponible'], 404);
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $absolutePath) ?: 'application/octet-stream';
+    finfo_close($finfo);
+
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    header('Content-Type: ' . $mime);
+    header('Content-Length: ' . filesize($absolutePath));
+    header('Content-Disposition: inline; filename="' . addslashes($downloadName) . '"');
+    header('X-Content-Type-Options: nosniff');
+    readfile($absolutePath);
+    exit();
+}
+
 function requireSession() {
     if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_tipo'])) {
         sendJson(['success' => false, 'mensaje' => 'Sesion no valida'], 401);
@@ -128,9 +182,14 @@ try {
     $idMedico = (int) $_SESSION['user_id'];
     $dao = new ChatMedicoDAO();
 
+    if (!$dao->medicoActivoPorId($idMedico)) {
+        sendJson(['success' => false, 'mensaje' => 'Tu cuenta medica esta inactiva. No puedes usar el chat.'], 403);
+    }
+
     switch ($accion) {
         case 'listar_medicos':
-            $medicos = $dao->listarMedicosDisponibles($idMedico);
+            $q = trim((string) ($_GET['q'] ?? ''));
+            $medicos = $dao->listarMedicosDisponibles($idMedico, $q);
             sendJson(['success' => true, 'data' => $medicos]);
             break;
 
@@ -167,7 +226,13 @@ try {
                     'id_mensaje' => (int)$m['id_mensaje'],
                     'id_emisor' => (int)$m['id_emisor'],
                     'id_receptor' => (int)$m['id_receptor'],
+                    'tipo_contenido' => $m['tipo_contenido'] ?? 'texto',
                     'mensaje' => $texto,
+                    'nombre_archivo' => $m['nombre_archivo'] ?? null,
+                    'tamano_bytes' => isset($m['tamano_bytes']) ? (int)$m['tamano_bytes'] : null,
+                    'archivo_url' => !empty($m['ruta_archivo'])
+                        ? ('/backend/src/controllers/ChatMedicosController.php?accion=descargar_archivo&id_mensaje=' . (int)$m['id_mensaje'])
+                        : null,
                     'enviado_en' => $m['enviado_en'],
                     'leido_en' => $m['leido_en']
                 ];
@@ -235,6 +300,113 @@ try {
                     'leido_en' => null
                 ]
             ]);
+            break;
+
+        case 'enviar_archivo':
+            if ($metodo !== 'POST') {
+                throw new Exception('Metodo no permitido');
+            }
+
+            aplicarRateLimitChat();
+
+            $idReceptor = (int) ($_POST['id_receptor'] ?? 0);
+            $mensaje = trim((string) ($_POST['mensaje'] ?? ''));
+
+            if ($idReceptor <= 0 || $idReceptor === $idMedico) {
+                throw new Exception('Receptor no valido');
+            }
+            if (!$dao->medicoActivoPorId($idReceptor)) {
+                throw new Exception('El medico receptor no esta disponible');
+            }
+            if (!isset($_FILES['archivo']) || !is_array($_FILES['archivo'])) {
+                throw new Exception('Debes adjuntar un archivo valido');
+            }
+
+            $archivo = $_FILES['archivo'];
+            if (($archivo['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+                throw new Exception('No se pudo cargar el archivo');
+            }
+
+            $maxBytes = 10 * 1024 * 1024;
+            $size = (int) ($archivo['size'] ?? 0);
+            if ($size <= 0 || $size > $maxBytes) {
+                throw new Exception('El archivo excede el limite de 10 MB');
+            }
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $archivo['tmp_name']) ?: '';
+            finfo_close($finfo);
+
+            $allowed = getAllowedAttachmentMimeMap();
+            if (!isset($allowed[$mime])) {
+                throw new Exception('Tipo de archivo no permitido. Solo PNG, JPG, PDF, DOC y DOCX');
+            }
+
+            $ext = $allowed[$mime];
+            $safeOriginal = sanitizeFilename((string) ($archivo['name'] ?? ('adjunto.' . $ext)));
+            if ($safeOriginal === '') {
+                $safeOriginal = 'adjunto.' . $ext;
+            }
+
+            $folder = ensureChatUploadDirectory($idMedico);
+            $storedName = date('Ymd_His') . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+            $absolutePath = $folder . '/' . $storedName;
+
+            if (!move_uploaded_file($archivo['tmp_name'], $absolutePath)) {
+                throw new Exception('No se pudo guardar el archivo adjunto');
+            }
+
+            $relativePath = 'medico_' . (int)$idMedico . '/' . $storedName;
+            $payloadText = $mensaje !== '' ? $mensaje : ('[Adjunto] ' . $safeOriginal);
+            if (mb_strlen($payloadText) > 2000) {
+                $payloadText = mb_substr($payloadText, 0, 2000);
+            }
+
+            $cifrado = encryptChatMessage($payloadText);
+            $nuevo = $dao->crearMensaje(
+                $idMedico,
+                $idReceptor,
+                $cifrado['mensaje_cifrado'],
+                $cifrado['nonce'],
+                $cifrado['tag'],
+                $cifrado['algoritmo'],
+                'archivo',
+                $safeOriginal,
+                $relativePath,
+                $size
+            );
+
+            sendJson([
+                'success' => true,
+                'mensaje' => 'Archivo enviado',
+                'data' => [
+                    'id_mensaje' => (int)$nuevo['id_mensaje'],
+                    'id_emisor' => $idMedico,
+                    'id_receptor' => $idReceptor,
+                    'tipo_contenido' => 'archivo',
+                    'mensaje' => $payloadText,
+                    'nombre_archivo' => $safeOriginal,
+                    'tamano_bytes' => $size,
+                    'archivo_url' => '/backend/src/controllers/ChatMedicosController.php?accion=descargar_archivo&id_mensaje=' . (int)$nuevo['id_mensaje'],
+                    'enviado_en' => $nuevo['enviado_en'],
+                    'leido_en' => null
+                ]
+            ]);
+            break;
+
+        case 'descargar_archivo':
+            $idMensaje = (int) ($_GET['id_mensaje'] ?? 0);
+            if ($idMensaje <= 0) {
+                throw new Exception('Mensaje no valido');
+            }
+
+            $mensaje = $dao->obtenerMensajePorIdParaMedico($idMensaje, $idMedico);
+            if (!$mensaje || empty($mensaje['ruta_archivo'])) {
+                throw new Exception('Archivo no disponible');
+            }
+
+            $fullPath = getChatUploadsBasePath() . '/' . ltrim((string)$mensaje['ruta_archivo'], '/\\');
+            streamAttachmentAndExit($fullPath, (string)($mensaje['nombre_archivo'] ?? 'adjunto'));
             break;
 
         case 'marcar_leidos':

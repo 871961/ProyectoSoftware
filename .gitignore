@@ -8,6 +8,7 @@
 # =============================================================================
 backend/src/config/config.php
 backend/src/config/database.php
+backend/src/config/chat_key.local.txt
 .env
 .env.local
 .env.production

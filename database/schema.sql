@@ -178,13 +178,18 @@ CREATE TABLE chat_mensajes (
     nonce VARCHAR(64) NOT NULL,
     tag VARCHAR(64) NOT NULL,
     algoritmo VARCHAR(32) NOT NULL DEFAULT 'aes-256-gcm',
+    tipo_contenido VARCHAR(20) NOT NULL DEFAULT 'texto',
+    nombre_archivo VARCHAR(255),
+    ruta_archivo TEXT,
+    tamano_bytes INT,
     enviado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     leido_en TIMESTAMP,
     eliminado_por_emisor BOOLEAN DEFAULT FALSE,
     eliminado_por_receptor BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_chat_emisor FOREIGN KEY (id_emisor) REFERENCES medicos(id_medico),
     CONSTRAINT fk_chat_receptor FOREIGN KEY (id_receptor) REFERENCES medicos(id_medico),
-    CONSTRAINT chk_chat_distinto_autor CHECK (id_emisor <> id_receptor)
+    CONSTRAINT chk_chat_distinto_autor CHECK (id_emisor <> id_receptor),
+    CONSTRAINT chk_chat_tipo_contenido CHECK (tipo_contenido IN ('texto', 'archivo'))
 );
 
 -- Recordatorios asociados a consultas
