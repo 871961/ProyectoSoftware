@@ -8,6 +8,7 @@ console.log('*** dashboard-medico.js cargado ***');
 const CONSULTAS_API = '/backend/src/controllers/ConsultasController.php';
 const PERFIL_API = '/backend/src/controllers/PerfilSaludController.php';
 const RECORDATORIOS_API = '/backend/src/controllers/RecordatoriosController.php';
+const CHAT_MEDICOS_API = '/backend/src/controllers/ChatMedicosController.php';
 
 class SidebarManager {
     constructor() {
@@ -136,6 +137,9 @@ class MedicoDashboard {
         this.recordatorioMessage = document.getElementById('recordatorioMessage');
         this.recordatorioSection = document.getElementById('recordatorioSection');
         this.recordatorioIdHidden = document.getElementById('recordatorioId');
+
+        this.navMensajesBadgeEl = document.getElementById('navMensajesBadge');
+        this.unreadBadgeTimer = null;
     }
 
     async init() {
@@ -152,6 +156,79 @@ class MedicoDashboard {
         await this.cargarSesion();
         await Promise.all([this.cargarPacientes(), this.cargarConsultas()]);
         await this.cargarRecordatoriosMedico();
+        this.iniciarActualizacionBadgeNoLeidos();
+    }
+
+    async obtenerTotalNoLeidosChat() {
+        try {
+            const res = await fetch(`${CHAT_MEDICOS_API}?accion=contar_no_leidos`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const payload = await res.json();
+            if (res.ok && payload?.success) {
+                return Number(payload?.data?.total_no_leidos || 0);
+            }
+        } catch (_e) {
+            // fallback below
+        }
+
+        // Fallback defensivo para evitar quedarnos sin badge si falla el endpoint directo.
+        try {
+            const res = await fetch(`${CHAT_MEDICOS_API}?accion=listar_conversaciones`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const payload = await res.json();
+            if (res.ok && payload?.success && Array.isArray(payload?.data)) {
+                return payload.data.reduce((acc, item) => acc + Number(item?.no_leidos || 0), 0);
+            }
+        } catch (_e) {
+            // noop
+        }
+
+        return 0;
+    }
+
+    pintarBadgeNoLeidos(total) {
+        if (!this.navMensajesBadgeEl) return;
+
+        if (Number(total) > 0) {
+            this.navMensajesBadgeEl.textContent = Number(total) > 99 ? '99+' : String(total);
+            this.navMensajesBadgeEl.classList.remove('hidden');
+            this.navMensajesBadgeEl.classList.add('inline-flex');
+            this.navMensajesBadgeEl.style.display = 'inline-flex';
+            this.navMensajesBadgeEl.style.visibility = 'visible';
+            this.navMensajesBadgeEl.style.opacity = '1';
+        } else {
+            this.navMensajesBadgeEl.textContent = '0';
+            this.navMensajesBadgeEl.classList.add('hidden');
+            this.navMensajesBadgeEl.classList.remove('inline-flex');
+            this.navMensajesBadgeEl.style.display = 'none';
+            this.navMensajesBadgeEl.style.visibility = 'hidden';
+            this.navMensajesBadgeEl.style.opacity = '0';
+        }
+    }
+
+    iniciarActualizacionBadgeNoLeidos() {
+        const refrescar = async () => {
+            const total = await this.obtenerTotalNoLeidosChat();
+            this.pintarBadgeNoLeidos(total);
+        };
+
+        refrescar();
+
+        if (this.unreadBadgeTimer) {
+            clearInterval(this.unreadBadgeTimer);
+        }
+
+        this.unreadBadgeTimer = setInterval(refrescar, 4000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                refrescar();
+            }
+        });
     }
 
     bindEvents() {

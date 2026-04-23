@@ -195,6 +195,18 @@ class ChatMedicoDAO {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function contarNoLeidos($idMedico) {
+        $sql = "SELECT COALESCE(SUM(CASE WHEN leido_en IS NULL THEN 1 ELSE 0 END), 0) AS total_no_leidos
+                FROM chat_mensajes
+                WHERE id_receptor = :id_medico
+                  AND eliminado_por_receptor = FALSE";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id_medico' => $idMedico]);
+        $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+        return isset($fila['total_no_leidos']) ? (int)$fila['total_no_leidos'] : 0;
+    }
+
         public function obtenerMensajePorIdParaMedico($idMensaje, $idMedico) {
             $usaAdjuntos = $this->chatSupportsAttachmentColumns();
             $camposAdjuntos = $usaAdjuntos

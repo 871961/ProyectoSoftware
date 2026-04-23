@@ -198,6 +198,16 @@ try {
             sendJson(['success' => true, 'data' => $resumen]);
             break;
 
+        case 'contar_no_leidos':
+            $totalNoLeidos = $dao->contarNoLeidos($idMedico);
+            sendJson([
+                'success' => true,
+                'data' => [
+                    'total_no_leidos' => $totalNoLeidos
+                ]
+            ]);
+            break;
+
         case 'listar_conversacion':
             $idOtro = (int) ($_GET['id_medico'] ?? 0);
             $limite = (int) ($_GET['limite'] ?? 100);

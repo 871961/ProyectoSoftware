@@ -262,6 +262,48 @@
     box-shadow: 0 12px 22px rgba(2, 132, 199, 0.3);
 }
 
+/* ========================================
+   MESSAGES CHAT LAYOUT
+   ======================================== */
+.chat-panel-shell {
+    height: min(84vh, 900px);
+    max-height: min(84vh, 900px);
+    overflow: hidden;
+}
+
+.chat-split-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    height: 100%;
+    min-height: 0;
+}
+
+.chat-split-layout > aside,
+.chat-split-layout > article {
+    min-height: 0;
+}
+
+.chat-split-layout > article {
+    overflow: hidden;
+}
+
+#chatMessages {
+    min-height: 0;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 1024px) {
+    .chat-panel-shell {
+        height: min(86vh, 920px);
+        max-height: min(86vh, 920px);
+    }
+
+    .chat-split-layout {
+        grid-template-columns: 280px minmax(0, 1fr);
+    }
+}
+
 .imc-badge {
     min-width: 136px;
     border-radius: 1rem;
