@@ -71,6 +71,102 @@
 }
 
 /* ========================================
+   SIDEBAR DARK (médico — Apple-style)
+   ======================================== */
+.sidebar-dark {
+    background: #0a1628;
+    border-right: 1px solid #1e2d45;
+}
+
+.sidebar-dark .sidebar-logo-border {
+    border-bottom: 1px solid #1e2d45;
+}
+
+.sidebar-dark .sidebar-item {
+    color: #8ca3bf;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-dark .sidebar-item:hover {
+    background: rgba(59, 130, 246, 0.08);
+    border-left: 3px solid rgba(59, 130, 246, 0.4);
+    color: #e2eaf4;
+}
+
+.sidebar-dark .sidebar-item.active {
+    background: rgba(59, 130, 246, 0.14);
+    border-left: 3px solid #3b82f6;
+    color: #f0f6ff;
+    font-weight: 600;
+}
+
+.sidebar-dark .sidebar-section-border {
+    border-color: #1e2d45;
+}
+
+.sidebar-dark .sidebar-logout {
+    border-top: 1px solid #1e2d45;
+}
+
+.sidebar-dark .sidebar-logout a {
+    background: rgba(239, 68, 68, 0.08);
+    color: #f87171;
+    border-radius: 0.5rem;
+}
+
+.sidebar-dark .sidebar-logout a:hover {
+    background: rgba(239, 68, 68, 0.16);
+}
+
+.sidebar-dark .sidebar-app-name {
+    color: #f0f6ff;
+}
+
+/* ========================================
+   CHAT PANEL (módulo mensajería médicos)
+   ======================================== */
+.chat-panel-shell {
+    height: min(84vh, 900px);
+    max-height: min(84vh, 900px);
+    overflow: hidden;
+    background: #0d1b2e;
+    border: 1px solid #1e3a5f;
+    border-radius: 1.25rem;
+}
+
+.chat-split-layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    height: 100%;
+    min-height: 0;
+    gap: 0;
+}
+
+.chat-split-layout > aside,
+.chat-split-layout > article {
+    min-height: 0;
+}
+
+.chat-split-layout > article {
+    overflow: hidden;
+}
+
+#chatMessages {
+    min-height: 0;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 1024px) {
+    .chat-panel-shell {
+        height: min(86vh, 920px);
+    }
+    .chat-split-layout {
+        grid-template-columns: 260px minmax(0, 1fr);
+    }
+}
+
+/* ========================================
    STAT CARDS
    ======================================== */
 .stat-card {

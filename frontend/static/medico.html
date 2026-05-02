@@ -30,115 +30,100 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-slate-50 min-h-screen" style="background:#f5f7fa">
 
     <!-- Sidebar Overlay (Mobile) -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 lg:hidden hidden"></div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar"
-        class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-50 flex flex-col">
+    <!-- Sidebar — dark navy Apple-style -->
+    <aside id="sidebar" class="sidebar sidebar-dark fixed left-0 top-0 h-full w-64 z-50 flex flex-col">
 
-        <!-- Logo Section -->
-        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-between px-6 sidebar-logo-border">
             <div class="flex items-center space-x-3">
-                <div
-                    class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                     <i data-lucide="stethoscope" class="w-4 h-4 text-white"></i>
                 </div>
-                <span class="text-lg font-bold text-gray-900">MedHistory</span>
+                <span class="text-base font-semibold tracking-tight sidebar-app-name">MedHistory</span>
             </div>
-            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-300 transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav class="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
             <a href="#" data-tab="inicio"
-                class="nav-link sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                <i data-lucide="home" class="w-5 h-5"></i>
+                class="nav-link sidebar-item active flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
                 <span>Inicio</span>
             </a>
             <a href="#" data-tab="mis-pacientes"
-                class="nav-link sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                <i data-lucide="users" class="w-5 h-5"></i>
+                class="nav-link sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i>
                 <span>Mis Pacientes</span>
             </a>
             <a href="#" data-tab="agenda"
-                class="nav-link sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                <i data-lucide="calendar" class="w-5 h-5"></i>
+                class="nav-link sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i>
                 <span>Agenda de Citas</span>
             </a>
             <a href="#" data-tab="consultas"
-                class="nav-link sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                <i data-lucide="file-text" class="w-5 h-5"></i>
+                class="nav-link sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <i data-lucide="file-text" class="w-4 h-4 flex-shrink-0"></i>
                 <span>Consultas</span>
             </a>
             <a href="#" data-tab="mensajes"
-                class="nav-link sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                class="nav-link sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <i data-lucide="message-circle" class="w-4 h-4 flex-shrink-0"></i>
                 <span>Mensajes</span>
             </a>
 
-            <div class="pt-4 border-t border-gray-200 mt-4">
-                <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
+            <div class="pt-4 mt-4 sidebar-section-border" style="border-top:1px solid #1e2d45">
+                <a href="#" class="sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                    <i data-lucide="settings" class="w-4 h-4 flex-shrink-0"></i>
                     <span>Configuración</span>
                 </a>
             </div>
         </nav>
 
-        <!-- Logout Button -->
-        <div class="px-4 py-4 border-t border-gray-200">
+        <!-- Logout -->
+        <div class="px-3 py-4 sidebar-logout">
             <a href="index.html" id="logoutLink"
-                class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                <span class="font-medium">Cerrar Sesión</span>
+                class="flex items-center justify-center space-x-2 w-full px-4 py-2.5 rounded-lg transition-colors text-sm font-medium">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Cerrar Sesión</span>
             </a>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="lg:ml-64 min-h-screen flex flex-col">
+    <div class="lg:ml-64 min-h-screen flex flex-col" style="background:#f5f7fa">
 
         <!-- Top Navbar -->
-        <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header class="h-14 bg-white border-b sticky top-0 z-30" style="border-color:#e8edf2">
             <div class="h-full px-4 lg:px-8 flex items-center justify-between">
 
-                <!-- Mobile Menu Button -->
-                <button id="openSidebar" class="lg:hidden text-gray-600 hover:text-gray-900">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+                <button id="openSidebar" class="lg:hidden text-gray-500 hover:text-gray-800 mr-3">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
 
-                <!-- Search Bar (Hidden on mobile) -->
-                <div class="hidden md:flex flex-1 max-w-xl mx-8">
-                    <div class="relative w-full">
-                        <i data-lucide="search"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                        <input type="text" placeholder="Buscar pacientes, consultas..."
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
+                <!-- Breadcrumb / page title -->
+                <div class="hidden md:flex items-center gap-2 text-sm text-gray-400">
+                    <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                    <span>Panel Médico</span>
                 </div>
 
-                <!-- Right Side Actions -->
-                <div class="flex items-center space-x-4">
-
-                    <!-- Notifications -->
-                    <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                    </button>
-
+                <div class="flex items-center gap-3 ml-auto">
                     <!-- User Profile -->
-                    <div class="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                    <div class="flex items-center gap-3 pl-4 border-l" style="border-color:#e8edf2">
                         <div class="hidden sm:block text-right">
-                            <p id="profileName" class="text-sm font-semibold text-gray-900">Dr. Juan Pérez</p>
-                            <p id="profileRole" class="text-xs text-gray-500">Médico General</p>
+                            <p id="profileName" class="text-sm font-semibold text-gray-900">Cargando...</p>
+                            <p id="profileRole" class="text-xs text-gray-400">Médico</p>
                         </div>
                         <div id="profileAvatar"
-                            class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            JP
+                            class="w-9 h-9 bg-blue-700 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                            --
                         </div>
                     </div>
                 </div>
@@ -157,13 +142,10 @@
                 </div>
 
                 <section class="mb-8">
-                    <div
-                        class="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl shadow-lg p-[1px] border border-blue-300/30">
-                        <div class="bg-white rounded-2xl p-4 md:p-5">
-                            <div class="flex items-center justify-between gap-4">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center shadow">
+                    <div class="bg-white rounded-xl border p-4 md:p-5" style="border-color:#e8edf2">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
                                         <i data-lucide="file-plus-2" class="w-5 h-5"></i>
                                     </div>
                                     <div>
@@ -229,7 +211,6 @@
                                 <p id="consultaMessage" class="mt-3 text-sm"></p>
                             </div>
                         </div>
-                    </div>
                 </section>
 
                 <!-- Stats Cards -->
@@ -1077,22 +1058,106 @@
 
             <!-- TAB: MENSAJES -->
             <div id="tab-mensajes" class="tab-content hidden">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Mensajes</h1>
-                    <p class="text-gray-600">Próximamente disponible</p>
+                <div class="mb-5">
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Mensajes entre médicos</h1>
+                    <p class="text-sm text-gray-400">Comunicación cifrada (AES-256-GCM)</p>
                 </div>
+
+                <section class="chat-panel-shell overflow-hidden">
+                    <div class="chat-split-layout h-full min-h-0">
+
+                        <!-- Lista de contactos -->
+                        <aside class="min-h-0 flex flex-col border-r" style="background:#0d1b2e;border-color:#1e3a5f">
+                            <div class="p-4 space-y-3" style="border-bottom:1px solid #1e3a5f">
+                                <div class="flex items-center justify-between gap-2">
+                                    <h2 class="text-sm font-semibold text-slate-200">Conversaciones</h2>
+                                    <button id="chatRefreshBtn" type="button"
+                                        class="px-3 py-1 text-xs font-medium rounded-full text-slate-300 hover:text-white transition-colors"
+                                        style="background:rgba(255,255,255,0.07)">
+                                        Actualizar
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                    <input id="chatSearchInput" type="text"
+                                        class="w-full rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                        style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e2e8f0"
+                                        placeholder="Buscar médico...">
+                                </div>
+                            </div>
+                            <div id="chatContactList" class="flex-1 min-h-0 overflow-y-auto p-2 space-y-1">
+                                <p class="text-xs text-slate-500 p-2">Cargando conversaciones...</p>
+                            </div>
+                        </aside>
+
+                        <!-- Panel de mensajes -->
+                        <article class="min-w-0 min-h-0 flex flex-col" style="background:#0a1525">
+                            <!-- Header del chat -->
+                            <div class="px-5 py-3.5 flex items-center gap-3 sticky top-0 z-10"
+                                style="background:#0d1b2e;border-bottom:1px solid #1e3a5f">
+                                <div id="chatAvatar"
+                                    class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0"
+                                    style="background:#1e3a5f;color:#7dd3fc">--</div>
+                                <div>
+                                    <h2 id="chatActiveTitle" class="text-sm font-semibold text-slate-200">Selecciona una conversación</h2>
+                                    <p id="chatActiveSubtitle" class="text-xs text-slate-500">Mensajería cifrada</p>
+                                </div>
+                            </div>
+
+                            <!-- Mensajes -->
+                            <div id="chatMessages"
+                                class="flex-1 min-h-0 px-4 py-4 space-y-2 overflow-y-scroll overscroll-contain">
+                                <p class="text-sm text-slate-500 text-center pt-8">Elige un médico para empezar a conversar.</p>
+                            </div>
+
+                            <!-- Input -->
+                            <form id="chatForm" class="p-3" style="background:#0d1b2e;border-top:1px solid #1e3a5f">
+                                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05)">
+                                    <textarea id="chatInput" rows="2" maxlength="2000"
+                                        class="w-full px-3 py-2.5 text-sm bg-transparent border-0 focus:outline-none resize-none"
+                                        style="color:#e2e8f0;caret-color:#60a5fa"
+                                        placeholder="Escribe un mensaje..."></textarea>
+                                    <div id="chatAttachmentPreview" class="hidden mx-2 mb-1 rounded-lg px-2 py-1 text-xs"
+                                        style="background:rgba(59,130,246,0.1);color:#93c5fd;border:1px solid rgba(59,130,246,0.2)"></div>
+                                    <div class="flex items-center justify-between gap-2 px-2 py-2">
+                                        <div class="flex items-center gap-2">
+                                            <input id="chatFileInput" type="file" class="hidden"
+                                                title="Adjuntar archivo" aria-label="Adjuntar archivo"
+                                                accept=".png,.jpg,.jpeg,.pdf,.doc,.docx">
+                                            <button id="chatAttachBtn" type="button"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                                                style="background:rgba(255,255,255,0.07);color:#94a3b8;border:1px solid rgba(255,255,255,0.1)">
+                                                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                                                Adjuntar
+                                            </button>
+                                            <p id="chatMessageStatus" class="text-xs text-slate-500"></p>
+                                        </div>
+                                        <button type="submit" id="chatSendBtn"
+                                            class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-50"
+                                            style="background:#1d4ed8;color:white"
+                                            title="Enviar">
+                                            <i data-lucide="send" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </article>
+                    </div>
+                </section>
             </div>
 
         </main>
     </div>
 
     <!-- External JavaScript -->
+    <script src="js/badge-styles.js"></script>
     <script src="js/dashboard-medico.js"></script>
     <script src="js/antecedentes.js"></script>
     <script src="js/mis-pacientes.js"></script>
     <script src="js/citas-medico.js"></script>
+    <script src="js/chat-medico.js"></script>
 
-    <!-- Script de navegación por tabs -->
+    <!-- Navegación por tabs + init módulos -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link[data-tab]');
@@ -1110,7 +1175,6 @@
                     if (selectedTab) selectedTab.classList.remove('hidden');
                     link.classList.add('active');
 
-                    // Inicializar agenda cuando se abre por primera vez
                     if (targetTab === 'agenda') {
                         window.citasMedicoModule.cargar();
                     }
@@ -1120,8 +1184,6 @@
             });
 
             if (tabs.length > 0) tabs[0].classList.remove('hidden');
-
-            // Inicializar módulo de citas del médico
             window.citasMedicoModule.init();
         });
     </script>
