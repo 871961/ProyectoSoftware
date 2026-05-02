@@ -114,24 +114,29 @@ class AntecedentesManager {
             return;
         }
 
-        this.listaEl.innerHTML = this.antecedentesActuales.map(ant => `
-            <div class="flex items-start justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">${this.getParentescoLabel(ant.parentesco)}</span>
-                        ${ant.lado_familiar ? `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${this.capitalize(ant.lado_familiar)}</span>` : ''}
-                        ${(ant.edad_diagnostico || ant.edad_diagnóstico) ? `<span class="text-xs text-gray-600">Edad: ${ant.edad_diagnostico || ant.edad_diagnóstico}</span>` : ''}
+        this.listaEl.innerHTML = this.antecedentesActuales.map(ant => {
+            const par = this.getParentescoLabel(ant.parentesco);
+            const pat = ant.nombre_patologia || ant.nombre_enfermedad || 'Enfermedad desconocida';
+            const lado = ant.lado_familiar ? this.capitalize(ant.lado_familiar) : null;
+            const edad = ant.edad_diagnostico || ant.edad_diagnóstico;
+            const notas = ant.notas_adicionales;
+            return `
+            <div class="flex items-start justify-between gap-3 py-3" style="border-bottom:1px solid #f0f4f8">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                        <span class="text-xs font-semibold" style="color:#1d4ed8">${par}</span>
+                        ${lado ? `<span class="text-xs text-gray-400">·</span><span class="text-xs text-gray-500">${lado}</span>` : ''}
+                        ${edad ? `<span class="text-xs text-gray-400">·</span><span class="text-xs text-gray-500">${edad} años</span>` : ''}
                     </div>
-                    <h4 class="font-semibold text-gray-900">${ant.nombre_patologia || ant.nombre_enfermedad || 'Enfermedad desconocida'}</h4>
-                    ${ant.notas_adicionales ? `<p class="text-sm text-gray-600 mt-1">${ant.notas_adicionales}</p>` : ''}
-                    <p class="text-xs text-gray-400 mt-2">Registrado: ${this.formatearFecha(ant.fecha_registro)}</p>
+                    <p class="text-sm font-medium text-gray-900">${pat}</p>
+                    ${notas ? `<p class="text-xs text-gray-500 mt-0.5 truncate">${notas}</p>` : ''}
                 </div>
                 <button onclick="antecedentesManager.eliminarAntecedente(${ant.id_antecedente})"
-                    class="ml-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    class="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 rounded-lg transition-colors">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
 
         // Reinicializar iconos de Lucide
         if (typeof lucide !== 'undefined') {

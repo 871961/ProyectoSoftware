@@ -206,11 +206,14 @@ class MisPacientesManager {
 
         // Mostrar alergias si existen
         const alergiaDiv = document.getElementById('alergiaDisplay');
-        if (perfil.alergias && perfil.alergias.trim()) {
-            alergiaDiv.classList.remove('hidden');
-            alergiaDiv.querySelector('p.text-sm').textContent = perfil.alergias;
-        } else {
-            alergiaDiv.classList.add('hidden');
+        if (alergiaDiv) {
+            if (perfil.alergias && perfil.alergias.trim()) {
+                alergiaDiv.classList.remove('hidden');
+                const p = alergiaDiv.querySelector('p:last-child') || alergiaDiv.querySelector('p');
+                if (p) p.textContent = perfil.alergias;
+            } else {
+                alergiaDiv.classList.add('hidden');
+            }
         }
     }
 

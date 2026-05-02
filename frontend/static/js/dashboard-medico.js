@@ -260,7 +260,10 @@ class MedicoDashboard {
         const welcomeTitle = document.getElementById('welcomeTitle');
         const welcomeSubtitle = document.getElementById('welcomeSubtitle');
 
-        if (profileName) profileName.textContent = `Dr./Dra. ${nombre}`;
+        if (profileName) {
+            profileName.textContent = `Dr./Dra. ${nombre}`;
+            profileName.dataset.email = this.usuario.email || '';
+        }
         if (profileRole) profileRole.textContent = especialidad;
         if (profileAvatar) profileAvatar.textContent = iniciales;
         if (welcomeTitle) welcomeTitle.textContent = `Bienvenido, Dr./Dra. ${nombre}`;
@@ -609,16 +612,19 @@ class MedicoDashboard {
             const tratamiento = consulta.tratamiento || '-';
             const row = document.createElement('tr');
             row.className = 'border-b border-gray-100';
+            row.className = 'hover:bg-gray-50 transition-colors';
             row.innerHTML = `
-                <td class="px-4 py-3 text-sm text-gray-700">${fecha}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">${paciente}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">${diagnostico}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">${tratamiento}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">
-                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium" data-edit-id="${consulta.id_consulta}">Editar</button>
-                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 font-medium ml-2" data-delete-id="${consulta.id_consulta}">Eliminar</button>
-                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-medium ml-2" data-reminder-id="${consulta.id_consulta}">Crear recordatorio</button>
-                    <button class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium ml-2" data-view-recordatorios="${consulta.id_consulta}">Ver recordatorios</button>
+                <td class="px-5 py-3.5 text-xs text-gray-500 whitespace-nowrap">${fecha}</td>
+                <td class="px-4 py-3.5 text-sm font-medium text-gray-900 whitespace-nowrap">${paciente}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden lg:table-cell">${diagnostico}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden xl:table-cell">${tratamiento}</td>
+                <td class="px-4 py-3.5 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#f0f4ff;color:#1d4ed8" data-edit-id="${consulta.id_consulta}">Editar</button>
+                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#fff5f5;color:#dc2626" data-delete-id="${consulta.id_consulta}">Eliminar</button>
+                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#fffbeb;color:#b45309" data-reminder-id="${consulta.id_consulta}">Recordatorio</button>
+                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#f5f5f5;color:#374151" data-view-recordatorios="${consulta.id_consulta}">Ver</button>
+                    </div>
                     <div class="mt-2 space-y-1 hidden" data-recordatorios-container="${consulta.id_consulta}"></div>
                 </td>
             `;

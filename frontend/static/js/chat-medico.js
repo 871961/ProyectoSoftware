@@ -145,16 +145,25 @@ class ChatMedicosUI {
     }
 
     async actualizarSoloNoLeidos() {
+        if (!this._errCount) this._errCount = 0;
+        if (this._polling_stopped) return;
         try {
             const [resConversaciones, resNoLeidos] = await Promise.all([
                 this.chatApi('listar_conversaciones'),
                 this.chatApi('contar_no_leidos')
             ]);
+            this._errCount = 0;
             this.conversaciones = resConversaciones.data || [];
             this.totalNoLeidosGlobal = Number(resNoLeidos?.data?.total_no_leidos || 0);
             this.actualizarBadgeMensajes();
         } catch (_error) {
-            // Silencioso: evita ruido visual en el resto de pestañas.
+            this._errCount++;
+            if (this._errCount >= 3) {
+                // Detiene el polling para no saturar la consola cuando la BD no está lista
+                this._polling_stopped = true;
+                clearInterval(this.unreadRefreshTimer);
+                clearInterval(this.refreshTimer);
+            }
         }
     }
 
