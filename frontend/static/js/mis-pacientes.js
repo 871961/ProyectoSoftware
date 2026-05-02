@@ -83,38 +83,29 @@ class MisPacientesManager {
         if (!lista) return;
 
         if (pacientes.length === 0) {
-            lista.innerHTML = `
-                <div class="text-center py-8 text-gray-500">
-                    <i data-lucide="users" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
-                    <p>No hay pacientes asignados</p>
-                </div>
-            `;
-            lucide.createIcons();
+            lista.innerHTML = `<p class="text-xs text-gray-400 py-6 text-center">No hay pacientes asignados</p>`;
             return;
         }
 
         lista.innerHTML = pacientes.map(p => {
             const iniciales = this.obtenerIniciales(p.nombre, p.apellidos);
-            const colorBg = this.obtenerColorAvatar(p.dni);
-
+            const color = this.obtenerColorAvatar(p.dni);
             return `
-                <div class="paciente-item p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
+                <div class="paciente-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
+                    style="border:1px solid transparent"
                     data-dni="${p.dni}"
                     onclick="misPacientesManager.seleccionarPaciente('${p.dni}')">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br ${colorBg} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                            ${iniciales}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-gray-900 truncate">${p.nombre} ${p.apellidos}</p>
-                            <p class="text-xs text-gray-500 truncate">${p.dni}</p>
-                        </div>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-semibold text-white flex-shrink-0"
+                        style="background:${color}">
+                        ${iniciales}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">${p.nombre} ${p.apellidos}</p>
+                        <p class="text-xs text-gray-400 truncate">${p.dni}</p>
                     </div>
                 </div>
             `;
         }).join('');
-
-        lucide.createIcons();
     }
 
     filtrarPacientes(busqueda) {
@@ -136,13 +127,14 @@ class MisPacientesManager {
     }
 
     async seleccionarPaciente(dni) {
-        // Actualizar UI de selección
         document.querySelectorAll('.paciente-item').forEach(item => {
-            item.classList.remove('bg-blue-50', 'border-blue-300');
+            item.style.background = '';
+            item.style.borderColor = 'transparent';
         });
         const item = document.querySelector(`[data-dni="${dni}"]`);
         if (item) {
-            item.classList.add('bg-blue-50', 'border-blue-300');
+            item.style.background = '#eef2ff';
+            item.style.borderColor = '#c7d2fe';
         }
 
         // Buscar paciente
@@ -169,16 +161,16 @@ class MisPacientesManager {
         document.getElementById('infoPaciente').classList.remove('hidden');
 
         const iniciales = this.obtenerIniciales(paciente.nombre, paciente.apellidos);
-        const colorBg = this.obtenerColorAvatar(paciente.dni);
+        const color = this.obtenerColorAvatar(paciente.dni);
 
-        // Avatar e información básica
         const avatar = document.getElementById('avatarPaciente');
-        avatar.className = `w-16 h-16 bg-gradient-to-br ${colorBg} rounded-full flex items-center justify-center text-white font-bold text-xl`;
+        avatar.className = 'w-14 h-14 rounded-xl flex items-center justify-center text-white font-semibold text-lg flex-shrink-0';
+        avatar.style.background = color;
         avatar.textContent = iniciales;
 
         document.getElementById('nombrePaciente').textContent = `${paciente.nombre} ${paciente.apellidos}`;
-        document.getElementById('dniPaciente').textContent = `DNI: ${paciente.dni}`;
-        document.getElementById('emailPaciente').textContent = paciente.email || 'Sin email registrado';
+        document.getElementById('dniPaciente').textContent = `DNI ${paciente.dni}`;
+        document.getElementById('emailPaciente').textContent = paciente.email || '';
     }
 
     async cargarPerfilSalud(dni) {
@@ -234,25 +226,22 @@ class MisPacientesManager {
         const container = document.getElementById('antecedentesResumen');
         if (!container) return;
 
-        const antecedentesData = window.antecedentesManager?.antecedentesActuales || [];
+        const data = window.antecedentesManager?.antecedentesActuales || [];
 
-        if (antecedentesData.length === 0) {
-            container.innerHTML = '<p class="text-sm text-gray-500">No hay antecedentes registrados</p>';
+        if (data.length === 0) {
+            container.innerHTML = '<p class="text-xs text-gray-400">Sin antecedentes registrados</p>';
             return;
         }
 
-        container.innerHTML = antecedentesData.slice(0, 3).map(ant => `
-            <div class="flex items-center space-x-2 text-sm">
-                <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                <span class="font-medium text-gray-900">${ant.nombre_patologia || ant.nombre_enfermedad || 'Desconocida'}</span>
-                <span class="text-gray-500">-</span>
-                <span class="text-gray-600">${ant.parentesco}</span>
-            </div>
-        `).join('');
-
-        if (antecedentesData.length > 3) {
-            container.innerHTML += `<p class="text-xs text-gray-500">+ ${antecedentesData.length - 3} más...</p>`;
-        }
+        container.innerHTML = data.slice(0, 4).map(ant => {
+            const pat = ant.nombre_patologia || ant.nombre_enfermedad || 'Desconocida';
+            const par = (ant.parentesco || '').replace(/_/g,' ');
+            return `<div class="flex items-center justify-between py-1.5" style="border-bottom:1px solid #f0f4f8">
+                <span class="text-xs font-medium text-gray-800">${pat}</span>
+                <span class="text-xs text-gray-400 ml-3">${par}</span>
+            </div>`;
+        }).join('') +
+        (data.length > 4 ? `<p class="text-xs text-gray-400 pt-1.5">+${data.length-4} más</p>` : '');
     }
 
     abrirModalPerfilSalud() {
@@ -332,14 +321,9 @@ class MisPacientesManager {
 
     obtenerColorAvatar(dni) {
         const colores = [
-            'from-blue-500 to-blue-700',
-            'from-green-500 to-green-700',
-            'from-purple-500 to-purple-700',
-            'from-pink-500 to-pink-700',
-            'from-indigo-500 to-indigo-700',
-            'from-red-500 to-red-700',
-            'from-yellow-500 to-yellow-700',
-            'from-teal-500 to-teal-700'
+            '#1d4ed8', '#0f766e', '#7c3aed',
+            '#be185d', '#0369a1', '#b45309',
+            '#15803d', '#9333ea'
         ];
         const index = (dni || '').charCodeAt(0) % colores.length;
         return colores[index];
@@ -348,13 +332,7 @@ class MisPacientesManager {
     mostrarError(mensaje) {
         const lista = document.getElementById('listaPacientes');
         if (lista) {
-            lista.innerHTML = `
-                <div class="text-center py-8 text-red-500">
-                    <i data-lucide="alert-circle" class="w-12 h-12 mx-auto mb-2"></i>
-                    <p>${mensaje}</p>
-                </div>
-            `;
-            lucide.createIcons();
+            lista.innerHTML = `<p class="text-xs text-red-500 py-4 text-center">${mensaje}</p>`;
         }
     }
 }

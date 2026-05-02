@@ -141,78 +141,6 @@
                     <p id="welcomeSubtitle" class="text-gray-600">Tienes 8 citas programadas para hoy</p>
                 </div>
 
-                <section class="mb-8">
-                    <div class="bg-white rounded-xl border p-4 md:p-5" style="border-color:#e8edf2">
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-                                        <i data-lucide="file-plus-2" class="w-5 h-5"></i>
-                                    </div>
-                                    <div>
-                                        <h2 class="text-lg md:text-xl font-semibold text-gray-900">Módulo de Consultas
-                                        </h2>
-                                        <p class="text-sm text-gray-600">Registra una nueva consulta solo cuando lo
-                                            necesites.</p>
-                                    </div>
-                                </div>
-                                <button id="toggleConsultaModule" type="button"
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white hover:bg-gray-800 transition-colors text-sm font-medium whitespace-nowrap">
-                                    <i data-lucide="plus" class="w-4 h-4"></i>
-                                    <span id="toggleConsultaLabel">Nueva consulta</span>
-                                </button>
-                            </div>
-
-                            <div id="consultaModulePanel" class="hidden mt-5 pt-5 border-t border-gray-100">
-                                <form id="consultaForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <input type="hidden" id="id_consulta" name="id_consulta">
-                                    <div>
-                                        <label for="id_paciente"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Paciente</label>
-                                        <select id="id_paciente" name="id_paciente" required
-                                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <option value="">Selecciona un paciente...</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="fecha_consulta"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Fecha y hora</label>
-                                        <input id="fecha_consulta" name="fecha" type="datetime-local"
-                                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="diagnostico"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Diagnóstico</label>
-                                        <textarea id="diagnostico" name="diagnostico" rows="2" required
-                                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="tratamiento"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Tratamiento</label>
-                                        <textarea id="tratamiento" name="tratamiento" rows="2"
-                                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="observaciones"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
-                                        <textarea id="observaciones" name="observaciones" rows="2"
-                                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="flex items-center gap-2">
-                                            <button id="submitConsultaBtn" type="submit"
-                                                class="px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">Guardar
-                                                consulta</button>
-                                            <button id="cancelEditBtn" type="button"
-                                                class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors hidden">Cancelar
-                                                edición</button>
-                                        </div>
-                                    </div>
-                                </form>
-                                <p id="consultaMessage" class="mt-3 text-sm"></p>
-                            </div>
-                        </div>
-                </section>
-
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div class="stat-card bg-white rounded-xl border border-gray-200 p-5">
@@ -421,52 +349,54 @@
                                     </div>
                                 </div>
 
-                                <!-- Perfil de Salud Resumen -->
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Perfil de Salud</h3>
-                                    <div id="perfilSaludResumen" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <div class="bg-gray-50 rounded-lg p-3">
-                                            <p class="text-xs text-gray-600 mb-1">Altura</p>
-                                            <p id="alturaDisplay" class="text-lg font-semibold text-gray-900">--</p>
+                                <!-- Perfil de Salud -->
+                                <div class="mb-5">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Perfil de salud</p>
+                                    <div class="grid grid-cols-4 gap-2 mb-3">
+                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
+                                            <p class="text-xs text-gray-400 mb-1">Altura</p>
+                                            <p id="alturaDisplay" class="text-base font-semibold text-gray-900">--</p>
                                         </div>
-                                        <div class="bg-gray-50 rounded-lg p-3">
-                                            <p class="text-xs text-gray-600 mb-1">Peso</p>
-                                            <p id="pesoDisplay" class="text-lg font-semibold text-gray-900">--</p>
+                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
+                                            <p class="text-xs text-gray-400 mb-1">Peso</p>
+                                            <p id="pesoDisplay" class="text-base font-semibold text-gray-900">--</p>
                                         </div>
-                                        <div class="bg-gray-50 rounded-lg p-3">
-                                            <p class="text-xs text-gray-600 mb-1">IMC</p>
-                                            <p id="imcDisplay" class="text-lg font-semibold text-gray-900">--</p>
+                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
+                                            <p class="text-xs text-gray-400 mb-1">IMC</p>
+                                            <p id="imcDisplay" class="text-base font-semibold text-gray-900">--</p>
                                         </div>
-                                        <div class="bg-gray-50 rounded-lg p-3">
-                                            <p class="text-xs text-gray-600 mb-1">Actividad</p>
-                                            <p id="actividadDisplay" class="text-sm font-semibold text-gray-900">--</p>
+                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
+                                            <p class="text-xs text-gray-400 mb-1">Actividad</p>
+                                            <p id="actividadDisplay" class="text-xs font-semibold text-gray-900">--</p>
                                         </div>
                                     </div>
-                                    <div id="alergiaDisplay" class="mt-3 p-3 bg-red-50 rounded-lg hidden">
-                                        <p class="text-xs text-red-600 font-semibold mb-1">⚠️ ALERGIAS</p>
-                                        <p class="text-sm text-red-900"></p>
+                                    <div id="alergiaDisplay" class="px-3 py-2.5 rounded-lg hidden" style="background:#fff5f5;border:1px solid #fecaca">
+                                        <p class="text-xs font-semibold text-red-700 mb-0.5">Alergias conocidas</p>
+                                        <p class="text-xs text-red-800"></p>
                                     </div>
                                 </div>
 
-                                <!-- Antecedentes Familiares Resumen -->
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Antecedentes Familiares</h3>
-                                    <div id="antecedentesResumen" class="space-y-2">
-                                        <p class="text-sm text-gray-500">No hay antecedentes registrados</p>
+                                <!-- Antecedentes Familiares -->
+                                <div class="mb-5">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Antecedentes familiares</p>
+                                    <div id="antecedentesResumen">
+                                        <p class="text-xs text-gray-400">Sin antecedentes registrados</p>
                                     </div>
                                 </div>
 
                                 <!-- Botones de acción -->
-                                <div class="flex flex-wrap gap-3">
+                                <div class="flex flex-wrap gap-2 pt-2" style="border-top:1px solid #e8edf2">
                                     <button id="btnEditarPerfilSalud"
-                                        class="flex items-center space-x-2 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium transition-colors">
-                                        <i data-lucide="heart-pulse" class="w-4 h-4"></i>
-                                        <span>Gestionar Perfil de Salud</span>
+                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors"
+                                        style="background:#f0f4ff;color:#1d4ed8;border:1px solid #dbeafe">
+                                        <i data-lucide="heart-pulse" class="w-3.5 h-3.5"></i>
+                                        Perfil de salud
                                     </button>
                                     <button id="btnAñadirAntecedentes"
-                                        class="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors">
-                                        <i data-lucide="git-branch" class="w-4 h-4"></i>
-                                        <span>Gestionar Antecedentes Familiares</span>
+                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors"
+                                        style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe">
+                                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                                        Antecedentes
                                     </button>
                                 </div>
                             </div>
@@ -679,9 +609,65 @@
 
             <!-- TAB: CONSULTAS -->
             <div id="tab-consultas" class="tab-content hidden">
-                <div class="mb-6">
-                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Consultas</h1>
-                    <p class="text-sm text-gray-400">Registro de consultas médicas</p>
+                <div class="mb-6 flex items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900 mb-1">Consultas</h1>
+                        <p class="text-sm text-gray-400">Registro de consultas médicas</p>
+                    </div>
+                    <button id="toggleConsultaModule" type="button"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                        style="background:#0f3460;color:white">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span id="toggleConsultaLabel">Nueva consulta</span>
+                    </button>
+                </div>
+
+                <!-- Formulario nueva consulta (colapsable) -->
+                <div id="consultaModulePanel" class="hidden mb-6 bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
+                    <h2 class="text-sm font-semibold text-gray-700 mb-4 tracking-tight">Nueva consulta</h2>
+                    <form id="consultaForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="hidden" id="id_consulta" name="id_consulta">
+                        <div>
+                            <label for="id_paciente" class="block text-xs font-medium text-gray-500 mb-1.5">Paciente</label>
+                            <select id="id_paciente" name="id_paciente" required
+                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="border-color:#e8edf2">
+                                <option value="">Selecciona un paciente...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="fecha_consulta" class="block text-xs font-medium text-gray-500 mb-1.5">Fecha y hora</label>
+                            <input id="fecha_consulta" name="fecha" type="datetime-local"
+                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="border-color:#e8edf2">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="diagnostico" class="block text-xs font-medium text-gray-500 mb-1.5">Diagnóstico</label>
+                            <textarea id="diagnostico" name="diagnostico" rows="2" required
+                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                style="border-color:#e8edf2"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="tratamiento" class="block text-xs font-medium text-gray-500 mb-1.5">Tratamiento</label>
+                            <textarea id="tratamiento" name="tratamiento" rows="2"
+                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                style="border-color:#e8edf2"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="observaciones" class="block text-xs font-medium text-gray-500 mb-1.5">Observaciones</label>
+                            <textarea id="observaciones" name="observaciones" rows="2"
+                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                style="border-color:#e8edf2"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex items-center gap-2">
+                            <button id="submitConsultaBtn" type="submit"
+                                class="px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-colors"
+                                style="background:#0f3460">Guardar consulta</button>
+                            <button id="cancelEditBtn" type="button"
+                                class="px-4 py-2.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 hidden">Cancelar</button>
+                        </div>
+                    </form>
+                    <p id="consultaMessage" class="mt-3 text-xs"></p>
                 </div>
 
                 <section class="bg-white rounded-xl mb-8" style="border:1px solid #e8edf2">
@@ -1041,32 +1027,10 @@
     <script src="js/citas-medico.js"></script>
     <script src="js/chat-medico.js"></script>
 
-    <!-- Navegación + Inicio dinámico + Configuración -->
+    <!-- Inicio dinámico + Configuración -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const navLinks = document.querySelectorAll('.nav-link[data-tab]');
-        const tabs     = document.querySelectorAll('.tab-content');
-
-        // ── Navegación por tabs ───────────────────────────────────────────────
-        function goToTab(targetTab) {
-            tabs.forEach(t => t.classList.add('hidden'));
-            navLinks.forEach(l => l.classList.remove('active'));
-            const sel = document.getElementById(`tab-${targetTab}`);
-            if (sel) sel.classList.remove('hidden');
-            const link = document.querySelector(`.nav-link[data-tab="${targetTab}"]`);
-            if (link) link.classList.add('active');
-            if (targetTab === 'agenda') window.citasMedicoModule.cargar();
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                goToTab(link.getAttribute('data-tab'));
-            });
-        });
-
-        if (tabs.length > 0) tabs[0].classList.remove('hidden');
+        // dashboard-medico.js ya maneja la navegación por tabs y expone window.goToTab
         window.citasMedicoModule.init();
 
         // ── Acciones rápidas → navegación ────────────────────────────────────
@@ -1089,7 +1053,7 @@
         inputBuscar?.addEventListener('keydown', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
 
         // ── Cargar citas de hoy en tab-inicio ────────────────────────────────
-        async function cargarCitasHoy() {
+        window.cargarCitasHoy = async function cargarCitasHoy() {
             const hoy = new Date();
             const hoyStr = hoy.toISOString().split('T')[0];
 
@@ -1097,7 +1061,7 @@
             if (fechaEl) fechaEl.textContent = hoy.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
 
             try {
-                const res  = await fetch(`../backend/src/controllers/CitasController.php?accion=listar_medico&fecha=${hoyStr}`);
+                const res  = await fetch(`/backend/src/controllers/CitasController.php?accion=listar_medico&fecha=${hoyStr}`);
                 const data = await res.json();
                 const citas = data.success ? data.data : [];
 
@@ -1167,7 +1131,7 @@
 
         async function cargarResumenSemana() {
             try {
-                const res  = await fetch('../backend/src/controllers/CitasController.php?accion=listar_medico');
+                const res  = await fetch('/backend/src/controllers/CitasController.php?accion=listar_medico');
                 const data = await res.json();
                 const citas = data.success ? data.data : [];
 

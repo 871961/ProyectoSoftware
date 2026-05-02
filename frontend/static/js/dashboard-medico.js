@@ -67,12 +67,26 @@ class SidebarManager {
                 // Cerrar sidebar en móvil
                 this.close();
 
+                // Llamar a cargadores dinámicos por tab
+                if (targetTab === 'inicio' && typeof window.cargarCitasHoy === 'function') {
+                    window.cargarCitasHoy();
+                }
+                if (targetTab === 'agenda' && window.citasMedicoModule) {
+                    window.citasMedicoModule.cargar();
+                }
+
                 // Reinicializar iconos de Lucide si están disponibles
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
             });
         });
+
+        // Exponer goToTab globalmente para navegación programática
+        window.goToTab = (targetTab) => {
+            const link = document.querySelector(`.nav-link[data-tab="${targetTab}"]`);
+            if (link) link.click();
+        };
 
         // Mostrar el primer tab por defecto
         if (tabs.length > 0) {

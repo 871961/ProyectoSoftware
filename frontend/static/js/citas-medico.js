@@ -3,7 +3,7 @@
  * Gestiona confirmar, cancelar y completar citas.
  */
 
-const CITAS_API = '../backend/src/controllers/CitasController.php';
+const CITAS_API = '/backend/src/controllers/CitasController.php';
 
 class CitasMedicoModule {
     constructor() {

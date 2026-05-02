@@ -3,7 +3,7 @@
  * Gestiona solicitar, ver y cancelar citas médicas.
  */
 
-const API = '../backend/src/controllers/CitasController.php';
+const API = '/backend/src/controllers/CitasController.php';
 
 class CitasModule {
     constructor() {
