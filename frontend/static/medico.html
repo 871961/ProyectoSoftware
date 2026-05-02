@@ -233,64 +233,34 @@
                 </section>
 
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-                    <!-- Pacientes Hoy -->
-                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-blue-50 rounded-lg">
-                                <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
-                            </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5">
+                        <div class="p-2.5 bg-blue-50 rounded-lg w-fit mb-3">
+                            <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Pacientes Hoy</h3>
-                        <p class="text-3xl font-bold text-gray-900">8</p>
-                        <div class="flex items-center mt-2 text-xs">
-                            <span class="text-green-600 font-medium">↑ 2</span>
-                            <span class="text-gray-500 ml-1">vs. ayer</span>
-                        </div>
+                        <p class="text-xs text-gray-500 mb-1">Citas hoy</p>
+                        <p id="statCitasHoy" class="text-3xl font-bold text-gray-900">--</p>
                     </div>
-
-                    <!-- Citas Pendientes -->
-                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-amber-50 rounded-lg">
-                                <i data-lucide="clock" class="w-6 h-6 text-amber-600"></i>
-                            </div>
+                    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5">
+                        <div class="p-2.5 bg-amber-50 rounded-lg w-fit mb-3">
+                            <i data-lucide="clock" class="w-5 h-5 text-amber-600"></i>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Citas Pendientes</h3>
-                        <p class="text-3xl font-bold text-gray-900">5</p>
-                        <div class="flex items-center mt-2 text-xs">
-                            <span class="text-amber-600 font-medium">Próxima: 10:00</span>
-                        </div>
+                        <p class="text-xs text-gray-500 mb-1">Pendientes confirmar</p>
+                        <p id="statCitasPendientes" class="text-3xl font-bold text-gray-900">--</p>
                     </div>
-
-                    <!-- Consultas Completadas -->
-                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-green-50 rounded-lg">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
-                            </div>
+                    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5">
+                        <div class="p-2.5 bg-green-50 rounded-lg w-fit mb-3">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Completadas</h3>
-                        <p class="text-3xl font-bold text-gray-900">3</p>
-                        <div class="flex items-center mt-2 text-xs">
-                            <span class="text-gray-500">Hoy</span>
-                        </div>
+                        <p class="text-xs text-gray-500 mb-1">Mis pacientes</p>
+                        <p id="statTotalPacientes" class="text-3xl font-bold text-gray-900">--</p>
                     </div>
-
-                    <!-- Mensajes Nuevos -->
-                    <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-purple-50 rounded-lg">
-                                <i data-lucide="message-circle" class="w-6 h-6 text-purple-600"></i>
-                            </div>
-                            <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5">
+                        <div class="p-2.5 bg-indigo-50 rounded-lg w-fit mb-3">
+                            <i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Mensajes</h3>
-                        <p class="text-3xl font-bold text-gray-900">12</p>
-                        <div class="flex items-center mt-2 text-xs">
-                            <span class="text-purple-600 font-medium">4 sin leer</span>
-                        </div>
+                        <p class="text-xs text-gray-500 mb-1">Consultas totales</p>
+                        <p id="statTotalConsultas" class="text-3xl font-bold text-gray-900">--</p>
                     </div>
                 </div>
 
@@ -1068,10 +1038,41 @@
 
             <!-- TAB: AGENDA DE CITAS -->
             <div id="tab-agenda" class="tab-content hidden">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Agenda de Citas</h1>
-                    <p class="text-gray-600">Próximamente disponible</p>
+                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-1">Agenda de Citas</h1>
+                        <p class="text-gray-600">Gestiona las citas solicitadas por tus pacientes.</p>
+                    </div>
                 </div>
+
+                <!-- Filtros -->
+                <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-gray-600 font-medium">Fecha:</label>
+                            <input id="agendaFiltroFecha" type="date"
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                            <input id="agendaFiltroPendientes" type="checkbox" class="rounded border-gray-300 text-blue-600">
+                            Solo pendientes de confirmar
+                        </label>
+                        <button id="agendaBtnHoy"
+                            class="px-3 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium">
+                            Hoy
+                        </button>
+                        <button id="agendaBtnTodo"
+                            class="px-3 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">
+                            Todas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de citas del médico -->
+                <div id="agendaList"></div>
+                <p id="agendaEmpty" class="hidden text-center text-gray-500 py-16 bg-white rounded-xl border border-gray-200">
+                    No hay citas que coincidan con los filtros seleccionados.
+                </p>
             </div>
 
             <!-- TAB: MENSAJES -->
@@ -1089,56 +1090,39 @@
     <script src="js/dashboard-medico.js"></script>
     <script src="js/antecedentes.js"></script>
     <script src="js/mis-pacientes.js"></script>
+    <script src="js/citas-medico.js"></script>
 
-    <!-- Script de navegación por tabs - inline -->
+    <!-- Script de navegación por tabs -->
     <script>
-        console.log('=== SCRIPT INLINE CARGADO ===');
-
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded ejecutado');
-
             const navLinks = document.querySelectorAll('.nav-link[data-tab]');
-            const tabs = document.querySelectorAll('.tab-content');
-
-            console.log('Nav links encontrados:', navLinks.length);
-            console.log('Tabs encontrados:', tabs.length);
+            const tabs     = document.querySelectorAll('.tab-content');
 
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const targetTab = link.getAttribute('data-tab');
 
-                    console.log('Click en tab:', targetTab);
-
-                    // Ocultar todos los tabs
                     tabs.forEach(tab => tab.classList.add('hidden'));
-
-                    // Remover active de todos los links
                     navLinks.forEach(l => l.classList.remove('active'));
 
-                    // Mostrar el tab seleccionado
                     const selectedTab = document.getElementById(`tab-${targetTab}`);
-                    if (selectedTab) {
-                        selectedTab.classList.remove('hidden');
-                        console.log('Tab mostrado:', `tab-${targetTab}`);
-                    } else {
-                        console.error('Tab no encontrado:', `tab-${targetTab}`);
-                    }
-
-                    // Activar el link seleccionado
+                    if (selectedTab) selectedTab.classList.remove('hidden');
                     link.classList.add('active');
 
-                    // Reinicializar iconos de Lucide
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
+                    // Inicializar agenda cuando se abre por primera vez
+                    if (targetTab === 'agenda') {
+                        window.citasMedicoModule.cargar();
                     }
+
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
                 });
             });
 
-            // Asegurar que el primer tab esté visible
-            if (tabs.length > 0) {
-                tabs[0].classList.remove('hidden');
-            }
+            if (tabs.length > 0) tabs[0].classList.remove('hidden');
+
+            // Inicializar módulo de citas del médico
+            window.citasMedicoModule.init();
         });
     </script>
 

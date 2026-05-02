@@ -62,7 +62,8 @@
                 <i data-lucide="file-text" class="w-5 h-5"></i>
                 <span>Mi Historial</span>
             </a>
-            <a href="#" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
+            <a href="#" id="navCitasPaciente"
+                class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700">
                 <i data-lucide="calendar" class="w-5 h-5"></i>
                 <span>Mis Citas</span>
             </a>
@@ -239,176 +240,62 @@
                             <div class="p-3 bg-blue-50 rounded-lg">
                                 <i data-lucide="calendar-check" class="w-6 h-6 text-blue-600"></i>
                             </div>
-                            <span
-                                class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Próxima</span>
+                            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Próxima</span>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Próxima Cita</h3>
-                        <p class="text-2xl font-bold text-gray-900 mb-2">15 Feb, 10:00</p>
-                        <p id="medicoCabecera" class="text-sm text-gray-600">Cargando...</p>
-                        <p class="text-xs text-gray-500 mt-1">Revisión anual</p>
+                        <h3 class="text-sm font-medium text-gray-500 mb-2">Próxima Cita</h3>
+                        <div id="proximaCitaInfo" class="text-sm text-gray-700">Cargando...</div>
                     </div>
 
-                    <!-- Último Diagnóstico -->
+                    <!-- Última Consulta -->
                     <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between mb-4">
                             <div class="p-3 bg-green-50 rounded-lg">
-                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                <i data-lucide="stethoscope" class="w-6 h-6 text-green-600"></i>
                             </div>
-                            <span
-                                class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Actualizado</span>
+                            <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Historial</span>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Último Diagnóstico</h3>
-                        <p class="text-2xl font-bold text-gray-900 mb-2">Estado Saludable</p>
-                        <p class="text-sm text-gray-600">08 Feb 2026</p>
-                        <p class="text-xs text-gray-500 mt-1">Chequeo general positivo</p>
+                        <h3 class="text-sm font-medium text-gray-500 mb-2">Última Consulta</h3>
+                        <p id="ultimaConsultaResumen" class="text-sm text-gray-700">Cargando...</p>
                     </div>
 
-                    <!-- Medicación Activa -->
+                    <!-- Recordatorios pendientes -->
                     <div class="stat-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-purple-50 rounded-lg">
-                                <i data-lucide="pill" class="w-6 h-6 text-purple-600"></i>
+                            <div class="p-3 bg-amber-50 rounded-lg">
+                                <i data-lucide="bell" class="w-6 h-6 text-amber-600"></i>
                             </div>
-                            <span
-                                class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Activa</span>
+                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Pendientes</span>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Medicación Activa</h3>
-                        <p class="text-2xl font-bold text-gray-900 mb-2">2 Recetas</p>
-                        <p class="text-sm text-gray-600">Omeprazol, Vitamina D</p>
-                        <p id="renewalDate" class="text-xs text-gray-500 mt-1">Cargando...</p>
+                        <h3 class="text-sm font-medium text-gray-500 mb-2">Recordatorios</h3>
+                        <p id="statRecordatoriosPendientes" class="text-3xl font-bold text-gray-900">--</p>
+                        <p class="text-xs text-gray-500 mt-1">tareas activas</p>
                     </div>
                 </div>
 
-                <!-- Quick Actions & Chart -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-                    <!-- Quick Actions -->
-                    <div class="lg:col-span-1">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Acceso Rápido</h3>
-                            <div class="space-y-3">
-                                <button
-                                    class="w-full flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
-                                    <div class="p-2 bg-blue-600 rounded-lg">
-                                        <i data-lucide="calendar-plus" class="w-5 h-5 text-white"></i>
-                                    </div>
-                                    <div class="flex-1 text-left">
-                                        <p class="font-semibold text-gray-900 group-hover:text-blue-600">Solicitar Cita
-                                        </p>
-                                        <p class="text-xs text-gray-600">Agenda una nueva consulta</p>
-                                    </div>
-                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                                </button>
-
-                                <button
-                                    class="w-full flex items-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors group">
-                                    <div class="p-2 bg-emerald-600 rounded-lg">
-                                        <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
-                                    </div>
-                                    <div class="flex-1 text-left">
-                                        <p class="font-semibold text-gray-900 group-hover:text-emerald-600">Ver mi
-                                            Historial</p>
-                                        <p class="text-xs text-gray-600">Consulta tu historial completo</p>
-                                    </div>
-                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                                </button>
-
-                                <button
-                                    class="w-full flex items-center space-x-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors group">
-                                    <div class="p-2 bg-purple-600 rounded-lg">
-                                        <i data-lucide="download" class="w-5 h-5 text-white"></i>
-                                    </div>
-                                    <div class="flex-1 text-left">
-                                        <p class="font-semibold text-gray-900 group-hover:text-purple-600">Descargar
-                                            Informes</p>
-                                        <p class="text-xs text-gray-600">Obtén tus documentos médicos</p>
-                                    </div>
-                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                                </button>
+                <!-- Acceso rápido -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 class="text-base font-semibold text-gray-900 mb-4">Acceso Rápido</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button id="btnSolicitarCita"
+                            class="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group text-left">
+                            <div class="p-2 bg-blue-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="calendar-plus" class="w-5 h-5 text-white"></i>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Evolution Chart -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-semibold text-gray-900">Evolución de Salud</h3>
-                                <select
-                                    class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option>Presión Arterial</option>
-                                    <option>Peso</option>
-                                    <option>Glucosa</option>
-                                </select>
+                            <div>
+                                <p class="font-semibold text-gray-900 group-hover:text-blue-700">Solicitar Cita</p>
+                                <p class="text-xs text-gray-500">Pide una nueva cita con tu médico</p>
                             </div>
-
-                            <!-- Chart Placeholder -->
-                            <div class="chart-placeholder flex items-center justify-center text-white">
-                                <div class="text-center">
-                                    <i data-lucide="trending-up" class="w-12 h-12 mx-auto mb-2 opacity-80"></i>
-                                    <p class="text-sm opacity-90">Gráfico de Evolución</p>
-                                    <p class="text-xs opacity-75 mt-1">Últimos 6 meses</p>
-                                </div>
+                        </button>
+                        <button id="btnVerHistorial"
+                            class="flex items-center gap-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors group text-left">
+                            <div class="p-2 bg-emerald-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
                             </div>
-
-                            <!-- Stats Below Chart -->
-                            <div class="grid grid-cols-3 gap-4 mt-6">
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-500 mb-1">Promedio</p>
-                                    <p class="text-lg font-bold text-gray-900">120/80</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-500 mb-1">Máximo</p>
-                                    <p class="text-lg font-bold text-gray-900">130/85</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-500 mb-1">Mínimo</p>
-                                    <p class="text-lg font-bold text-gray-900">115/75</p>
-                                </div>
+                            <div>
+                                <p class="font-semibold text-gray-900 group-hover:text-emerald-700">Mi Historial</p>
+                                <p class="text-xs text-gray-500">Consulta todas tus consultas médicas</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
-                            <div class="p-2 bg-blue-50 rounded-lg">
-                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p id="proximaCita" class="font-medium text-gray-900">Cargando próxima cita...</p>
-                                <p class="text-sm text-gray-600 mt-1">Revisión anual programada para el 15 de febrero
-                                </p>
-                                <p class="text-xs text-gray-500 mt-2">Cargando fecha...</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-4 pb-4 border-b border-gray-100">
-                            <div class="p-2 bg-green-50 rounded-lg">
-                                <i data-lucide="file-check" class="w-5 h-5 text-green-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">Resultados de laboratorio disponibles</p>
-                                <p class="text-sm text-gray-600 mt-1">Análisis de sangre completo - Todos los valores
-                                    normales</p>
-                                <p class="text-xs text-gray-500 mt-2">Cargando fecha...</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-4">
-                            <div class="p-2 bg-purple-50 rounded-lg">
-                                <i data-lucide="pill" class="w-5 h-5 text-purple-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">Receta renovada</p>
-                                <p class="text-sm text-gray-600 mt-1">Omeprazol 20mg - Disponible para recoger en
-                                    farmacia</p>
-                                <p class="text-xs text-gray-500 mt-2">Cargando fecha...</p>
-                            </div>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -486,6 +373,27 @@
                     </form>
                 </div>
             </section>
+        </main>
+
+        <!-- Vista: Mis Citas -->
+        <main id="citasView" class="view-section flex-1 p-4 lg:p-8">
+            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-1">Mis Citas</h1>
+                    <p class="text-gray-600">Gestiona tus citas médicas y solicita nuevas.</p>
+                </div>
+                <button id="btnNuevaCita"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors text-sm">
+                    <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                    Solicitar nueva cita
+                </button>
+            </div>
+
+            <!-- Lista de citas -->
+            <div id="citasList"></div>
+            <p id="citasEmpty" class="hidden text-center text-gray-500 py-16">
+                No tienes citas registradas. ¡Solicita tu primera cita!
+            </p>
         </main>
 
         <!-- Minimal Pediatric View (placeholders dinámicos para dependientes) -->
@@ -703,6 +611,77 @@
         </div>
     </div>
 
+    <!-- Modal: Solicitar Cita -->
+    <div id="citaModal" class="modal fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 bg-blue-50 rounded-xl">
+                        <i data-lucide="calendar-plus" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Solicitar Cita</h2>
+                        <p class="text-xs text-gray-500">El médico confirmará tu solicitud</p>
+                    </div>
+                </div>
+                <button id="cerrarCitaModal" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="citaForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Médico <span class="text-red-500">*</span></label>
+                    <select id="citaMedicoSelect" name="id_medico" required
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Cargando médicos...</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha <span class="text-red-500">*</span></label>
+                        <input id="citaFechaInput" type="date" name="fecha" required
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hora <span class="text-red-500">*</span></label>
+                        <input type="time" name="hora" required
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Motivo <span class="text-red-500">*</span></label>
+                    <textarea name="motivo" rows="2" required placeholder="Describe brevemente el motivo de la consulta..."
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                    <select name="tipo"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Presencial">Presencial</option>
+                        <option value="Telematica">Telemática</option>
+                    </select>
+                </div>
+
+                <p id="citaFormMsg" class="text-sm hidden"></p>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" id="cancelarCitaModal"
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="citaSubmitBtn"
+                        class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium transition-colors">
+                        Solicitar cita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- External JavaScript -->
     <script>
         console.log('📝 INICIANDO CARGA DE SCRIPTS');
@@ -713,9 +692,68 @@
         console.log('✅ dashboard.js CARGADO');
     </script>
     <script src="js/dependientes.js"></script>
+    <script src="js/citas.js"></script>
     <script>
-        console.log('✅ dependientes.js CARGADO');
-        console.log('🏁 TODOS LOS SCRIPTS CARGADOS');
+        console.log('✅ dependientes.js + citas.js CARGADOS');
+
+        // ── Navegación a Mis Citas ──────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const navCitas = document.getElementById('navCitasPaciente');
+            const citasView = document.getElementById('citasView');
+            const mainView  = document.getElementById('mainPacienteView');
+            const healthView = document.getElementById('healthProfileView');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            function showView(view) {
+                [mainView, healthView, citasView].forEach(v => {
+                    if (v) { v.classList.remove('active'); v.classList.add('hidden') || v.classList.remove('active'); }
+                });
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                if (view) view.classList.add('active');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            if (navCitas) {
+                navCitas.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    navCitas.classList.add('active');
+                    showView(citasView);
+                    window.citasModule.cargarCitas();
+                });
+            }
+
+            // Botones solicitar cita (header + acceso rápido)
+            ['btnSolicitarCita', 'btnNuevaCita'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.addEventListener('click', () => {
+                    // Si no estamos en la vista de citas, navegamos primero
+                    if (id === 'btnSolicitarCita') {
+                        sidebarItems.forEach(i => i.classList.remove('active'));
+                        if (navCitas) navCitas.classList.add('active');
+                        showView(citasView);
+                        window.citasModule.cargarCitas();
+                    }
+                    window.citasModule.abrirModal();
+                });
+            });
+
+            // Cerrar modal
+            ['cerrarCitaModal', 'cancelarCitaModal'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.addEventListener('click', () => {
+                    const m = document.getElementById('citaModal');
+                    if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+                });
+            });
+
+            // Init citas cuando el dashboard cargue la sesión
+            document.addEventListener('citasDashboardReady', (e) => {
+                if (e.detail && e.detail.dni) {
+                    window.citasModule.init(e.detail.dni);
+                }
+            });
+        });
     </script>
 </body>
 

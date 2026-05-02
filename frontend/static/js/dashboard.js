@@ -207,6 +207,10 @@ class PacienteDashboard {
             }
 
             this.pintarUsuario();
+            // Notificar al módulo de citas que ya tenemos la sesión
+            document.dispatchEvent(new CustomEvent('citasDashboardReady', {
+                detail: { dni: this.usuario.id }
+            }));
         } catch (_error) {
             window.location.href = 'login.html';
         }
@@ -569,8 +573,16 @@ class PacienteDashboard {
             (item) => item.estado !== 'Completado' && !dismissed.has(String(item.id_recordatorio))
         );
 
-        if (pending.length) {
-            this.notificationBadge.textContent = pending.length > 9 ? '9+' : pending.length;
+        // Stat badge de recordatorios pendientes en la tarjeta de inicio
+        const statEl = document.getElementById('statRecordatoriosPendientes');
+        if (statEl) statEl.textContent = pending.length;
+
+        // Incluir citas próximas en el contador del bell
+        const citasProx = window.citasModule ? window.citasModule.getCitasProximas() : [];
+        const total = pending.length + citasProx.length;
+
+        if (total) {
+            this.notificationBadge.textContent = total > 9 ? '9+' : total;
             this.notificationBadge.classList.remove('hidden');
         } else {
             this.notificationBadge.classList.add('hidden');
@@ -658,6 +670,16 @@ class PacienteDashboard {
                 return db - da;
             });
             this.renderConsultas();
+            // Stat: última consulta
+            const uc = document.getElementById('ultimaConsultaResumen');
+            if (uc && this.consultas.length > 0) {
+                const c = this.consultas[0];
+                const med = `Dr./Dra. ${c.medico_nombre || ''} ${c.medico_apellidos || ''}`.trim();
+                const fecha = this.formatearFecha(c.fecha);
+                uc.innerHTML = `<span class="font-semibold">${fecha}</span><br><span class="text-xs text-gray-500">${med}</span>`;
+            } else if (uc) {
+                uc.textContent = 'Sin consultas registradas';
+            }
         } catch (error) {
             this.renderError(error.message);
         }

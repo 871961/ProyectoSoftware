@@ -1,212 +1,218 @@
+/* ============================================================
+   MedHistory — Panel Infantil
+   Estética: colores planos vivos, formas redondas, fuente Nunito
+   Sin degradados, sin sombras excesivas
+   ============================================================ */
+
 :root {
-    --kid-sky: #38bdf8;
-    --kid-mint: #34d399;
-    --kid-sun: #fbbf24;
-    --kid-rose: #fb7185;
-    --kid-ink: #0f172a;
+    --kid-sky:    #38bdf8;
+    --kid-mint:   #34d399;
+    --kid-sun:    #fbbf24;
+    --kid-rose:   #fb7185;
+    --kid-violet: #a78bfa;
+    --kid-ink:    #0f172a;
     --kid-ink-soft: #475569;
-    --kid-shell: #ffffff;
+    --kid-bg:     #f0f9ff;
     --kid-border: #e2e8f0;
-    --kid-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
-* {
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
-}
+* { font-family: 'Nunito', 'Segoe UI', sans-serif; }
 
+/* ── Fondo ── */
 .kid-bg {
-    background: linear-gradient(120deg, #f0fbff 0%, #fff7ed 45%, #f0fdf4 100%);
+    background-color: var(--kid-bg);
     color: var(--kid-ink);
-    position: relative;
-    overflow-x: hidden;
 }
 
-.kid-orbit {
-    position: fixed;
-    inset: -40% -10% auto;
-    height: 60vh;
-    background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.25), transparent 55%),
-        radial-gradient(circle at 80% 30%, rgba(52, 211, 153, 0.18), transparent 60%),
-        radial-gradient(circle at 50% 80%, rgba(251, 191, 36, 0.2), transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-}
-
+/* ── Contenedor ── */
 .kid-container {
     max-width: 1180px;
     margin: 0 auto;
     padding: 0 24px;
-    position: relative;
-    z-index: 1;
 }
 
-.kid-header {
-    padding: 24px 0 12px;
-}
+.kid-header { padding: 24px 0 12px; }
+.kid-main   { padding-bottom: 64px; }
 
-.kid-main {
-    padding-bottom: 64px;
-}
-
+/* ── Logo ── */
 .kid-logo {
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: linear-gradient(135deg, var(--kid-sky), var(--kid-mint));
+    background-color: var(--kid-sky);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 22px rgba(56, 189, 248, 0.25);
 }
 
+/* ── Botón de volver ── */
 .kid-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 10px 18px;
     border-radius: 999px;
-    background: var(--kid-shell);
-    border: 1px solid var(--kid-border);
+    background: white;
+    border: 2px solid var(--kid-border);
     color: var(--kid-ink);
-    font-weight: 600;
-    box-shadow: 0 8px 20px rgba(148, 163, 184, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 700;
+    transition: border-color 0.2s ease, transform 0.15s ease;
 }
-
 .kid-btn:hover {
+    border-color: var(--kid-sky);
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px rgba(148, 163, 184, 0.28);
 }
 
+/* ── Tarjeta base ── */
 .kid-card {
-    background: var(--kid-shell);
+    background: white;
     border-radius: 24px;
-    border: 1px solid var(--kid-border);
+    border: 2px solid var(--kid-border);
     padding: 24px;
-    box-shadow: var(--kid-shadow);
-    animation: kidFadeUp 0.4s ease;
+    animation: kidFadeUp 0.35s ease;
 }
 
+/* ── Hero card (perfil del dependiente) ── */
 .kid-hero {
     margin-bottom: 24px;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(52, 211, 153, 0.12));
+    border-color: var(--kid-sky);
+    background-color: #f0f9ff;
 }
 
+/* ── Avatar ── */
 .kid-avatar {
     width: 84px;
     height: 84px;
     border-radius: 24px;
-    background: linear-gradient(135deg, var(--kid-rose), var(--kid-sun));
+    background-color: var(--kid-rose);
     color: white;
     font-size: 28px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 12px 26px rgba(251, 113, 133, 0.35);
+    border: 3px solid white;
+    outline: 3px solid var(--kid-rose);
+    outline-offset: 2px;
 }
 
+/* ── Chips informativos ── */
 .kid-chip {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.04);
+    background: #f1f5f9;
     color: var(--kid-ink-soft);
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
+    border: 1.5px solid var(--kid-border);
 }
 
+/* ── Grid de secciones ── */
 .kid-grid {
     display: grid;
     gap: 24px;
 }
-
 @media (min-width: 1024px) {
-    .kid-grid {
-        grid-template-columns: 1.4fr 1fr;
-    }
+    .kid-grid { grid-template-columns: 1.4fr 1fr; }
 }
 
+/* ── Icono de sección ── */
 .kid-icon {
     width: 40px;
     height: 40px;
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
+/* ── Métricas (peso, talla, IMC) ── */
 .kid-metric {
-    background: rgba(248, 250, 252, 0.8);
-    border: 1px dashed rgba(148, 163, 184, 0.6);
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
     border-radius: 16px;
     padding: 16px;
+    text-align: center;
 }
-
 .kid-metric-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     color: var(--kid-ink-soft);
+    font-weight: 700;
     margin-bottom: 6px;
 }
-
 .kid-metric-value {
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--kid-ink);
 }
 
+/* ── Etiquetas de alergias ── */
 .kid-tag {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
-    background: rgba(251, 113, 133, 0.12);
+    background: #fff1f2;
     color: #be123c;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.85rem;
+    border: 1.5px solid #fecdd3;
 }
 
+/* ── Filas de datos básicos ── */
 .kid-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 14px;
-    border-radius: 16px;
-    background: rgba(248, 250, 252, 0.8);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    padding: 11px 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1.5px solid var(--kid-border);
 }
+.kid-info-label { color: var(--kid-ink-soft); font-weight: 700; }
+.kid-info-value { color: var(--kid-ink); font-weight: 800; }
 
-.kid-info-label {
-    color: var(--kid-ink-soft);
-    font-weight: 600;
-}
-
-.kid-info-value {
-    color: var(--kid-ink);
-    font-weight: 700;
-}
-
+/* ── Mensaje de error ── */
 .kid-error {
     margin: 16px 0 24px;
     padding: 12px 16px;
     border-radius: 16px;
-    background: rgba(248, 113, 113, 0.12);
+    background: #fff1f2;
     color: #b91c1c;
-    font-weight: 600;
-    border: 1px solid rgba(248, 113, 113, 0.2);
+    font-weight: 700;
+    border: 2px solid #fecdd3;
 }
 
+/* ── Decoración de fondo (sin degradados) ── */
+.kid-dot-pattern {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #bae6fd 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Animación entrada ── */
 @keyframes kidFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Filas de consultas/vacunas en el panel ── */
+.kid-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1.5px solid var(--kid-border);
+}
+.kid-row + .kid-row { margin-top: 8px; }
