@@ -166,6 +166,20 @@
     }
 }
 
+/* Fuerza el tema oscuro en los inputs del chat */
+#chatInput {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+    caret-color: #60a5fa !important;
+}
+
+#chatInput::placeholder { color: #64748b !important; }
+
+#chatForm textarea,
+#chatForm input {
+    background: transparent !important;
+}
+
 /* ========================================
    STAT CARDS
    ======================================== */

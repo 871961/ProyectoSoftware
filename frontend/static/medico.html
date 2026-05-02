@@ -80,10 +80,10 @@
             </a>
 
             <div class="pt-4 mt-4 sidebar-section-border" style="border-top:1px solid #1e2d45">
-                <a href="#" class="sidebar-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm">
+                <button id="btnAbrirConfig" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-left">
                     <i data-lucide="settings" class="w-4 h-4 flex-shrink-0"></i>
                     <span>Configuración</span>
-                </a>
+                </button>
             </div>
         </nav>
 
@@ -245,218 +245,51 @@
                     </div>
                 </div>
 
-                <!-- Search Bar (Prominent) -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-1 relative">
-                            <i data-lucide="search"
-                                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                            <input type="text" placeholder="Buscar pacientes por nombre, DNI o historial clínico..."
-                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base">
-                        </div>
-                        <button
-                            class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
-                            <span class="flex items-center space-x-2">
-                                <i data-lucide="search" class="w-5 h-5"></i>
-                                <span>Buscar</span>
-                            </span>
-                        </button>
-                    </div>
+                <!-- Buscador global -->
+                <div class="mb-8 flex items-center gap-3 bg-white rounded-xl px-4 py-3" style="border:1px solid #e8edf2">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                    <input id="buscarInicio" type="text"
+                        placeholder="Buscar paciente por nombre o DNI..."
+                        class="flex-1 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-400">
+                    <button id="btnBuscarInicio"
+                        class="px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-colors"
+                        style="background:#0f3460;hover:background:#1a4a7a">
+                        Buscar
+                    </button>
                 </div>
 
-                <!-- Main Content Grid -->
+                <!-- Contenido principal -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    <!-- Patients List (2 columns) -->
+                    <!-- Citas de hoy — dinámico -->
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-                            <div class="p-6 border-b border-gray-200">
-                                <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-semibold text-gray-900">Citas de Hoy</h3>
-                                    <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">Ver
-                                        todas</button>
+                        <div class="bg-white rounded-xl" style="border:1px solid #e8edf2">
+                            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #e8edf2">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-gray-900 tracking-tight">Citas de hoy</h3>
+                                    <p id="citasHoyFecha" class="text-xs text-gray-400 mt-0.5"></p>
                                 </div>
+                                <button id="btnVerAgenda"
+                                    class="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+                                    style="color:#0f3460;background:#f0f4ff">
+                                    Ver agenda completa
+                                </button>
                             </div>
-
                             <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead class="bg-gray-50 border-b border-gray-200">
+                                <table class="w-full text-sm">
+                                    <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
                                         <tr>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Paciente
-                                            </th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Hora
-                                            </th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Motivo
-                                            </th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Estado
-                                            </th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Acciones
-                                            </th>
+                                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Paciente</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Hora</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Motivo</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Estado</th>
+                                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Acción</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <div
-                                                        class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                        AM
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <p class="font-medium text-gray-900">Ana Martínez</p>
-                                                        <p class="text-sm text-gray-500">DNI: 12345678A</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <p class="text-sm font-medium text-gray-900">10:00</p>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-gray-900">Revisión anual</p>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
-                                                    Pendiente
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
-                                                    historial</button>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <div
-                                                        class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                        CL
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <p class="font-medium text-gray-900">Carlos López</p>
-                                                        <p class="text-sm text-gray-500">DNI: 87654321B</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <p class="text-sm font-medium text-gray-900">10:30</p>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-gray-900">Control hipertensión</p>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
-                                                    Pendiente
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
-                                                    historial</button>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <div
-                                                        class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                        MR
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <p class="font-medium text-gray-900">María Rodríguez</p>
-                                                        <p class="text-sm text-gray-500">DNI: 11223344C</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <p class="text-sm font-medium text-gray-900">11:00</p>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-gray-900">Resultados análisis</p>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
-                                                    Pendiente
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
-                                                    historial</button>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="hover:bg-gray-50 transition-colors bg-green-50/30">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <div
-                                                        class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                        JG
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <p class="font-medium text-gray-900">Jorge García</p>
-                                                        <p class="text-sm text-gray-500">DNI: 99887766D</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <p class="text-sm font-medium text-gray-900">09:00</p>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-gray-900">Consulta general</p>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                                                    Completada
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
-                                                    historial</button>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <div
-                                                        class="w-10 h-10 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                        LS
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <p class="font-medium text-gray-900">Laura Sánchez</p>
-                                                        <p class="text-sm text-gray-500">DNI: 55667788E</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <p class="text-sm font-medium text-gray-900">11:30</p>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-gray-900">Vacunación</p>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">
-                                                    Pendiente
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <button class="text-blue-600 hover:text-blue-700 font-medium">Ver
-                                                    historial</button>
+                                    <tbody id="citasHoyBody" class="divide-y" style="border-color:#f0f4f8">
+                                        <tr>
+                                            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">
+                                                Cargando citas de hoy...
                                             </td>
                                         </tr>
                                     </tbody>
@@ -465,91 +298,57 @@
                         </div>
                     </div>
 
-                    <!-- Right Sidebar - Quick Info -->
-                    <div class="space-y-6">
+                    <!-- Panel derecho -->
+                    <div class="space-y-5">
 
-                        <!-- Quick Actions -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-                            <div class="space-y-3">
-                                <button
-                                    class="w-full flex items-center space-x-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                                    <i data-lucide="user-plus" class="w-5 h-5 text-blue-600"></i>
-                                    <span class="text-sm font-medium text-gray-900">Registrar Paciente</span>
+                        <!-- Acciones rápidas -->
+                        <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Acciones rápidas</h3>
+                            <div class="space-y-1.5">
+                                <button data-goto="consultas" id="accionNuevaConsulta"
+                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="file-plus" class="w-3.5 h-3.5 text-blue-700"></i>
+                                    </div>
+                                    Nueva consulta
                                 </button>
-                                <button
-                                    class="w-full flex items-center space-x-3 p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                                    <i data-lucide="file-plus" class="w-5 h-5 text-green-600"></i>
-                                    <span class="text-sm font-medium text-gray-900">Nueva Consulta</span>
+                                <button data-goto="agenda" id="accionVerAgenda"
+                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-700"></i>
+                                    </div>
+                                    Ver agenda
                                 </button>
-                                <button
-                                    class="w-full flex items-center space-x-3 p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-                                    <i data-lucide="clipboard" class="w-5 h-5 text-purple-600"></i>
-                                    <span class="text-sm font-medium text-gray-900">Emitir Receta</span>
+                                <button data-goto="mis-pacientes" id="accionPacientes"
+                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="users" class="w-3.5 h-3.5 text-emerald-700"></i>
+                                    </div>
+                                    Mis pacientes
+                                </button>
+                                <button data-goto="mensajes" id="accionMensajes"
+                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                    <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="message-circle" class="w-3.5 h-3.5 text-violet-700"></i>
+                                    </div>
+                                    Mensajes
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Recent Alerts -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Alertas Recientes</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <div class="p-2 bg-red-50 rounded-lg">
-                                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">Resultado crítico</p>
-                                        <p class="text-xs text-gray-600 mt-1">Paciente: Ana M.</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-start space-x-3">
-                                    <div class="p-2 bg-amber-50 rounded-lg">
-                                        <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">Receta por vencer</p>
-                                        <p class="text-xs text-gray-600 mt-1">Carlos L. - 3 días</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-start space-x-3">
-                                    <div class="p-2 bg-blue-50 rounded-lg">
-                                        <i data-lucide="info" class="w-4 h-4 text-blue-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">Nueva solicitud de cita</p>
-                                        <p class="text-xs text-gray-600 mt-1">Hace 15 minutos</p>
-                                    </div>
-                                </div>
+                        <!-- Citas pendientes de confirmar -->
+                        <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendientes de confirmar</h3>
+                            <div id="citasPendientesResumen" class="space-y-2">
+                                <p class="text-xs text-gray-400">Cargando...</p>
                             </div>
                         </div>
 
-                        <!-- Calendar Widget -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Esta Semana</h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                                    <span class="text-sm text-gray-600">Lunes</span>
-                                    <span class="text-sm font-semibold text-gray-900">12 citas</span>
-                                </div>
-                                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                                    <span class="text-sm text-gray-600">Martes</span>
-                                    <span class="text-sm font-semibold text-blue-600">8 citas (hoy)</span>
-                                </div>
-                                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                                    <span class="text-sm text-gray-600">Miércoles</span>
-                                    <span class="text-sm font-semibold text-gray-900">10 citas</span>
-                                </div>
-                                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                                    <span class="text-sm text-gray-600">Jueves</span>
-                                    <span class="text-sm font-semibold text-gray-900">9 citas</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm text-gray-600">Viernes</span>
-                                    <span class="text-sm font-semibold text-gray-900">7 citas</span>
-                                </div>
+                        <!-- Esta semana -->
+                        <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Esta semana</h3>
+                            <div id="resumenSemana" class="space-y-1.5">
+                                <p class="text-xs text-gray-400">Cargando...</p>
                             </div>
                         </div>
                     </div>
@@ -560,19 +359,16 @@
             <!-- TAB: MIS PACIENTES -->
             <div id="tab-mis-pacientes" class="tab-content hidden">
                 <div class="mb-6">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Mis Pacientes</h1>
-                    <p class="text-gray-600">Gestiona el perfil de salud y antecedentes familiares de tus pacientes</p>
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Mis Pacientes</h1>
+                    <p class="text-sm text-gray-400">Perfil de salud y antecedentes familiares</p>
                 </div>
 
-                <!-- Buscador de pacientes -->
-                <div class="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                    <div class="relative">
-                        <i data-lucide="search"
-                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                        <input type="text" id="buscarPaciente"
-                            placeholder="Buscar paciente por DNI, nombre o apellidos..."
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
+                <!-- Buscador -->
+                <div class="mb-5 flex items-center gap-3 bg-white rounded-xl px-4 py-3" style="border:1px solid #e8edf2">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                    <input type="text" id="buscarPaciente"
+                        placeholder="Buscar por DNI, nombre o apellidos..."
+                        class="flex-1 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-400">
                 </div>
 
                 <!-- Grid: Lista de pacientes + Detalles -->
@@ -580,11 +376,11 @@
 
                     <!-- Columna izquierda: Lista de pacientes -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Listado de Pacientes</h2>
-                            <div id="listaPacientes" class="space-y-2 max-h-[600px] overflow-y-auto">
-                                <div class="text-center py-8 text-gray-500">
-                                    <i data-lucide="users" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                        <div class="bg-white rounded-xl p-4" style="border:1px solid #e8edf2">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pacientes asignados</p>
+                            <div id="listaPacientes" class="space-y-1 max-h-[600px] overflow-y-auto">
+                                <div class="text-center py-8 text-gray-400 text-sm">
+                                    <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
                                     <p>Cargando pacientes...</p>
                                 </div>
                             </div>
@@ -593,31 +389,33 @@
 
                     <!-- Columna derecha: Detalles del paciente seleccionado -->
                     <div class="lg:col-span-2">
-                        <div id="detallePaciente" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div id="detallePaciente" class="bg-white rounded-xl p-6" style="border:1px solid #e8edf2">
                             <!-- Estado inicial: sin selección -->
                             <div id="sinSeleccion" class="text-center py-16">
-                                <i data-lucide="user-circle" class="w-24 h-24 mx-auto mb-4 text-gray-300"></i>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2">Selecciona un paciente</h3>
-                                <p class="text-gray-500">Haz clic en un paciente de la lista para ver su información</p>
+                                <i data-lucide="user-circle" class="w-16 h-16 mx-auto mb-3 text-gray-200"></i>
+                                <p class="text-sm font-medium text-gray-500">Selecciona un paciente</p>
+                                <p class="text-xs text-gray-400 mt-1">Haz clic en la lista para ver su historial</p>
                             </div>
 
                             <!-- Información del paciente (oculta inicialmente) -->
                             <div id="infoPaciente" class="hidden">
-                                <!-- Header con datos básicos -->
-                                <div class="flex items-start justify-between mb-6 pb-6 border-b border-gray-200">
-                                    <div class="flex items-start space-x-4">
+                                <!-- Header -->
+                                <div class="flex items-start justify-between mb-5 pb-5" style="border-bottom:1px solid #e8edf2">
+                                    <div class="flex items-center gap-4">
                                         <div id="avatarPaciente"
-                                            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                                            class="w-14 h-14 rounded-xl flex items-center justify-center text-white font-semibold text-lg flex-shrink-0"
+                                            style="background:#1d4ed8">
                                         </div>
                                         <div>
-                                            <h2 id="nombrePaciente" class="text-2xl font-bold text-gray-900"></h2>
-                                            <p id="dniPaciente" class="text-gray-600"></p>
-                                            <p id="emailPaciente" class="text-sm text-gray-500 mt-1"></p>
+                                            <h2 id="nombrePaciente" class="text-lg font-semibold text-gray-900"></h2>
+                                            <p id="dniPaciente" class="text-xs text-gray-400 mt-0.5"></p>
+                                            <p id="emailPaciente" class="text-xs text-gray-400"></p>
                                         </div>
                                     </div>
                                     <div>
                                         <span id="estadoPaciente"
-                                            class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                            class="px-2.5 py-1 text-xs font-semibold rounded-full"
+                                            style="background:#f0fdf4;color:#166534">
                                             Activo
                                         </span>
                                     </div>
@@ -879,52 +677,48 @@
                 <!-- FIN TAB: MIS PACIENTES -->
             </div>
 
-            <!-- TAB: HISTORIALES -->
+            <!-- TAB: CONSULTAS -->
             <div id="tab-consultas" class="tab-content hidden">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Consultas</h1>
-                    <p class="text-gray-600">Consultas médicas registradas</p>
+                <div class="mb-6">
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Consultas</h1>
+                    <p class="text-sm text-gray-400">Registro de consultas médicas</p>
                 </div>
 
-                <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                    <div class="flex flex-col md:flex-row md:items-end gap-3 mb-4">
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-900">Mis Consultas Registradas</h2>
-                        </div>
-                        <div class="md:ml-auto flex items-end gap-2">
-                            <div>
-                                <label for="filtroDesdeMedico" class="block text-xs text-gray-600 mb-1">Desde</label>
+                <section class="bg-white rounded-xl mb-8" style="border:1px solid #e8edf2">
+                    <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3" style="border-bottom:1px solid #e8edf2">
+                        <h2 class="text-sm font-semibold text-gray-700 tracking-tight">Mis consultas registradas</h2>
+                        <div class="sm:ml-auto flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-1">
+                                <label for="filtroDesdeMedico" class="text-xs text-gray-400">Desde</label>
                                 <input id="filtroDesdeMedico" type="date"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                    class="px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    style="border-color:#e8edf2">
                             </div>
-                            <div>
-                                <label for="filtroHastaMedico" class="block text-xs text-gray-600 mb-1">Hasta</label>
+                            <div class="flex items-center gap-1">
+                                <label for="filtroHastaMedico" class="text-xs text-gray-400">Hasta</label>
                                 <input id="filtroHastaMedico" type="date"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                    class="px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    style="border-color:#e8edf2">
                             </div>
                             <button id="aplicarFiltroMedico" type="button"
-                                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Filtrar</button>
+                                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                                style="background:#0f3460;color:white">Filtrar</button>
                             <button id="limpiarFiltroMedico" type="button"
-                                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Limpiar</button>
+                                class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-200">Limpiar</button>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                        <table class="w-full text-sm">
+                            <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
                                 <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Fecha
-                                    </th>
-                                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                        Paciente</th>
-                                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                        Diagnóstico</th>
-                                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                        Tratamiento</th>
-                                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                                        Acciones</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Fecha</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Paciente</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Diagnóstico</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden xl:table-cell">Tratamiento</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="consultasMedicoBody"></tbody>
+                            <tbody id="consultasMedicoBody" class="divide-y" style="border-color:#f0f4f8"></tbody>
                         </table>
                     </div>
                 </section>
@@ -1019,34 +813,32 @@
 
             <!-- TAB: AGENDA DE CITAS -->
             <div id="tab-agenda" class="tab-content hidden">
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-1">Agenda de Citas</h1>
-                        <p class="text-gray-600">Gestiona las citas solicitadas por tus pacientes.</p>
-                    </div>
+                <div class="mb-6">
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Agenda de Citas</h1>
+                    <p class="text-sm text-gray-400">Gestiona las solicitudes de cita de tus pacientes.</p>
                 </div>
 
                 <!-- Filtros -->
-                <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm text-gray-600 font-medium">Fecha:</label>
-                            <input id="agendaFiltroFecha" type="date"
-                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                            <input id="agendaFiltroPendientes" type="checkbox" class="rounded border-gray-300 text-blue-600">
-                            Solo pendientes de confirmar
-                        </label>
-                        <button id="agendaBtnHoy"
-                            class="px-3 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium">
-                            Hoy
-                        </button>
-                        <button id="agendaBtnTodo"
-                            class="px-3 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">
-                            Todas
-                        </button>
+                <div class="bg-white rounded-xl p-4 mb-5 flex flex-wrap items-center gap-3" style="border:1px solid #e8edf2">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs text-gray-400 font-medium">Fecha</label>
+                        <input id="agendaFiltroFecha" type="date"
+                            class="px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            style="border-color:#e8edf2">
                     </div>
+                    <label class="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+                        <input id="agendaFiltroPendientes" type="checkbox" class="rounded">
+                        Solo pendientes de confirmar
+                    </label>
+                    <button id="agendaBtnHoy"
+                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                        style="background:#0f3460;color:white">
+                        Hoy
+                    </button>
+                    <button id="agendaBtnTodo"
+                        class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-200">
+                        Todas
+                    </button>
                 </div>
 
                 <!-- Lista de citas del médico -->
@@ -1149,6 +941,98 @@
         </main>
     </div>
 
+    <!-- Modal de Configuración -->
+    <div id="configModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-5 flex items-center justify-between" style="border-bottom:1px solid #e8edf2">
+                <div>
+                    <h2 class="text-base font-semibold text-gray-900">Configuración</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">Ajustes de tu cuenta</p>
+                </div>
+                <button id="cerrarConfig" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Datos personales -->
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Datos de cuenta</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nombre completo</label>
+                            <input id="configNombre" type="text" readonly
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl bg-gray-50 focus:outline-none"
+                                style="border-color:#e8edf2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Correo electrónico</label>
+                            <input id="configEmail" type="email" readonly
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl bg-gray-50 focus:outline-none"
+                                style="border-color:#e8edf2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Tipo de médico</label>
+                            <input id="configTipo" type="text" readonly
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl bg-gray-50 focus:outline-none"
+                                style="border-color:#e8edf2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cambio de contraseña -->
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Cambiar contraseña</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Contraseña actual</label>
+                            <input id="configPassActual" type="password"
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="border-color:#e8edf2"
+                                placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nueva contraseña</label>
+                            <input id="configPassNueva" type="password"
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="border-color:#e8edf2"
+                                placeholder="Mínimo 8 caracteres">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Confirmar nueva contraseña</label>
+                            <input id="configPassConfirm" type="password"
+                                class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="border-color:#e8edf2"
+                                placeholder="Repite la nueva contraseña">
+                        </div>
+                        <p id="configPassMsg" class="text-xs hidden"></p>
+                        <button id="btnGuardarPass"
+                            class="px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-colors"
+                            style="background:#0f3460">
+                            Actualizar contraseña
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preferencias -->
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Preferencias</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <span class="text-sm text-gray-700">Notificaciones de nuevas citas</span>
+                            <div class="relative">
+                                <input id="prefNotifCitas" type="checkbox" class="sr-only peer" checked>
+                                <div class="w-10 h-5 rounded-full peer-checked:bg-blue-700 bg-gray-200 transition-colors"
+                                    style="background-color:inherit"></div>
+                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- External JavaScript -->
     <script src="js/badge-styles.js"></script>
     <script src="js/dashboard-medico.js"></script>
@@ -1157,35 +1041,211 @@
     <script src="js/citas-medico.js"></script>
     <script src="js/chat-medico.js"></script>
 
-    <!-- Navegación por tabs + init módulos -->
+    <!-- Navegación + Inicio dinámico + Configuración -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.nav-link[data-tab]');
-            const tabs     = document.querySelectorAll('.tab-content');
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.nav-link[data-tab]');
+        const tabs     = document.querySelectorAll('.tab-content');
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetTab = link.getAttribute('data-tab');
+        // ── Navegación por tabs ───────────────────────────────────────────────
+        function goToTab(targetTab) {
+            tabs.forEach(t => t.classList.add('hidden'));
+            navLinks.forEach(l => l.classList.remove('active'));
+            const sel = document.getElementById(`tab-${targetTab}`);
+            if (sel) sel.classList.remove('hidden');
+            const link = document.querySelector(`.nav-link[data-tab="${targetTab}"]`);
+            if (link) link.classList.add('active');
+            if (targetTab === 'agenda') window.citasMedicoModule.cargar();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
-                    tabs.forEach(tab => tab.classList.add('hidden'));
-                    navLinks.forEach(l => l.classList.remove('active'));
-
-                    const selectedTab = document.getElementById(`tab-${targetTab}`);
-                    if (selectedTab) selectedTab.classList.remove('hidden');
-                    link.classList.add('active');
-
-                    if (targetTab === 'agenda') {
-                        window.citasMedicoModule.cargar();
-                    }
-
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                });
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToTab(link.getAttribute('data-tab'));
             });
-
-            if (tabs.length > 0) tabs[0].classList.remove('hidden');
-            window.citasMedicoModule.init();
         });
+
+        if (tabs.length > 0) tabs[0].classList.remove('hidden');
+        window.citasMedicoModule.init();
+
+        // ── Acciones rápidas → navegación ────────────────────────────────────
+        document.querySelectorAll('.accion-rapida[data-goto]').forEach(btn => {
+            btn.addEventListener('click', () => goToTab(btn.dataset.goto));
+        });
+        document.getElementById('btnVerAgenda')?.addEventListener('click', () => goToTab('agenda'));
+
+        // ── Búsqueda en Inicio → ir a Mis Pacientes ───────────────────────────
+        const btnBuscar = document.getElementById('btnBuscarInicio');
+        const inputBuscar = document.getElementById('buscarInicio');
+        function ejecutarBusqueda() {
+            const q = inputBuscar?.value.trim();
+            if (!q) return;
+            goToTab('mis-pacientes');
+            const buscador = document.getElementById('buscarPaciente');
+            if (buscador) { buscador.value = q; buscador.dispatchEvent(new Event('input')); }
+        }
+        btnBuscar?.addEventListener('click', ejecutarBusqueda);
+        inputBuscar?.addEventListener('keydown', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
+
+        // ── Cargar citas de hoy en tab-inicio ────────────────────────────────
+        async function cargarCitasHoy() {
+            const hoy = new Date();
+            const hoyStr = hoy.toISOString().split('T')[0];
+
+            const fechaEl = document.getElementById('citasHoyFecha');
+            if (fechaEl) fechaEl.textContent = hoy.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+
+            try {
+                const res  = await fetch(`../backend/src/controllers/CitasController.php?accion=listar_medico&fecha=${hoyStr}`);
+                const data = await res.json();
+                const citas = data.success ? data.data : [];
+
+                const tbody = document.getElementById('citasHoyBody');
+                if (!tbody) return;
+
+                // Resumen de la semana
+                cargarResumenSemana();
+
+                // Pendientes para el panel lateral
+                const pendientes = citas.filter(c => c.estado === 'Pendiente');
+                const elPend = document.getElementById('citasPendientesResumen');
+                if (elPend) {
+                    if (pendientes.length === 0) {
+                        elPend.innerHTML = '<p class="text-xs text-gray-400">No hay solicitudes pendientes.</p>';
+                    } else {
+                        elPend.innerHTML = pendientes.slice(0,3).map(c => `
+                            <div class="flex items-center gap-2 py-1.5" style="border-bottom:1px solid #f0f4f8">
+                                <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-xs font-semibold text-blue-700 flex-shrink-0">
+                                    ${(c.paciente_nombre[0]||'')+(c.paciente_apellidos[0]||'')}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-medium text-gray-800 truncate">${c.paciente_nombre} ${c.paciente_apellidos}</p>
+                                    <p class="text-xs text-gray-400">${c.fecha_hora.substring(11,16)} · ${c.motivo.substring(0,25)}</p>
+                                </div>
+                            </div>`).join('') +
+                            (pendientes.length > 3 ? `<p class="text-xs text-gray-400 pt-1">+${pendientes.length-3} más</p>` : '');
+                    }
+                }
+
+                if (citas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No hay citas programadas para hoy.</td></tr>';
+                    return;
+                }
+
+                const estadoBadge = { Pendiente:'background:#fef3c7;color:#92400e', Confirmada:'background:#d1fae5;color:#065f46', Cancelada:'background:#fee2e2;color:#991b1b', Completada:'background:#f3f4f6;color:#374151' };
+                tbody.innerHTML = citas.map(c => {
+                    const ini = (c.paciente_nombre[0]||'')+(c.paciente_apellidos[0]||'');
+                    const hora = c.fecha_hora.substring(11,16);
+                    const est = estadoBadge[c.estado] || estadoBadge.Pendiente;
+                    return `<tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-5 py-3.5 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">${ini}</div>
+                                <div><p class="text-sm font-medium text-gray-900">${c.paciente_nombre} ${c.paciente_apellidos}</p>
+                                <p class="text-xs text-gray-400">${c.paciente_dni}</p></div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm font-semibold text-gray-800">${hora}</td>
+                        <td class="px-4 py-3.5 text-sm text-gray-600 hidden md:table-cell max-w-xs truncate">${c.motivo}</td>
+                        <td class="px-4 py-3.5 whitespace-nowrap">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full" style="${est}">${c.estado}</span>
+                        </td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                ${c.estado==='Pendiente'?`<button data-id="${c.id_cita}" data-accion="confirmar" class="btn-accion-cita text-xs font-medium px-2.5 py-1 rounded-lg" style="background:#e0f2fe;color:#0369a1">Confirmar</button>`:''}
+                                <button data-id="${c.id_cita}" data-accion="cancelar" class="btn-accion-cita text-xs font-medium px-2.5 py-1 rounded-lg text-gray-500 hover:bg-gray-100">✕</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                const tbody = document.getElementById('citasHoyBody');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-5 text-center text-xs text-gray-400">No se pudieron cargar las citas.</td></tr>';
+            }
+        }
+
+        async function cargarResumenSemana() {
+            try {
+                const res  = await fetch('../backend/src/controllers/CitasController.php?accion=listar_medico');
+                const data = await res.json();
+                const citas = data.success ? data.data : [];
+
+                const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+                const hoy = new Date().getDay();
+                const counts = {};
+                citas.forEach(c => {
+                    const d = new Date(c.fecha_hora.replace(' ','T'));
+                    counts[d.getDay()] = (counts[d.getDay()]||0) + 1;
+                });
+
+                const el = document.getElementById('resumenSemana');
+                if (!el) return;
+                el.innerHTML = [1,2,3,4,5].map(d => {
+                    const n = counts[d] || 0;
+                    const esHoy = d === hoy;
+                    return `<div class="flex items-center justify-between py-1.5" style="${d<5?'border-bottom:1px solid #f0f4f8':''}">
+                        <span class="text-xs ${esHoy?'font-semibold text-blue-700':'text-gray-500'}">${dias[d]}${esHoy?' (hoy)':''}</span>
+                        <span class="text-xs font-semibold ${esHoy?'text-blue-700':'text-gray-700'}">${n} cita${n!==1?'s':''}</span>
+                    </div>`;
+                }).join('');
+            } catch(e) {}
+        }
+
+        cargarCitasHoy();
+
+        // ── Fecha en header del inicio ────────────────────────────────────────
+        const welcomeSub = document.getElementById('welcomeSubtitle');
+        if (welcomeSub) {
+            const hoy = new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+            welcomeSub.textContent = hoy.charAt(0).toUpperCase() + hoy.slice(1);
+        }
+
+        // ── Modal Configuración ───────────────────────────────────────────────
+        const configModal   = document.getElementById('configModal');
+        const btnAbrirConf  = document.getElementById('btnAbrirConfig');
+        const btnCerrarConf = document.getElementById('cerrarConfig');
+
+        btnAbrirConf?.addEventListener('click', () => {
+            // Rellena datos desde el dashboard (si ya cargó sesión)
+            const nombre = document.getElementById('profileName')?.textContent || '';
+            const role   = document.getElementById('profileRole')?.textContent || '';
+            if (document.getElementById('configNombre')) document.getElementById('configNombre').value = nombre;
+            if (document.getElementById('configTipo'))   document.getElementById('configTipo').value   = role;
+            configModal?.classList.remove('hidden');
+            configModal?.classList.add('flex');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+
+        btnCerrarConf?.addEventListener('click', () => {
+            configModal?.classList.add('hidden');
+            configModal?.classList.remove('flex');
+        });
+
+        configModal?.addEventListener('click', (e) => {
+            if (e.target === configModal) { configModal.classList.add('hidden'); configModal.classList.remove('flex'); }
+        });
+
+        document.getElementById('btnGuardarPass')?.addEventListener('click', () => {
+            const actual   = document.getElementById('configPassActual')?.value;
+            const nueva    = document.getElementById('configPassNueva')?.value;
+            const confirma = document.getElementById('configPassConfirm')?.value;
+            const msg      = document.getElementById('configPassMsg');
+            if (!actual || !nueva) {
+                if (msg) { msg.textContent = 'Rellena todos los campos.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                return;
+            }
+            if (nueva !== confirma) {
+                if (msg) { msg.textContent = 'Las contraseñas no coinciden.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                return;
+            }
+            if (nueva.length < 8) {
+                if (msg) { msg.textContent = 'La contraseña debe tener al menos 8 caracteres.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                return;
+            }
+            if (msg) { msg.textContent = 'Cambio de contraseña disponible próximamente.'; msg.className = 'text-xs text-amber-600'; msg.classList.remove('hidden'); }
+        });
+    });
     </script>
 
     <!-- Verificación de elementos del DOM -->
