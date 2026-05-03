@@ -12,6 +12,65 @@ class ChatMedicoDAO {
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+        $this->ensureChatSchema();
+    }
+
+    private function ensureChatSchema() {
+        if ($this->tablaExiste('chat_mensajes')) {
+            $this->db->exec("ALTER TABLE chat_mensajes ADD COLUMN IF NOT EXISTS tipo_contenido VARCHAR(20) NOT NULL DEFAULT 'texto'");
+            $this->db->exec("ALTER TABLE chat_mensajes ADD COLUMN IF NOT EXISTS nombre_archivo VARCHAR(255)");
+            $this->db->exec("ALTER TABLE chat_mensajes ADD COLUMN IF NOT EXISTS ruta_archivo TEXT");
+            $this->db->exec("ALTER TABLE chat_mensajes ADD COLUMN IF NOT EXISTS tamano_bytes INT");
+        } else {
+            $this->db->exec("CREATE TABLE chat_mensajes (
+                id_mensaje SERIAL PRIMARY KEY,
+                id_emisor INT NOT NULL,
+                id_receptor INT NOT NULL,
+                mensaje_cifrado TEXT NOT NULL,
+                nonce VARCHAR(64) NOT NULL,
+                tag VARCHAR(64) NOT NULL,
+                algoritmo VARCHAR(32) NOT NULL DEFAULT 'aes-256-gcm',
+                tipo_contenido VARCHAR(20) NOT NULL DEFAULT 'texto',
+                nombre_archivo VARCHAR(255),
+                ruta_archivo TEXT,
+                tamano_bytes INT,
+                enviado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                leido_en TIMESTAMP,
+                eliminado_por_emisor BOOLEAN DEFAULT FALSE,
+                eliminado_por_receptor BOOLEAN DEFAULT FALSE,
+                CONSTRAINT fk_chat_emisor FOREIGN KEY (id_emisor) REFERENCES medicos(id_medico),
+                CONSTRAINT fk_chat_receptor FOREIGN KEY (id_receptor) REFERENCES medicos(id_medico),
+                CONSTRAINT chk_chat_distinto_autor CHECK (id_emisor <> id_receptor),
+                CONSTRAINT chk_chat_tipo_contenido CHECK (tipo_contenido IN ('texto', 'archivo'))
+            )");
+        }
+
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_chat_emisor_receptor_fecha ON chat_mensajes(id_emisor, id_receptor, enviado_en DESC)");
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_chat_receptor_leido ON chat_mensajes(id_receptor, leido_en)");
+    }
+
+    private function tablaExiste($tabla) {
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = :tabla";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tabla' => $tabla]);
+        return ((int)$stmt->fetchColumn() > 0);
+    }
+
+    private function columnaExiste($tabla, $columna) {
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = :tabla
+                  AND column_name = :columna";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':tabla' => $tabla,
+            ':columna' => $columna
+        ]);
+        return ((int)$stmt->fetchColumn() > 0);
     }
 
     private function chatSupportsAttachmentColumns() {
@@ -71,6 +130,10 @@ class ChatMedicoDAO {
     }
 
     public function crearMensaje($idEmisor, $idReceptor, $mensajeCifrado, $nonce, $tag, $algoritmo, $tipoContenido = 'texto', $nombreArchivo = null, $rutaArchivo = null, $tamanoBytes = null) {
+        if (!$this->tablaExiste('chat_mensajes')) {
+            throw new Exception('La tabla chat_mensajes no existe. Ejecuta database/chat_medicos_seguro.sql para habilitar el chat.');
+        }
+
         $usaAdjuntos = $this->chatSupportsAttachmentColumns();
 
         if ($usaAdjuntos) {
@@ -123,17 +186,33 @@ class ChatMedicoDAO {
     }
 
     public function obtenerConversacion($idMedicoA, $idMedicoB, $limite = 100) {
+        if (!$this->tablaExiste('chat_mensajes')) {
+            return [];
+        }
+
         $usaAdjuntos = $this->chatSupportsAttachmentColumns();
         $camposAdjuntos = $usaAdjuntos
             ? ", tipo_contenido, nombre_archivo, ruta_archivo, tamano_bytes"
             : ", 'texto' AS tipo_contenido, NULL AS nombre_archivo, NULL AS ruta_archivo, NULL::INT AS tamano_bytes";
 
+        $filtraEliminadoEmisor = $this->columnaExiste('chat_mensajes', 'eliminado_por_emisor');
+        $filtraEliminadoReceptor = $this->columnaExiste('chat_mensajes', 'eliminado_por_receptor');
+
+        $condA = "id_emisor = :id_a AND id_receptor = :id_b";
+        $condB = "id_emisor = :id_b AND id_receptor = :id_a";
+        if ($filtraEliminadoEmisor) {
+            $condA .= " AND eliminado_por_emisor = FALSE";
+        }
+        if ($filtraEliminadoReceptor) {
+            $condB .= " AND eliminado_por_receptor = FALSE";
+        }
+
         $sql = "SELECT id_mensaje, id_emisor, id_receptor, mensaje_cifrado, nonce, tag, algoritmo{$camposAdjuntos}, enviado_en, leido_en
                 FROM chat_mensajes
                 WHERE (
-                    id_emisor = :id_a AND id_receptor = :id_b AND eliminado_por_emisor = FALSE
+                    {$condA}
                 ) OR (
-                    id_emisor = :id_b AND id_receptor = :id_a AND eliminado_por_receptor = FALSE
+                    {$condB}
                 )
                 ORDER BY id_mensaje DESC
                 LIMIT :limite";
@@ -165,6 +244,16 @@ class ChatMedicoDAO {
     }
 
     public function listarResumenConversaciones($idMedico) {
+        if (!$this->tablaExiste('chat_mensajes')) {
+            return [];
+        }
+
+        $filtraEliminadoEmisor = $this->columnaExiste('chat_mensajes', 'eliminado_por_emisor');
+        $filtraEliminadoReceptor = $this->columnaExiste('chat_mensajes', 'eliminado_por_receptor');
+
+        $filtroEmisor = $filtraEliminadoEmisor ? " AND eliminado_por_emisor = FALSE" : "";
+        $filtroReceptor = $filtraEliminadoReceptor ? " AND eliminado_por_receptor = FALSE" : "";
+
         $sql = "SELECT
                     c.id_contacto,
                     m.nombre,
@@ -180,9 +269,9 @@ class ChatMedicoDAO {
                         SUM(CASE WHEN id_receptor = :id_medico AND leido_en IS NULL THEN 1 ELSE 0 END) AS no_leidos
                     FROM chat_mensajes
                     WHERE
-                        (id_emisor = :id_medico AND eliminado_por_emisor = FALSE)
+                        (id_emisor = :id_medico{$filtroEmisor})
                         OR
-                        (id_receptor = :id_medico AND eliminado_por_receptor = FALSE)
+                        (id_receptor = :id_medico{$filtroReceptor})
                     GROUP BY CASE WHEN id_emisor = :id_medico THEN id_receptor ELSE id_emisor END
                 ) c
                 INNER JOIN medicos m ON m.id_medico = c.id_contacto
@@ -196,10 +285,18 @@ class ChatMedicoDAO {
     }
 
     public function contarNoLeidos($idMedico) {
+        if (!$this->tablaExiste('chat_mensajes')) {
+            return 0;
+        }
+
+        $filtroEliminado = $this->columnaExiste('chat_mensajes', 'eliminado_por_receptor')
+            ? " AND eliminado_por_receptor = FALSE"
+            : "";
+
         $sql = "SELECT COALESCE(SUM(CASE WHEN leido_en IS NULL THEN 1 ELSE 0 END), 0) AS total_no_leidos
                 FROM chat_mensajes
                 WHERE id_receptor = :id_medico
-                  AND eliminado_por_receptor = FALSE";
+                  {$filtroEliminado}";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id_medico' => $idMedico]);
@@ -208,18 +305,29 @@ class ChatMedicoDAO {
     }
 
         public function obtenerMensajePorIdParaMedico($idMensaje, $idMedico) {
+            if (!$this->tablaExiste('chat_mensajes')) {
+                return null;
+            }
+
             $usaAdjuntos = $this->chatSupportsAttachmentColumns();
             $camposAdjuntos = $usaAdjuntos
                 ? ", nombre_archivo, ruta_archivo, tamano_bytes, tipo_contenido"
                 : ", NULL AS nombre_archivo, NULL AS ruta_archivo, NULL::INT AS tamano_bytes, 'texto' AS tipo_contenido";
 
+            $filtroEliminadoEmisor = $this->columnaExiste('chat_mensajes', 'eliminado_por_emisor')
+                ? " AND eliminado_por_emisor = FALSE"
+                : "";
+            $filtroEliminadoReceptor = $this->columnaExiste('chat_mensajes', 'eliminado_por_receptor')
+                ? " AND eliminado_por_receptor = FALSE"
+                : "";
+
             $sql = "SELECT id_mensaje, id_emisor, id_receptor{$camposAdjuntos}
                                 FROM chat_mensajes
                                 WHERE id_mensaje = :id_mensaje
                                     AND (
-                                        (id_emisor = :id_medico AND eliminado_por_emisor = FALSE)
+                                        (id_emisor = :id_medico{$filtroEliminadoEmisor})
                                         OR
-                                        (id_receptor = :id_medico AND eliminado_por_receptor = FALSE)
+                                        (id_receptor = :id_medico{$filtroEliminadoReceptor})
                                     )
                                 LIMIT 1";
 

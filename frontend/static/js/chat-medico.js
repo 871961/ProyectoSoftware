@@ -170,7 +170,8 @@ class ChatMedicosUI {
     async cargarSesion() {
         const response = await fetch(SESION_API, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin'
         });
         const payload = await response.json();
 
@@ -186,7 +187,8 @@ class ChatMedicosUI {
         const url = `${CHAT_API}?${query}`;
         const options = {
             method,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin'
         };
 
         if (data) {
@@ -289,23 +291,33 @@ class ChatMedicosUI {
         this.contactListEl.innerHTML = '';
 
         if (!mezclados.length) {
-            const p = document.createElement('p');
-            p.className = 'text-sm text-gray-500';
-            p.textContent = 'No hay medicos disponibles.';
-            this.contactListEl.appendChild(p);
+            const empty = document.createElement('div');
+            empty.className = 'chat-message-empty';
+
+            const title = document.createElement('p');
+            title.className = 'text-sm font-semibold text-gray-900';
+            title.textContent = 'No hay médicos disponibles';
+
+            const subtitle = document.createElement('p');
+            subtitle.className = 'mt-1 text-xs text-gray-500 leading-relaxed';
+            subtitle.textContent = 'Cuando existan contactos activos, aparecerán aquí con su especialidad y estado de mensajes.';
+
+            empty.appendChild(title);
+            empty.appendChild(subtitle);
+            this.contactListEl.appendChild(empty);
             return;
         }
 
         mezclados.forEach((c) => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'w-full text-left p-3 rounded-2xl border transition-all duration-200 relative overflow-hidden';
+            btn.className = 'chat-contact-card';
 
             const activo = this.contactoActivo && Number(this.contactoActivo.id_medico) === Number(c.id_medico);
             if (activo) {
-                btn.classList.add('bg-white', 'border-cyan-300', 'shadow-[0_8px_24px_rgba(8,47,73,0.08)]', 'ring-1', 'ring-cyan-200', 'scale-[1.01]');
+                btn.classList.add('chat-contact-card--active');
             } else {
-                btn.classList.add('bg-cyan-50/80', 'border-cyan-100', 'hover:bg-white', 'hover:border-cyan-200', 'hover:translate-x-0.5');
+                btn.classList.add('chat-contact-card--idle');
             }
 
             const nombreCompleto = `${c.nombre || ''} ${c.apellidos || ''}`.trim();
@@ -313,10 +325,10 @@ class ChatMedicosUI {
             const tieneNoLeidos = Number(c.no_leidos || 0) > 0;
 
             const header = document.createElement('div');
-            header.className = 'flex items-center gap-3 pr-10';
+            header.className = 'flex items-center gap-3 pr-1';
 
             const avatar = document.createElement('div');
-            avatar.className = 'w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 via-cyan-500 to-sky-600 text-white text-xs font-semibold flex items-center justify-center shrink-0 shadow-sm';
+            avatar.className = 'chat-contact-avatar';
             avatar.textContent = initials;
 
             const content = document.createElement('div');
@@ -326,12 +338,12 @@ class ChatMedicosUI {
             top.className = 'flex items-start justify-between gap-2';
 
             const title = document.createElement('p');
-            title.className = 'font-semibold text-slate-900 text-sm leading-tight whitespace-normal break-words';
+            title.className = 'chat-contact-name font-semibold leading-tight whitespace-normal break-words';
             title.textContent = nombreCompleto || `Medico ${c.id_medico}`;
             top.appendChild(title);
 
             const sub = document.createElement('p');
-            sub.className = 'text-xs text-slate-500 mt-1 whitespace-normal break-words leading-tight';
+            sub.className = 'chat-contact-meta text-xs mt-1 whitespace-normal break-words leading-tight';
             const colegiado = c.num_colegiado ? ` · Col. ${c.num_colegiado}` : '';
             sub.textContent = `${c.especialidad || 'Medico'}${colegiado}`;
 
@@ -339,11 +351,11 @@ class ChatMedicosUI {
             footer.className = 'mt-2 flex items-center justify-between gap-2';
 
             const preview = document.createElement('p');
-            preview.className = 'text-[11px] text-slate-600 whitespace-normal break-words leading-tight';
-            preview.textContent = c.ultimo_envio ? 'Último mensaje reciente' : 'Sin mensajes todavía';
+            preview.className = 'chat-contact-preview text-[11px] whitespace-normal break-words leading-tight';
+            preview.textContent = c.ultimo_envio ? 'Última actividad reciente' : 'Sin mensajes todavía';
 
             const meta = document.createElement('span');
-            meta.className = 'text-[11px] text-slate-400 shrink-0 leading-none';
+            meta.className = 'chat-contact-time text-[11px] shrink-0 leading-none';
             meta.textContent = c.ultimo_envio ? this.formatearHora(c.ultimo_envio) : '';
 
             const rightFooter = document.createElement('div');
@@ -351,7 +363,7 @@ class ChatMedicosUI {
 
             if (tieneNoLeidos) {
                 const badge = document.createElement('span');
-                badge.className = 'inline-flex w-7 h-7 items-center justify-center rounded-full bg-red-950 text-blue-900 text-[11px] font-bold leading-none ring-2 ring-white shadow-md';
+                badge.className = 'chat-contact-badge';
                 badge.textContent = Number(c.no_leidos) > 99 ? '99+' : String(c.no_leidos);
                 rightFooter.appendChild(badge);
             }
@@ -426,10 +438,28 @@ class ChatMedicosUI {
         this.messagesEl.innerHTML = '';
 
         if (!mensajes.length) {
-            const p = document.createElement('p');
-            p.className = 'text-sm text-gray-500';
-            p.textContent = 'No hay mensajes en esta conversacion.';
-            this.messagesEl.appendChild(p);
+            const empty = document.createElement('div');
+            empty.className = 'chat-message-empty';
+
+            const icon = document.createElement('div');
+            icon.className = 'mx-auto mb-3 flex h-12 w-12 items-center justify-center text-gray-500';
+            icon.innerHTML = '<i data-lucide="message-square" class="w-4 h-4"></i>';
+
+            const title = document.createElement('p');
+            title.className = 'text-sm font-semibold text-gray-900';
+            title.textContent = 'Selecciona una conversación';
+
+            const subtitle = document.createElement('p');
+            subtitle.className = 'mt-1 text-xs text-gray-500 leading-relaxed';
+            subtitle.textContent = 'Aquí verás los mensajes cifrados, adjuntos y el historial de la conversación.';
+
+            empty.appendChild(icon);
+            empty.appendChild(title);
+            empty.appendChild(subtitle);
+            this.messagesEl.appendChild(empty);
+            if (window.lucide?.createIcons) {
+                window.lucide.createIcons();
+            }
             return;
         }
 
@@ -439,10 +469,10 @@ class ChatMedicosUI {
             const diaClave = this.obtenerClaveDia(m.enviado_en);
             if (diaClave && diaClave !== ultimoDia) {
                 const separadorRow = document.createElement('div');
-                separadorRow.className = 'flex justify-center my-2';
+                separadorRow.className = 'chat-day-divider';
 
                 const separador = document.createElement('span');
-                separador.className = 'px-3 py-1 rounded-full text-[11px] font-medium bg-slate-200 text-slate-600';
+                separador.className = '';
                 separador.textContent = this.formatearEtiquetaDia(m.enviado_en);
 
                 separadorRow.appendChild(separador);
@@ -452,43 +482,20 @@ class ChatMedicosUI {
 
             const propio = Number(m.id_emisor) === this.getUsuarioId();
             const row = document.createElement('div');
-            row.className = propio ? 'flex w-full items-end justify-end' : 'flex w-full items-end justify-start';
-            row.style.display = 'flex';
-            row.style.justifyContent = propio ? 'flex-end' : 'flex-start';
+            row.className = propio ? 'chat-message-row chat-message-row--self' : 'chat-message-row chat-message-row--other';
 
             const bubble = document.createElement('div');
-            bubble.className = propio
-                ? 'w-fit ml-auto max-w-[92%] min-w-[250px] px-4 py-1 rounded-2xl rounded-br-md bg-gradient-to-br from-[#0f172a] via-[#1d4ed8] to-[#0ea5e9] text-white shadow-[0_14px_30px_rgba(2,6,23,0.38)] border border-[#1e3a8a] hover:shadow-[0_18px_38px_rgba(2,6,23,0.48)] transition-shadow'
-                : 'w-fit mr-auto max-w-[92%] min-w-[250px] px-4 py-1 rounded-2xl rounded-bl-md bg-white border border-slate-200 text-slate-950 shadow-[0_10px_24px_rgba(15,23,42,0.10)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.14)] transition-shadow';
-
-            if (propio) {
-                bubble.classList.add('ml-auto');
-                bubble.style.width = 'fit-content';
-                bubble.style.maxWidth = '92%';
-                bubble.style.minWidth = '250px';
-                bubble.style.padding = '4px 14px';
-                bubble.style.background = 'linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #0ea5e9 100%)';
-                bubble.style.color = '#ffffff';
-                bubble.style.borderColor = '#1e3a8a';
-                bubble.style.boxShadow = '0 14px 30px rgba(2, 6, 23, 0.38)';
-            }
-
-            if (!propio) {
-                bubble.style.width = 'fit-content';
-                bubble.style.maxWidth = '92%';
-                bubble.style.minWidth = '250px';
-                bubble.style.padding = '4px 14px';
-            }
+            bubble.className = propio ? 'chat-message-bubble chat-message-bubble--self' : 'chat-message-bubble chat-message-bubble--other';
 
             if (!propio) {
                 const author = document.createElement('p');
-                author.className = 'text-[11px] font-semibold text-cyan-700 mb-1';
+                author.className = 'chat-message-author';
                 author.textContent = this.activeTitleEl?.textContent || 'Médico';
                 bubble.appendChild(author);
             }
 
             const text = document.createElement('p');
-            text.className = propio ? 'text-base leading-snug whitespace-pre-wrap break-words text-white' : 'text-base leading-snug whitespace-pre-wrap break-words text-slate-950';
+            text.className = 'chat-message-text';
             text.textContent = m.mensaje || '';
             bubble.appendChild(text);
 
@@ -498,8 +505,8 @@ class ChatMedicosUI {
                 fileCard.target = '_blank';
                 fileCard.rel = 'noopener noreferrer';
                 fileCard.className = propio
-                    ? 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20'
-                    : 'mt-2 flex items-center gap-2 p-2 rounded-lg bg-cyan-50 hover:bg-cyan-100 border border-cyan-100';
+                    ? 'chat-file-card chat-file-card--self'
+                    : 'chat-file-card chat-file-card--other';
 
                 const icon = document.createElement('span');
                 icon.className = 'text-base';
@@ -509,7 +516,7 @@ class ChatMedicosUI {
                 info.className = 'min-w-0';
 
                 const name = document.createElement('p');
-                name.className = propio ? 'text-xs font-semibold text-white truncate' : 'text-xs font-semibold text-slate-800 truncate';
+                name.className = 'text-xs font-semibold truncate';
                 name.textContent = m.nombre_archivo || 'Adjunto';
 
                 const size = document.createElement('p');
@@ -534,8 +541,8 @@ class ChatMedicosUI {
                     img.src = m.archivo_url;
                     img.alt = m.nombre_archivo || 'Imagen adjunta';
                     img.className = propio
-                        ? 'max-h-48 rounded-lg border border-white/20 object-cover'
-                        : 'max-h-48 rounded-lg border border-black/10 object-cover';
+                        ? 'max-h-48 border border-white/20 object-cover'
+                        : 'max-h-48 border border-black/10 object-cover';
                     img.loading = 'lazy';
 
                     imageWrap.appendChild(img);
@@ -544,7 +551,7 @@ class ChatMedicosUI {
             }
 
             const meta = document.createElement('p');
-            meta.className = propio ? 'text-[10px] text-cyan-100 mt-1' : 'text-[10px] text-gray-500 mt-1';
+            meta.className = propio ? 'chat-message-meta text-cyan-100' : 'chat-message-meta';
 
             const fecha = this.formatearHora(m.enviado_en);
             const estado = propio ? (m.leido_en ? 'Leido' : 'Enviado') : 'Recibido';
@@ -612,7 +619,7 @@ class ChatMedicosUI {
             if (this.fileInputEl) this.fileInputEl.value = '';
             this.selectedFile = null;
             this.renderAttachmentPreview();
-            this.setStatus('Mensaje enviado.', false);
+            this.setStatus('', false);
             await this.cargarMensajes(this.contactoActivo.id_medico, true);
         } catch (error) {
             this.setStatus(error.message, true);
@@ -660,8 +667,10 @@ class ChatMedicosUI {
             this.attachmentPreviewEl.classList.add('hidden');
             this.attachmentPreviewEl.textContent = '';
             this.attachmentPreviewEl.innerHTML = '';
+            this.attachmentPreviewEl.style.display = 'none';
             return;
         }
+        this.attachmentPreviewEl.style.display = 'block';
         this.attachmentPreviewEl.classList.remove('hidden');
         this.attachmentPreviewEl.innerHTML = '';
 
@@ -672,7 +681,7 @@ class ChatMedicosUI {
         info.className = 'min-w-0 flex items-center gap-2';
 
         const badge = document.createElement('span');
-        badge.className = 'text-xs font-semibold px-2 py-1 rounded-full bg-slate-900 text-white';
+        badge.className = 'text-xs font-semibold px-2 py-1 bg-gray-900 text-white';
         badge.textContent = this.iconoPorArchivo(this.selectedFile.name);
 
         const textWrap = document.createElement('div');
@@ -696,13 +705,13 @@ class ChatMedicosUI {
             const thumb = document.createElement('img');
             thumb.src = this.previewObjectUrl;
             thumb.alt = 'Vista previa';
-            thumb.className = 'w-12 h-12 rounded-lg object-cover border border-slate-200';
+            thumb.className = 'w-12 h-12 object-cover border border-gray-200';
             info.insertBefore(thumb, textWrap);
         }
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'w-7 h-7 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center';
+        removeBtn.className = 'w-7 h-7 bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center';
         removeBtn.title = 'Quitar archivo';
         removeBtn.setAttribute('aria-label', 'Quitar archivo');
         removeBtn.textContent = '×';
@@ -716,6 +725,7 @@ class ChatMedicosUI {
         wrap.appendChild(removeBtn);
         this.attachmentPreviewEl.appendChild(wrap);
         this.attachmentPreviewEl.classList.remove('hidden');
+        this.attachmentPreviewEl.style.display = 'block';
     }
 
     formatearTamano(bytes) {

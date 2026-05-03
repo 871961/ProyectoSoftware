@@ -117,8 +117,8 @@ class DependienteDashboard {
     }
 
     renderCrecimiento(perfil) {
-        const peso = perfil.peso_kg ? `${perfil.peso_kg} kg` : '-- kg';
-        const altura = perfil.altura_cm ? `${perfil.altura_cm} cm` : '-- cm';
+        const peso = perfil.peso_kg ? `${perfil.peso_kg}` : '--';
+        const altura = perfil.altura_cm ? `${perfil.altura_cm}` : '--';
         const imc = this.calcularImc(perfil.peso_kg, perfil.altura_cm) || '--';
 
         this.setText('depWeight', peso);
@@ -130,7 +130,7 @@ class DependienteDashboard {
         const container = document.getElementById('depConsultas');
         if (!container) return;
         if (!consultas || consultas.length === 0) {
-            container.innerHTML = '<p class="text-sm text-slate-500">No hay consultas registradas.</p>';
+            container.innerHTML = '<p class="kid-empty">Sin consultas registradas todavía</p>';
             return;
         }
 
@@ -143,27 +143,28 @@ class DependienteDashboard {
             const fecha = new Date(c.fecha).toLocaleDateString('es-ES');
             const medico = `${c.medico_nombre || ''} ${c.medico_apellidos || ''}`.trim();
             const especialidad = c.especialidad ? `· ${c.especialidad}` : '';
-            const diagnostico = c.diagnostico || 'Consulta pediatrica';
+            const diagnostico = c.diagnostico || 'Consulta pediátrica';
             return `
-                <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50">
-                    <div class="kid-icon bg-emerald-100 text-emerald-600">
+                <div class="kid-row">
+                    <div class="kid-icon" style="background:#d1fae5;color:#047857;width:36px;height:36px;border-radius:12px">
                         <i data-lucide="stethoscope" class="w-4 h-4"></i>
                     </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-slate-900">${diagnostico}</p>
-                        <p class="text-sm text-slate-600">${medico} ${especialidad}</p>
-                        <p class="text-xs text-slate-400">${fecha}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-extrabold text-slate-900 text-sm truncate">${diagnostico}</p>
+                        <p class="text-xs text-slate-600 font-semibold truncate">${medico} ${especialidad}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">${fecha}</p>
                     </div>
                 </div>
             `;
         }).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     renderVacunas(vacunas) {
         const container = document.getElementById('depVacunas');
         if (!container) return;
         if (!vacunas || vacunas.length === 0) {
-            container.innerHTML = '<p class="text-sm text-slate-500">No hay vacunas registradas.</p>';
+            container.innerHTML = '<p class="kid-empty">Sin vacunas registradas todavía</p>';
             return;
         }
 
@@ -177,18 +178,19 @@ class DependienteDashboard {
             const dosis = v.dosis ? `· ${v.dosis}` : '';
             const estado = v.estado ? `· ${v.estado}` : '';
             return `
-                <div class="flex items-start gap-3 p-3 rounded-2xl bg-amber-50">
-                    <div class="kid-icon bg-amber-200 text-amber-700">
+                <div class="kid-row">
+                    <div class="kid-icon" style="background:#fef3c7;color:#b45309;width:36px;height:36px;border-radius:12px">
                         <i data-lucide="syringe" class="w-4 h-4"></i>
                     </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-slate-900">${v.nombre_vacuna}</p>
-                        <p class="text-sm text-slate-600">${fecha} ${dosis} ${estado}</p>
-                        <p class="text-xs text-slate-400">${v.centro || 'Centro no especificado'}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-extrabold text-slate-900 text-sm truncate">${v.nombre_vacuna}</p>
+                        <p class="text-xs text-slate-600 font-semibold truncate">${fecha} ${dosis} ${estado}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">${v.centro || 'Centro no especificado'}</p>
                     </div>
                 </div>
             `;
         }).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     renderAlergias(dependiente, perfil) {

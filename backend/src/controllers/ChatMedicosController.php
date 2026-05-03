@@ -213,56 +213,86 @@ try {
             $limite = (int) ($_GET['limite'] ?? 100);
 
             if ($idOtro <= 0 || $idOtro === $idMedico) {
-                throw new Exception('Medico destino no valido');
+                sendJson([
+                    'success' => true,
+                    'data' => [],
+                    'meta' => [
+                        'id_contacto' => $idOtro,
+                        'mensajes_marcados_leidos' => 0,
+                        'contacto_inactivo' => true,
+                        'destino_invalido' => true
+                    ]
+                ]);
             }
             if (!$dao->medicoActivoPorId($idOtro)) {
-                throw new Exception('El medico seleccionado no esta disponible');
+                sendJson([
+                    'success' => true,
+                    'data' => [],
+                    'meta' => [
+                        'id_contacto' => $idOtro,
+                        'mensajes_marcados_leidos' => 0,
+                        'contacto_inactivo' => true
+                    ]
+                ]);
             }
 
-            $mensajes = $dao->obtenerConversacion($idMedico, $idOtro, $limite);
-            $mensajesPlano = [];
-            foreach ($mensajes as $m) {
-                $texto = '';
-                try {
-                    if (($m['algoritmo'] ?? '') !== 'aes-256-gcm') {
-                        throw new Exception('Algoritmo no soportado');
+            try {
+                $mensajes = $dao->obtenerConversacion($idMedico, $idOtro, $limite);
+                $mensajesPlano = [];
+                foreach ($mensajes as $m) {
+                    $texto = '';
+                    try {
+                        if (($m['algoritmo'] ?? '') !== 'aes-256-gcm') {
+                            throw new Exception('Algoritmo no soportado');
+                        }
+                        $texto = decryptChatMessage($m['mensaje_cifrado'], $m['nonce'], $m['tag']);
+                    } catch (Exception $e) {
+                        $texto = '[mensaje no disponible]';
                     }
-                    $texto = decryptChatMessage($m['mensaje_cifrado'], $m['nonce'], $m['tag']);
-                } catch (Exception $e) {
-                    $texto = '[mensaje no disponible]';
+
+                    $mensajesPlano[] = [
+                        'id_mensaje' => (int)$m['id_mensaje'],
+                        'id_emisor' => (int)$m['id_emisor'],
+                        'id_receptor' => (int)$m['id_receptor'],
+                        'tipo_contenido' => $m['tipo_contenido'] ?? 'texto',
+                        'mensaje' => $texto,
+                        'nombre_archivo' => $m['nombre_archivo'] ?? null,
+                        'tamano_bytes' => isset($m['tamano_bytes']) ? (int)$m['tamano_bytes'] : null,
+                        'archivo_url' => !empty($m['ruta_archivo'])
+                            ? ('/backend/src/controllers/ChatMedicosController.php?accion=descargar_archivo&id_mensaje=' . (int)$m['id_mensaje'])
+                            : null,
+                        'enviado_en' => $m['enviado_en'],
+                        'leido_en' => $m['leido_en']
+                    ];
                 }
 
-                $mensajesPlano[] = [
-                    'id_mensaje' => (int)$m['id_mensaje'],
-                    'id_emisor' => (int)$m['id_emisor'],
-                    'id_receptor' => (int)$m['id_receptor'],
-                    'tipo_contenido' => $m['tipo_contenido'] ?? 'texto',
-                    'mensaje' => $texto,
-                    'nombre_archivo' => $m['nombre_archivo'] ?? null,
-                    'tamano_bytes' => isset($m['tamano_bytes']) ? (int)$m['tamano_bytes'] : null,
-                    'archivo_url' => !empty($m['ruta_archivo'])
-                        ? ('/backend/src/controllers/ChatMedicosController.php?accion=descargar_archivo&id_mensaje=' . (int)$m['id_mensaje'])
-                        : null,
-                    'enviado_en' => $m['enviado_en'],
-                    'leido_en' => $m['leido_en']
-                ];
-            }
-
-            $leidos = $dao->marcarLeidos($idMedico, $idOtro);
-            $dao->registrarEventoChat($idMedico, 'CHAT_READ', null, [
-                'id_contacto' => $idOtro,
-                'mensajes' => count($mensajesPlano),
-                'marcados_leidos' => (int) $leidos
-            ]);
-
-            sendJson([
-                'success' => true,
-                'data' => $mensajesPlano,
-                'meta' => [
+                $leidos = $dao->marcarLeidos($idMedico, $idOtro);
+                $dao->registrarEventoChat($idMedico, 'CHAT_READ', null, [
                     'id_contacto' => $idOtro,
-                    'mensajes_marcados_leidos' => $leidos
-                ]
-            ]);
+                    'mensajes' => count($mensajesPlano),
+                    'marcados_leidos' => (int) $leidos
+                ]);
+
+                sendJson([
+                    'success' => true,
+                    'data' => $mensajesPlano,
+                    'meta' => [
+                        'id_contacto' => $idOtro,
+                        'mensajes_marcados_leidos' => $leidos
+                    ]
+                ]);
+            } catch (Throwable $e) {
+                sendJson([
+                    'success' => true,
+                    'data' => [],
+                    'meta' => [
+                        'id_contacto' => $idOtro,
+                        'mensajes_marcados_leidos' => 0,
+                        'fallback' => true,
+                        'error' => $e->getMessage()
+                    ]
+                ]);
+            }
             break;
 
         case 'enviar':

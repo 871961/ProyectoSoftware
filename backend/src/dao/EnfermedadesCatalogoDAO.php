@@ -16,14 +16,59 @@ class EnfermedadesCatalogoDAO {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    private function tablaExiste($tabla) {
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = :tabla";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tabla' => $tabla]);
+        return ((int)$stmt->fetchColumn() > 0);
+    }
+
+    private function columnaExiste($tabla, $columna) {
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = :tabla
+                  AND column_name = :columna";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':tabla' => $tabla,
+            ':columna' => $columna
+        ]);
+        return ((int)$stmt->fetchColumn() > 0);
+    }
+
     /**
      * Obtiene todas las enfermedades activas (para dropdowns)
      */
     public function listarTodas() {
         try {
-            $sql = "SELECT * FROM enfermedades_catalogo 
-                    WHERE activo = true 
-                    ORDER BY categoria, nombre";
+            if (!$this->tablaExiste('enfermedades_catalogo')) {
+                return [];
+            }
+
+            $tieneActivo = $this->columnaExiste('enfermedades_catalogo', 'activo');
+            $tieneCategoria = $this->columnaExiste('enfermedades_catalogo', 'categoria');
+            $tieneNombre = $this->columnaExiste('enfermedades_catalogo', 'nombre');
+            $tieneNombrePatologia = $this->columnaExiste('enfermedades_catalogo', 'nombre_patologia');
+
+            $nombreExpr = $tieneNombre
+                ? 'nombre'
+                : ($tieneNombrePatologia ? 'nombre_patologia' : "''");
+            $categoriaExpr = $tieneCategoria ? 'categoria' : "'General'";
+
+            $sql = "SELECT id_enfermedad,
+                           {$nombreExpr} AS nombre,
+                           {$categoriaExpr} AS categoria
+                    FROM enfermedades_catalogo";
+
+            if ($tieneActivo) {
+                $sql .= " WHERE activo = true";
+            }
+
+            $sql .= " ORDER BY categoria, nombre";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute();

@@ -29,6 +29,9 @@ class CitasMedicoModule {
         try {
             const res  = await fetch(url);
             const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data?.mensaje || `Error HTTP ${res.status}`);
+            }
             if (data.success) {
                 this.citas = data.data || [];
                 this._render();
@@ -212,9 +215,13 @@ class CitasMedicoModule {
             const res  = await fetch(`${CITAS_API}?accion=${accion}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
                 body: JSON.stringify(body)
             });
             const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data?.mensaje || `Error HTTP ${res.status}`);
+            }
             if (data.success) await this.cargar();
         } catch (e) {
             console.error(`Error en acción ${accion}:`, e);

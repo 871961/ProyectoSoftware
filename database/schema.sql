@@ -88,12 +88,26 @@ CREATE TABLE pacientes (
     num_seguridad_social VARCHAR(20),
     -- Médico General asignado (médico de cabecera)
     id_medico_general INT,
+    -- INFORMACIÓN DE DEPENDIENTES (menores a cargo)
+    es_dependiente BOOLEAN DEFAULT FALSE,
+    dni_tutor VARCHAR(20), -- DNI del tutor/padre si es un dependiente
+    id_pediatra INT, -- Médico pediatra asignado
+    -- INFORMACIÓN DE SALUD ADICIONAL
+    grupo_sanguineo VARCHAR(10),
+    alergias TEXT,
+    observaciones TEXT,
     -- BORRADO LÓGICO
     activo BOOLEAN DEFAULT TRUE,
     fecha_baja TIMESTAMP,
     -- FK al médico general asignado
     CONSTRAINT fk_paciente_medico_general FOREIGN KEY (id_medico_general) 
-        REFERENCES medicos_generales(id_medico)
+        REFERENCES medicos_generales(id_medico),
+    -- FK al pediatra (si es un dependiente)
+    CONSTRAINT fk_paciente_pediatra FOREIGN KEY (id_pediatra) 
+        REFERENCES medicos_especialistas(id_medico),
+    -- FK al tutor (referencia a otro paciente)
+    CONSTRAINT fk_paciente_tutor FOREIGN KEY (dni_tutor) 
+        REFERENCES pacientes(dni)
 );
 
 -- Índice único parcial: solo valida unicidad cuando el valor NO es NULL

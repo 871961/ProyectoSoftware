@@ -254,6 +254,12 @@ class DependientesManager {
         // Indicar que estamos viendo un dependiente (evitar que el dashboard del tutor reescriba la UI)
         window.viewingDependiente = true;
 
+        // Sincronizar el módulo de citas con el DNI del dependiente, para que
+        // al solicitar cita solo aparezca el pediatra asociado.
+        if (window.citasModule && dep.id_dependiente) {
+            window.citasModule.setDni(dep.id_dependiente);
+        }
+
         // Rellenar encabezados de la vista pediátrica
         const childNameEl = document.getElementById('childName');
         const childAgeEl = document.getElementById('childAge');
@@ -385,6 +391,12 @@ class DependientesManager {
 
         // Restaurar flag de vista
         window.viewingDependiente = false;
+
+        // Restaurar el módulo de citas al DNI del tutor (paciente principal)
+        if (window.citasModule && window.citasModule.dni) {
+            // Forzar a null para que el dashboard.js cargue de nuevo con el DNI del usuario
+            window.citasModule.setDni(null);
+        }
 
         // Restore main paciente view
         const mainPacienteView = document.getElementById('mainPacienteView');

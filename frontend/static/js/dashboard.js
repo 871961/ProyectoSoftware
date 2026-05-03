@@ -262,7 +262,7 @@ class PacienteDashboard {
         try {
             const res = await this.perfilApi('obtener_mi_perfil');
             this.pintarPerfilSalud(res.data || {});
-            this.setSaludMessage('Perfil de salud cargado.', false);
+            this.setSaludMessage('', false);
         } catch (error) {
             this.setSaludMessage(error.message, true);
         }
@@ -357,7 +357,7 @@ class PacienteDashboard {
             try {
                 payload = raw ? JSON.parse(raw) : null;
             } catch (_error) {
-                throw new Error('Respuesta no vÃ¡lida del servidor.');
+                throw new Error('Respuesta no válida del servidor.');
             }
 
             if (!response.ok || !payload.success) {
@@ -388,7 +388,7 @@ class PacienteDashboard {
                 <div class="text-center py-8 text-gray-500">
                     <i data-lucide="info" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
                     <p>No tienes antecedentes familiares registrados.</p>
-                    <p class="text-sm mt-1">Tu mÃ©dico puede aÃ±adirlos durante la consulta.</p>
+                    <p class="text-sm mt-1">Tu médico puede añadirlos durante la consulta.</p>
                 </div>
             `;
             if (typeof lucide !== 'undefined') {
@@ -414,7 +414,7 @@ class PacienteDashboard {
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="flex-1">
                         <h4 class="text-lg font-semibold text-gray-900">${ant.nombre_patologia || 'Sin nombre'}</h4>
-                        <p class="text-xs text-gray-500 mt-0.5">${ant.categoria || 'Sin categorÃ­a'}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">${ant.categoria || 'Sin categoría'}</p>
                     </div>
                     <span class="text-xs px-2.5 py-1 rounded-full ${parentescoColor} font-medium whitespace-nowrap">
                         ${ant.parentesco}
@@ -443,8 +443,8 @@ class PacienteDashboard {
             'abuela': 'bg-purple-100 text-purple-700',
             'hermano': 'bg-green-100 text-green-700',
             'hermana': 'bg-green-100 text-green-700',
-            'tÃ­o': 'bg-amber-100 text-amber-700',
-            'tÃ­a': 'bg-amber-100 text-amber-700'
+            'tío': 'bg-amber-100 text-amber-700',
+            'tía': 'bg-amber-100 text-amber-700'
         };
         return colores[parentesco?.toLowerCase()] || 'bg-gray-100 text-gray-700';
     }
@@ -588,45 +588,92 @@ class PacienteDashboard {
             this.notificationBadge.classList.add('hidden');
         }
 
-        if (!pending.length) {
-            this.notificationList.innerHTML = '';
+        // Construir lista combinada: citas próximas + recordatorios pendientes
+        this.notificationList.innerHTML = '';
+        const totalItems = pending.length + citasProx.length;
+
+        if (!totalItems) {
             this.notificationEmpty?.classList.remove('hidden');
             return;
         }
-
         this.notificationEmpty?.classList.add('hidden');
-        this.notificationList.innerHTML = '';
-        pending.forEach((item) => {
-            const row = document.createElement('div');
-            row.className = 'flex items-start gap-3 px-4 py-3 hover:bg-gray-50';
-            row.innerHTML = `
-                <div class="p-2 rounded-lg bg-blue-50 text-blue-700">
-                    <i data-lucide="bell-ring" class="w-4 h-4"></i>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-semibold text-gray-900">${item.razon || 'Recordatorio'}</p>
-                    <p class="text-xs text-gray-600">${item.fecha_hora ? item.fecha_hora.replace('T', ' ').substring(0, 16) : ''}</p>
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    <button class="text-xs font-medium text-blue-700 hover:text-blue-900" data-ver-noti="${item.id_recordatorio}">Ver</button>
-                    <button class="text-xs font-medium text-emerald-700 hover:text-emerald-900" data-completar-noti="${item.id_recordatorio}">Completar</button>
-                </div>
-            `;
-            this.notificationList.appendChild(row);
-        });
+
+        // Citas próximas
+        if (citasProx.length) {
+            const sectionLabel = document.createElement('div');
+            sectionLabel.className = 'px-4 pt-3 pb-1';
+            sectionLabel.innerHTML = `<p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Próximas citas</p>`;
+            this.notificationList.appendChild(sectionLabel);
+
+            citasProx.forEach((cita) => {
+                const fecha = new Date((cita.fecha_hora || '').replace(' ', 'T'));
+                const fechaStr = isNaN(fecha) ? '' : fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+                const horaStr = isNaN(fecha) ? '' : fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                const medico = `Dr./Dra. ${cita.medico_nombre || ''} ${cita.medico_apellidos || ''}`.trim();
+
+                const row = document.createElement('div');
+                row.className = 'flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer';
+                row.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#dbeafe;color:#1d4ed8">
+                        <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">${medico || 'Cita médica'}</p>
+                        <p class="text-xs text-gray-500">${fechaStr} · ${horaStr}</p>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" style="background:${cita.estado === 'Confirmada' ? '#dcfce7;color:#15803d' : '#fef3c7;color:#b45309'}">${cita.estado}</span>
+                `;
+                row.addEventListener('click', () => {
+                    this.toggleNotificationPanel(false);
+                    document.getElementById('navCitasPaciente')?.click();
+                });
+                this.notificationList.appendChild(row);
+            });
+        }
+
+        // Recordatorios pendientes
+        if (pending.length) {
+            const sectionLabel = document.createElement('div');
+            sectionLabel.className = 'px-4 pt-3 pb-1';
+            sectionLabel.innerHTML = `<p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Recordatorios</p>`;
+            this.notificationList.appendChild(sectionLabel);
+
+            pending.forEach((item) => {
+                const fechaTxt = item.fecha_hora ? item.fecha_hora.replace('T', ' ').substring(0, 16) : '';
+                const tipo = (item.tipo_recordatorio || item.tipo || 'otro').toLowerCase();
+                const tipoMap = {
+                    'medicamento': { bg: '#fef3c7', fg: '#b45309', icon: 'pill' },
+                    'cita': { bg: '#dbeafe', fg: '#1d4ed8', icon: 'calendar' },
+                    'examen': { bg: '#ede9fe', fg: '#6d28d9', icon: 'flask-conical' },
+                    'seguimiento': { bg: '#dcfce7', fg: '#15803d', icon: 'activity' },
+                    'dieta': { bg: '#fef3c7', fg: '#b45309', icon: 'apple' },
+                    'ejercicio': { bg: '#dcfce7', fg: '#15803d', icon: 'dumbbell' }
+                };
+                const t = tipoMap[tipo] || { bg: '#f1f5f9', fg: '#475569', icon: 'bell-ring' };
+
+                const row = document.createElement('div');
+                row.className = 'flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors';
+                row.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${t.bg};color:${t.fg}">
+                        <i data-lucide="${t.icon}" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">${item.razon || item.titulo || 'Recordatorio'}</p>
+                        <p class="text-xs text-gray-500">${fechaTxt}</p>
+                    </div>
+                    <button class="text-[11px] font-semibold px-2 py-1 rounded-md transition-colors" style="background:#f0fdf4;color:#15803d" data-completar-noti="${item.id_recordatorio}" title="Marcar como completado">
+                        ✓
+                    </button>
+                `;
+                this.notificationList.appendChild(row);
+            });
+        }
 
         this.notificationList.querySelectorAll('[data-completar-noti]').forEach((btn) => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
                 const id = btn.getAttribute('data-completar-noti');
                 await this.completarRecordatorio(id, btn);
-                this.toggleNotificationPanel(false);
-            });
-        });
-
-        this.notificationList.querySelectorAll('[data-ver-noti]').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                this.toggleNotificationPanel(false);
-                this.recordatoriosList?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
@@ -714,8 +761,8 @@ class PacienteDashboard {
                     </div>
                     <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">Consulta</span>
                 </div>
-                <p class="text-sm text-gray-500 mb-2">MÃ©dico: <span class="text-gray-700 font-medium">${medico}</span></p>
-                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">DiagnÃ³stico:</span> ${diagnostico}</p>
+                <p class="text-sm text-gray-500 mb-2">Médico: <span class="text-gray-700 font-medium">${medico}</span></p>
+                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">Diagnóstico:</span> ${diagnostico}</p>
                 <p class="text-sm text-gray-600 mt-2 line-clamp-1"><span class="font-semibold text-gray-800">Tratamiento:</span> ${tratamiento}</p>
                 <div class="mt-4 text-sm text-blue-700 font-medium group-hover:text-blue-800">Ver detalle completo</div>
             `;

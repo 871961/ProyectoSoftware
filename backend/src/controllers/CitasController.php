@@ -16,7 +16,7 @@ function sendJson($payload, $status = 200) {
 }
 
 session_start();
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -191,11 +191,61 @@ try {
             break;
 
         // ── Listar médicos disponibles (para el formulario de solicitud) ────────
+        // Reglas:
+        //   - Paciente normal: solo su médico general asignado + TODOS los especialistas.
+        //     Nunca puede solicitar a otro médico general que no sea el suyo.
+        //   - Dependiente (?id_paciente=DNI_DEPENDIENTE): solo el pediatra asignado.
         case 'obtener_medicos':
             if ($_SESSION['user_tipo'] !== 'paciente') throw new Exception('No autorizado');
+
+            require_once __DIR__ . '/../dao/PacienteDAO.php';
+            require_once __DIR__ . '/../dao/DependienteDAO.php';
+
+            $idPaciente = trim($_GET['id_paciente'] ?? $_SESSION['user_id']);
+            $esDependiente = ($idPaciente !== $_SESSION['user_id']);
+            if ($esDependiente) {
+                $depDAO = new DependienteDAO();
+                if (!$depDAO->verificarAccesoTutor($idPaciente, $_SESSION['user_id'])) {
+                    throw new Exception('Sin acceso a este dependiente');
+                }
+            }
+
             $medicoDAO = new MedicoDAO();
-            $medicoVOs = $medicoDAO->obtenerTodos();
-            $medicos   = array_map(fn($m) => $m->toArray(), $medicoVOs);
+
+            if ($esDependiente) {
+                // Solo el pediatra asignado al dependiente
+                $depVO = $depDAO->obtenerPorId($idPaciente);
+                $idPediatra = $depVO ? $depVO->getIdPediatra() : null;
+                if (!$idPediatra) {
+                    sendJson(['success' => true, 'data' => []]);
+                    break;
+                }
+                $medicoVO = $medicoDAO->obtenerPorId($idPediatra);
+                $medicos = $medicoVO ? [$medicoVO->toArray()] : [];
+            } else {
+                // Paciente normal: su médico general + todos los especialistas
+                $pacDAO = new PacienteDAO();
+                $pacVO = $pacDAO->obtenerPorId($idPaciente);
+                $idMedicoGeneral = $pacVO ? $pacVO->getIdMedicoGeneral() : null;
+
+                $medicoVOs = $medicoDAO->obtenerTodos();
+                $medicos = [];
+                foreach ($medicoVOs as $m) {
+                    $arr = $m->toArray();
+                    if (empty($arr['activo'])) continue;
+                    $tipo = $arr['tipo_medico'] ?? null;
+                    // Si es general: solo si es el suyo asignado
+                    if ($tipo === 'general') {
+                        if ($idMedicoGeneral && (int)$arr['id_medico'] === (int)$idMedicoGeneral) {
+                            $medicos[] = $arr;
+                        }
+                        continue;
+                    }
+                    // Cualquier especialista (no-general): siempre incluido
+                    $medicos[] = $arr;
+                }
+            }
+
             sendJson(['success' => true, 'data' => $medicos]);
             break;
 

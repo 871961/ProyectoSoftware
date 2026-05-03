@@ -24,19 +24,24 @@
 
 <body class="kid-bg min-h-screen">
 
-    <!-- Patrón de puntos de fondo -->
-    <div class="kid-dot-pattern"></div>
+    <!-- Decoración: burbujas de fondo -->
+    <div class="kid-bubbles" aria-hidden="true">
+        <span class="kid-bubble kid-bubble--1"></span>
+        <span class="kid-bubble kid-bubble--2"></span>
+        <span class="kid-bubble kid-bubble--3"></span>
+        <span class="kid-bubble kid-bubble--4"></span>
+    </div>
 
-    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <!-- ── Header médico-infantil ─────────────────────────────────── -->
     <header class="kid-header relative z-10">
-        <div class="kid-container flex items-center justify-between">
+        <div class="kid-container">
             <div class="flex items-center gap-3">
                 <div class="kid-logo">
                     <i data-lucide="heart-pulse" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-sky-500 uppercase tracking-wider">MedHistory</p>
-                    <h1 class="text-lg font-extrabold text-slate-900">Mi ficha de salud</h1>
+                    <p class="text-[11px] font-extrabold uppercase tracking-widest" style="color:#0ea5e9">MedHistory</p>
+                    <h1 class="text-base font-extrabold" style="color:#0f172a">Mi ficha de salud</h1>
                 </div>
             </div>
             <button id="backToPacienteBtn" class="kid-btn">
@@ -53,30 +58,39 @@
         <div id="errorBanner" class="kid-error hidden"></div>
 
         <!-- ── Hero: datos del dependiente ─────────────────────────────────── -->
-        <section class="kid-card kid-hero mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+        <section class="kid-hero mb-6">
+            <div class="kid-hero-pattern" aria-hidden="true"></div>
+            <div class="kid-hero-content">
 
-                <!-- Avatar con iniciales -->
-                <div class="kid-avatar" id="depAvatar">--</div>
+                <!-- Avatar con iniciales y estrella -->
+                <div class="kid-avatar-wrap">
+                    <div class="kid-avatar" id="depAvatar">--</div>
+                    <span class="kid-avatar-star" aria-hidden="true">
+                        <i data-lucide="star" class="w-4 h-4"></i>
+                    </span>
+                </div>
 
                 <!-- Info principal -->
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold uppercase tracking-widest text-sky-500 mb-1">Paciente dependiente</p>
-                    <h2 id="depName" class="text-2xl font-extrabold text-slate-900 mb-1">Cargando...</h2>
-                    <p id="depMeta" class="text-sm text-slate-500 mb-3">Preparando datos del paciente</p>
+                    <p class="kid-eyebrow">
+                        <i data-lucide="baby" class="w-3 h-3"></i>
+                        Paciente pediátrico
+                    </p>
+                    <h2 id="depName" class="kid-hero-title">Cargando...</h2>
+                    <p id="depMeta" class="kid-hero-subtitle">Preparando datos del paciente</p>
 
-                    <!-- Chips -->
-                    <div class="flex flex-wrap gap-2">
+                    <!-- Chips clínicos -->
+                    <div class="flex flex-wrap gap-2 mt-3">
                         <span class="kid-chip" id="depPediatra">
-                            <i data-lucide="user-check" class="w-3.5 h-3.5 mr-1.5 text-sky-500"></i>
+                            <i data-lucide="user-check" class="w-3.5 h-3.5" style="color:#0ea5e9"></i>
                             Pediatra: --
                         </span>
                         <span class="kid-chip" id="depNextReview">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 text-mint-500"></i>
+                            <i data-lucide="calendar" class="w-3.5 h-3.5" style="color:#10b981"></i>
                             Próxima revisión: --
                         </span>
                         <span class="kid-chip" id="depLastVaccine">
-                            <i data-lucide="syringe" class="w-3.5 h-3.5 mr-1.5 text-amber-500"></i>
+                            <i data-lucide="syringe" class="w-3.5 h-3.5" style="color:#f59e0b"></i>
                             Última vacuna: --
                         </span>
                     </div>
@@ -91,44 +105,64 @@
             <div class="space-y-5">
 
                 <!-- Crecimiento y salud -->
-                <div class="kid-card">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="kid-icon bg-sky-100">
-                            <i data-lucide="trending-up" class="w-5 h-5 text-sky-600"></i>
+                <section class="kid-card">
+                    <div class="kid-section-header">
+                        <div class="kid-icon" style="background:#e0f2fe;color:#0284c7">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Crecimiento y salud</h3>
+                        <div>
+                            <h3 class="kid-section-title">Crecimiento y salud</h3>
+                            <p class="kid-section-subtitle">Métricas físicas actuales</p>
+                        </div>
                     </div>
                     <div class="grid grid-cols-3 gap-3">
-                        <div class="kid-metric">
+                        <div class="kid-metric kid-metric--sky">
+                            <div class="kid-metric-icon">
+                                <i data-lucide="weight" class="w-4 h-4"></i>
+                            </div>
                             <p class="kid-metric-label">Peso</p>
-                            <p id="depWeight" class="kid-metric-value">--</p>
-                            <p class="text-xs text-slate-400 mt-0.5">kg</p>
+                            <p class="kid-metric-row">
+                                <span id="depWeight" class="kid-metric-value">--</span>
+                                <span class="kid-metric-unit">kg</span>
+                            </p>
                         </div>
-                        <div class="kid-metric">
+                        <div class="kid-metric kid-metric--mint">
+                            <div class="kid-metric-icon">
+                                <i data-lucide="ruler" class="w-4 h-4"></i>
+                            </div>
                             <p class="kid-metric-label">Talla</p>
-                            <p id="depHeight" class="kid-metric-value">--</p>
-                            <p class="text-xs text-slate-400 mt-0.5">cm</p>
+                            <p class="kid-metric-row">
+                                <span id="depHeight" class="kid-metric-value">--</span>
+                                <span class="kid-metric-unit">cm</span>
+                            </p>
                         </div>
-                        <div class="kid-metric">
+                        <div class="kid-metric kid-metric--violet">
+                            <div class="kid-metric-icon">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                            </div>
                             <p class="kid-metric-label">IMC</p>
-                            <p id="depImc" class="kid-metric-value">--</p>
-                            <p class="text-xs text-slate-400 mt-0.5">&nbsp;</p>
+                            <p class="kid-metric-row">
+                                <span id="depImc" class="kid-metric-value">--</span>
+                            </p>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Consultas recientes -->
-                <div class="kid-card">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="kid-icon bg-indigo-100">
-                            <i data-lucide="stethoscope" class="w-5 h-5 text-indigo-600"></i>
+                <section class="kid-card">
+                    <div class="kid-section-header">
+                        <div class="kid-icon" style="background:#e0e7ff;color:#4f46e5">
+                            <i data-lucide="stethoscope" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Consultas recientes</h3>
+                        <div>
+                            <h3 class="kid-section-title">Consultas recientes</h3>
+                            <p class="kid-section-subtitle">Últimas visitas al pediatra</p>
+                        </div>
                     </div>
                     <div id="depConsultas" class="space-y-2">
-                        <p class="text-sm text-slate-400 italic">Cargando consultas...</p>
+                        <p class="kid-empty">Cargando consultas...</p>
                     </div>
-                </div>
+                </section>
 
             </div>
 
@@ -136,54 +170,63 @@
             <div class="space-y-5">
 
                 <!-- Vacunas -->
-                <div class="kid-card">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="kid-icon bg-amber-100">
-                            <i data-lucide="syringe" class="w-5 h-5 text-amber-600"></i>
+                <section class="kid-card">
+                    <div class="kid-section-header">
+                        <div class="kid-icon" style="background:#fef3c7;color:#b45309">
+                            <i data-lucide="syringe" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Vacunas recientes</h3>
+                        <div>
+                            <h3 class="kid-section-title">Vacunas</h3>
+                            <p class="kid-section-subtitle">Cartilla y dosis recientes</p>
+                        </div>
                     </div>
                     <div id="depVacunas" class="space-y-2">
-                        <p class="text-sm text-slate-400 italic">Cargando vacunas...</p>
+                        <p class="kid-empty">Cargando vacunas...</p>
                     </div>
-                </div>
+                </section>
 
                 <!-- Alergias -->
-                <div class="kid-card">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="kid-icon bg-rose-100">
-                            <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                <section class="kid-card">
+                    <div class="kid-section-header">
+                        <div class="kid-icon" style="background:#ffe4e6;color:#be123c">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Alergias</h3>
+                        <div>
+                            <h3 class="kid-section-title">Alergias</h3>
+                            <p class="kid-section-subtitle">Atención clínica relevante</p>
+                        </div>
                     </div>
                     <div id="depAlergias" class="flex flex-wrap gap-2">
                         <span class="kid-tag">Sin datos</span>
                     </div>
-                </div>
+                </section>
 
                 <!-- Datos básicos -->
-                <div class="kid-card">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="kid-icon bg-violet-100">
-                            <i data-lucide="id-card" class="w-5 h-5 text-violet-600"></i>
+                <section class="kid-card">
+                    <div class="kid-section-header">
+                        <div class="kid-icon" style="background:#ede9fe;color:#7c3aed">
+                            <i data-lucide="id-card" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Datos básicos</h3>
+                        <div>
+                            <h3 class="kid-section-title">Datos básicos</h3>
+                            <p class="kid-section-subtitle">Identificación clínica</p>
+                        </div>
                     </div>
                     <div class="space-y-2">
                         <div class="kid-info">
-                            <span class="kid-info-label text-sm">Fecha de nacimiento</span>
-                            <span id="depBirthDate" class="kid-info-value text-sm">--</span>
+                            <span class="kid-info-label">Fecha de nacimiento</span>
+                            <span id="depBirthDate" class="kid-info-value">--</span>
                         </div>
                         <div class="kid-info">
-                            <span class="kid-info-label text-sm">Grupo sanguíneo</span>
-                            <span id="depBloodType" class="kid-info-value text-sm">--</span>
+                            <span class="kid-info-label">Grupo sanguíneo</span>
+                            <span id="depBloodType" class="kid-info-value">--</span>
                         </div>
                         <div class="kid-info">
-                            <span class="kid-info-label text-sm">N.º Seg. Social</span>
-                            <span id="depSsn" class="kid-info-value text-sm">--</span>
+                            <span class="kid-info-label">N.º Seg. Social</span>
+                            <span id="depSsn" class="kid-info-value">--</span>
                         </div>
                     </div>
-                </div>
+                </section>
 
             </div>
         </div>

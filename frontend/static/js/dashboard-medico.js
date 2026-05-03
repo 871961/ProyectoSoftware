@@ -173,6 +173,19 @@ class MedicoDashboard {
         this.logoutLink?.addEventListener('click', (e) => this.logout(e));
         this.cancelEditBtn?.addEventListener('click', () => this.cancelarEdicion());
         this.toggleConsultaBtn?.addEventListener('click', () => this.toggleConsultaPanel());
+        // Botón X del modal de consulta
+        const cerrarConsultaModalBtn = document.getElementById('cerrarConsultaModal');
+        cerrarConsultaModalBtn?.addEventListener('click', () => this.cancelarEdicion());
+        // Click en el backdrop del modal cierra
+        this.consultaPanel?.addEventListener('click', (e) => {
+            if (e.target === this.consultaPanel) this.cancelarEdicion();
+        });
+        // Modal recordatorio: cerrar X y backdrop
+        const cerrarRecBtn = document.getElementById('cerrarRecordatorioModal');
+        cerrarRecBtn?.addEventListener('click', () => this.mostrarRecordatorioForm(false));
+        this.recordatorioSection?.addEventListener('click', (e) => {
+            if (e.target === this.recordatorioSection) this.mostrarRecordatorioForm(false);
+        });
         this.filtroBtn?.addEventListener('click', () => this.cargarConsultas());
         this.limpiarFiltroBtn?.addEventListener('click', () => {
             if (this.filtroDesde) this.filtroDesde.value = '';
@@ -191,8 +204,17 @@ class MedicoDashboard {
         if (!this.consultaPanel) return;
         const shouldOpen = forceOpen === null ? this.consultaPanel.classList.contains('hidden') : forceOpen;
         this.consultaPanel.classList.toggle('hidden', !shouldOpen);
+        // El panel ahora es un modal overlay: gestionamos display flex/none
+        this.consultaPanel.style.display = shouldOpen ? 'flex' : 'none';
         if (this.toggleConsultaLabel) {
-            this.toggleConsultaLabel.textContent = shouldOpen ? 'Ocultar formulario' : 'Nueva consulta';
+            this.toggleConsultaLabel.textContent = 'Nueva consulta';
+        }
+        // Reset del título cuando se abre desde "Nueva consulta" (no edición)
+        if (shouldOpen && !this.editingConsultaId) {
+            const title = document.getElementById('consultaModalTitle');
+            const subtitle = document.getElementById('consultaModalSubtitle');
+            if (title) title.textContent = 'Nueva consulta';
+            if (subtitle) subtitle.textContent = 'Completa los datos clínicos de la atención';
         }
     }
 
@@ -326,8 +348,13 @@ class MedicoDashboard {
         if (!this.recordatorioSection) return;
         if (show) {
             this.recordatorioSection.classList.remove('hidden');
+            this.recordatorioSection.classList.add('flex');
+            this.recordatorioSection.style.display = 'flex';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         } else {
             this.recordatorioSection.classList.add('hidden');
+            this.recordatorioSection.classList.remove('flex');
+            this.recordatorioSection.style.display = 'none';
         }
     }
 
@@ -483,7 +510,7 @@ class MedicoDashboard {
         try {
             const res = await this.perfilApi('obtener_por_paciente', 'GET', null, { id_paciente: idPaciente });
             this.pintarPerfilSalud(res.data || {});
-            this.setSaludMessage('Perfil de salud cargado.', false);
+            this.setSaludMessage('', false);
         } catch (error) {
             this.setSaludMessage(error.message, true);
         }
@@ -619,11 +646,26 @@ class MedicoDashboard {
                 <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden lg:table-cell">${diagnostico}</td>
                 <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden xl:table-cell">${tratamiento}</td>
                 <td class="px-4 py-3.5 text-right whitespace-nowrap">
-                    <div class="flex items-center justify-end gap-1.5">
-                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#f0f4ff;color:#1d4ed8" data-edit-id="${consulta.id_consulta}">Editar</button>
-                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#fff5f5;color:#dc2626" data-delete-id="${consulta.id_consulta}">Eliminar</button>
-                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#fffbeb;color:#b45309" data-reminder-id="${consulta.id_consulta}">Recordatorio</button>
-                        <button class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background:#f5f5f5;color:#374151" data-view-recordatorios="${consulta.id_consulta}">Ver</button>
+                    <div class="inline-flex items-center gap-1.5 flex-wrap justify-end">
+                        <button title="Editar consulta" data-edit-id="${consulta.id_consulta}"
+                            class="consulta-action consulta-action--edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Editar</span>
+                        </button>
+                        <button title="Crear recordatorio" data-reminder-id="${consulta.id_consulta}"
+                            class="consulta-action consulta-action--reminder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            <span>Recordatorio</span>
+                        </button>
+                        <button title="Ver recordatorios" data-view-recordatorios="${consulta.id_consulta}"
+                            class="consulta-action consulta-action--view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Ver</span>
+                        </button>
+                        <button title="Eliminar consulta" data-delete-id="${consulta.id_consulta}"
+                            class="consulta-action consulta-action--delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
                     </div>
                     <div class="mt-2 space-y-1 hidden" data-recordatorios-container="${consulta.id_consulta}"></div>
                 </td>
@@ -652,7 +694,6 @@ class MedicoDashboard {
                     this.recordatorioForm?.reset();
                     this.recordatorioConsultaSelect.value = id;
                     this.mostrarRecordatorioForm(true);
-                    this.recordatorioSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             });
         });
@@ -694,7 +735,16 @@ class MedicoDashboard {
     }
 
     async eliminarConsulta(idConsulta) {
-        const ok = window.confirm('¿Seguro que quieres eliminar esta consulta? Esta accion no se puede deshacer.');
+        const consulta = this.consultas.find((c) => Number(c.id_consulta) === Number(idConsulta));
+        const paciente = consulta ? `${consulta.paciente_nombre || ''} ${consulta.paciente_apellidos || ''}`.trim() : '';
+        const fecha = consulta ? this.formatearFecha(consulta.fecha) : '';
+        const detalle = paciente ? `Consulta de ${paciente}${fecha ? ` (${fecha})` : ''}.` : '';
+        const ok = await window.openConfirmModal({
+            title: '¿Eliminar consulta?',
+            message: `${detalle} Esta acción no se puede deshacer.`.trim(),
+            okLabel: 'Eliminar',
+            tone: 'danger'
+        });
         if (!ok) return;
         try {
             await this.api('eliminar_consulta', 'POST', { id_consulta: idConsulta });
@@ -712,7 +762,6 @@ class MedicoDashboard {
         const consulta = this.consultas.find((c) => Number(c.id_consulta) === Number(idConsulta));
         if (!consulta || !this.form) return;
 
-        this.toggleConsultaPanel(true);
         this.editingConsultaId = Number(idConsulta);
         if (this.idConsultaInput) this.idConsultaInput.value = String(this.editingConsultaId);
         this.pacienteSelect.value = consulta.id_paciente || '';
@@ -722,10 +771,22 @@ class MedicoDashboard {
         this.form.elements.tratamiento.value = consulta.tratamiento || '';
         this.form.elements.observaciones.value = consulta.observaciones || '';
 
-        if (this.submitBtn) this.submitBtn.textContent = 'Actualizar consulta';
+        // Actualiza título del modal con contexto del paciente
+        const paciente = `${consulta.paciente_nombre || ''} ${consulta.paciente_apellidos || ''}`.trim() || 'Paciente';
+        const fecha = this.formatearFecha(consulta.fecha);
+        const title = document.getElementById('consultaModalTitle');
+        const subtitle = document.getElementById('consultaModalSubtitle');
+        if (title) title.textContent = `Editar consulta · ${paciente}`;
+        if (subtitle) subtitle.textContent = `Consulta del ${fecha}`;
+
+        if (this.submitBtn) {
+            this.submitBtn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5"></i>Actualizar consulta';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
         this.cancelEditBtn?.classList.remove('hidden');
-        this.setMessage(`Editando consulta #${this.editingConsultaId}`, false);
-        this.form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        this.setMessage('', false);
+        // Abre el modal (que ahora es un overlay y no descuadra la página)
+        this.toggleConsultaPanel(true);
     }
 
     cancelarEdicion() {
@@ -733,9 +794,18 @@ class MedicoDashboard {
         if (this.idConsultaInput) this.idConsultaInput.value = '';
         if (this.form) this.form.reset();
         if (this.pacienteSelect) this.pacienteSelect.disabled = false;
-        if (this.submitBtn) this.submitBtn.textContent = 'Guardar consulta';
+        if (this.submitBtn) {
+            this.submitBtn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5"></i>Guardar consulta';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
         this.cancelEditBtn?.classList.add('hidden');
         this.setMessage('', false);
+        // Cierra el modal y resetea su título
+        this.toggleConsultaPanel(false);
+        const title = document.getElementById('consultaModalTitle');
+        const subtitle = document.getElementById('consultaModalSubtitle');
+        if (title) title.textContent = 'Nueva consulta';
+        if (subtitle) subtitle.textContent = 'Completa los datos clínicos de la atención';
     }
 
     async guardarConsulta(event) {

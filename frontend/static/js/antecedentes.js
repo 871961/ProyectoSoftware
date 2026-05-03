@@ -33,8 +33,14 @@ class AntecedentesManager {
      */
     async cargarEnfermedades() {
         try {
-            const response = await fetch(`${ANTECEDENTES_API}?accion=obtenerEnfermedades`);
+            const response = await fetch(`${ANTECEDENTES_API}?accion=obtenerEnfermedades`, {
+                credentials: 'same-origin'
+            });
             const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data?.error || data?.mensaje || `Error HTTP ${response.status}`);
+            }
 
             if (data.success && data.data) {
                 this.enfermedades = data.data;
@@ -90,8 +96,14 @@ class AntecedentesManager {
         }
 
         try {
-            const response = await fetch(`${ANTECEDENTES_API}?accion=obtenerPorPaciente&dni_paciente=${dniPaciente}`);
+            const response = await fetch(`${ANTECEDENTES_API}?accion=obtenerPorPaciente&dni_paciente=${dniPaciente}`, {
+                credentials: 'same-origin'
+            });
             const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data?.error || data?.mensaje || `Error HTTP ${response.status}`);
+            }
 
             if (data.success && data.data) {
                 this.antecedentesActuales = data.data;
@@ -109,8 +121,14 @@ class AntecedentesManager {
     renderizarAntecedentes() {
         if (!this.listaEl) return;
 
+        const countEl = document.getElementById('antecedentesCount');
+        if (countEl) countEl.textContent = this.antecedentesActuales.length ? `${this.antecedentesActuales.length} registro${this.antecedentesActuales.length === 1 ? '' : 's'}` : '';
+
         if (this.antecedentesActuales.length === 0) {
-            this.listaEl.innerHTML = '<p class="text-sm text-gray-500">No hay antecedentes familiares registrados</p>';
+            this.listaEl.innerHTML = `
+                <div class="text-center py-10 rounded-xl" style="background:#fafbfc;border:1px dashed #e5e7eb">
+                    <p class="text-xs text-gray-400">Sin antecedentes registrados</p>
+                </div>`;
             return;
         }
 
@@ -120,21 +138,42 @@ class AntecedentesManager {
             const lado = ant.lado_familiar ? this.capitalize(ant.lado_familiar) : null;
             const edad = ant.edad_diagnostico || ant.edad_diagnóstico;
             const notas = ant.notas_adicionales;
+            const colorMeta = this.getColorByParentesco(ant.parentesco);
+
             return `
-            <div class="flex items-start justify-between gap-3 py-3" style="border-bottom:1px solid #f0f4f8">
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                        <span class="text-xs font-semibold" style="color:#1d4ed8">${par}</span>
-                        ${lado ? `<span class="text-xs text-gray-400">·</span><span class="text-xs text-gray-500">${lado}</span>` : ''}
-                        ${edad ? `<span class="text-xs text-gray-400">·</span><span class="text-xs text-gray-500">${edad} años</span>` : ''}
+            <div class="rounded-xl p-4 transition-colors hover:shadow-sm" style="background:#fff;border:1px solid #e8edf2">
+                <div class="flex items-start gap-3">
+                    <!-- Icono de parentesco -->
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${colorMeta.bg};color:${colorMeta.fg}">
+                        <i data-lucide="${colorMeta.icon}" class="w-4 h-4"></i>
                     </div>
-                    <p class="text-sm font-medium text-gray-900">${pat}</p>
-                    ${notas ? `<p class="text-xs text-gray-500 mt-0.5 truncate">${notas}</p>` : ''}
+                    <!-- Contenido -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h4 class="text-sm font-semibold text-gray-900 leading-tight">${pat}</h4>
+                                <p class="text-xs text-gray-500 mt-0.5">${par}</p>
+                            </div>
+                            <button onclick="antecedentesManager.eliminarAntecedente(${ant.id_antecedente})"
+                                title="Eliminar antecedente"
+                                class="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-red-50 text-gray-300 hover:text-red-500">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <!-- Chips de metadata -->
+                        <div class="flex items-center gap-1.5 flex-wrap mt-2">
+                            ${lado ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium" style="background:#f0f4ff;color:#1d4ed8">
+                                <i data-lucide="users" class="w-2.5 h-2.5"></i>${lado}
+                            </span>` : ''}
+                            ${edad ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium" style="background:#f0fdf4;color:#15803d">
+                                <i data-lucide="calendar" class="w-2.5 h-2.5"></i>${edad} años
+                            </span>` : ''}
+                        </div>
+                        ${notas ? `<p class="text-xs text-gray-500 mt-2 pt-2 leading-relaxed" style="border-top:1px dashed #f0f4f8">
+                            <span class="font-medium text-gray-400">Notas:</span> ${notas}
+                        </p>` : ''}
+                    </div>
                 </div>
-                <button onclick="antecedentesManager.eliminarAntecedente(${ant.id_antecedente})"
-                    class="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 rounded-lg transition-colors">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
             </div>`;
         }).join('');
 
@@ -142,6 +181,27 @@ class AntecedentesManager {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+    }
+
+    /**
+     * Devuelve color e icono según parentesco
+     */
+    getColorByParentesco(parentesco) {
+        const map = {
+            'padre':            { bg: '#eff6ff', fg: '#1d4ed8', icon: 'user' },
+            'madre':            { bg: '#fdf2f8', fg: '#be185d', icon: 'user' },
+            'hermano':          { bg: '#f0f9ff', fg: '#0369a1', icon: 'users' },
+            'hermana':          { bg: '#fdf4ff', fg: '#a21caf', icon: 'users' },
+            'abuelo_paterno':   { bg: '#f5f3ff', fg: '#6d28d9', icon: 'user-cog' },
+            'abuela_paterna':   { bg: '#fef2f2', fg: '#b91c1c', icon: 'user-cog' },
+            'abuelo_materno':   { bg: '#ecfdf5', fg: '#047857', icon: 'user-cog' },
+            'abuela_materna':   { bg: '#fff7ed', fg: '#c2410c', icon: 'user-cog' },
+            'tio':              { bg: '#f8fafc', fg: '#475569', icon: 'user-round' },
+            'tia':              { bg: '#f8fafc', fg: '#475569', icon: 'user-round' },
+            'primo':            { bg: '#fafaf9', fg: '#57534e', icon: 'user-round' },
+            'prima':            { bg: '#fafaf9', fg: '#57534e', icon: 'user-round' }
+        };
+        return map[parentesco] || { bg: '#f5f5f5', fg: '#374151', icon: 'circle-help' };
     }
 
     /**

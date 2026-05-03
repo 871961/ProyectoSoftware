@@ -41,19 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
             card.addEventListener('click', function () {
                 const role = this.dataset.role;
 
-                // Remove active state from all cards
-                roleCards.forEach(c => {
-                    c.classList.remove('border-medical-blue', 'bg-blue-50', 'ring-4', 'ring-blue-100');
-                    c.classList.add('border-gray-200');
-
-                    // Reset icon color to gray
-                    const icon = c.querySelector('div:first-child');
-                    icon.className = 'w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center mx-auto mb-2';
-                });
-
-                // Add active state to selected card
-                this.classList.remove('border-gray-200');
-                this.classList.add('border-medical-blue', 'bg-blue-50', 'ring-4', 'ring-blue-100');
+                // Toggle active class on role cards (estilos definidos en el HTML)
+                roleCards.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
 
                 // Update selected card icon
                 const selectedIcon = this.querySelector('div:first-child');
@@ -315,23 +305,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         selectedRole = data.role;
                         userRoleInput.value = data.role;
 
-                        // Update UI to show selected role
+                        // Aplica clase active según el rol guardado
                         roleCards.forEach(card => {
-                            const icon = card.querySelector('div:first-child');
-                            if (card.dataset.role === data.role) {
-                                card.classList.remove('border-gray-200');
-                                card.classList.add('border-medical-blue', 'bg-blue-50', 'ring-4', 'ring-blue-100');
-
-                                if (data.role === 'paciente') {
-                                    icon.className = 'w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2';
-                                } else {
-                                    icon.className = 'w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-2';
-                                }
-                            } else {
-                                card.classList.remove('border-medical-blue', 'bg-blue-50', 'ring-4', 'ring-blue-100');
-                                card.classList.add('border-gray-200');
-                                icon.className = 'w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center mx-auto mb-2';
-                            }
+                            card.classList.toggle('active', card.dataset.role === data.role);
                         });
                     }
                 } else {

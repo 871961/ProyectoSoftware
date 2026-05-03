@@ -1,48 +1,108 @@
 /* ============================================================
-   MedHistory — Panel Infantil
-   Estética: colores planos vivos, formas redondas, fuente Nunito
-   Sin degradados, sin sombras excesivas
+   MedHistory — Panel Pediátrico
+   Estética: claramente infantil (colores vivos, formas redondas,
+   pequeños detalles juguetones) pero estructurada como una
+   aplicación médica profesional. Tipografía Nunito.
    ============================================================ */
 
 :root {
-    --kid-sky:    #38bdf8;
-    --kid-mint:   #34d399;
-    --kid-sun:    #fbbf24;
-    --kid-rose:   #fb7185;
-    --kid-violet: #a78bfa;
-    --kid-ink:    #0f172a;
-    --kid-ink-soft: #475569;
-    --kid-bg:     #f0f9ff;
-    --kid-border: #e2e8f0;
+    --kid-sky:        #0ea5e9;
+    --kid-sky-soft:   #e0f2fe;
+    --kid-sky-line:   #bae6fd;
+    --kid-mint:       #10b981;
+    --kid-mint-soft:  #d1fae5;
+    --kid-mint-line:  #a7f3d0;
+    --kid-sun:        #f59e0b;
+    --kid-sun-soft:   #fef3c7;
+    --kid-sun-line:   #fde68a;
+    --kid-rose:       #f43f5e;
+    --kid-rose-soft:  #ffe4e6;
+    --kid-rose-line:  #fecdd3;
+    --kid-violet:     #8b5cf6;
+    --kid-violet-soft:#ede9fe;
+    --kid-violet-line:#ddd6fe;
+    --kid-indigo:     #6366f1;
+    --kid-ink:        #0f172a;
+    --kid-ink-soft:   #475569;
+    --kid-bg:         #f0f9ff;
+    --kid-surface:    #ffffff;
+    --kid-border:     #e2e8f0;
 }
 
 * { font-family: 'Nunito', 'Segoe UI', sans-serif; }
 
 /* ── Fondo ── */
 .kid-bg {
-    background-color: var(--kid-bg);
+    background: linear-gradient(180deg, #f0f9ff 0%, #fef3c7 100%);
+    background-attachment: fixed;
     color: var(--kid-ink);
+    min-height: 100vh;
+}
+
+/* ── Burbujas decorativas ── */
+.kid-bubbles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.kid-bubble {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.4;
+}
+.kid-bubble--1 {
+    width: 220px; height: 220px;
+    top: 8%; left: -60px;
+    background: radial-gradient(circle, var(--kid-sky-soft) 0%, transparent 70%);
+}
+.kid-bubble--2 {
+    width: 180px; height: 180px;
+    top: 35%; right: -50px;
+    background: radial-gradient(circle, var(--kid-mint-soft) 0%, transparent 70%);
+}
+.kid-bubble--3 {
+    width: 260px; height: 260px;
+    bottom: -80px; left: 30%;
+    background: radial-gradient(circle, var(--kid-violet-soft) 0%, transparent 70%);
+}
+.kid-bubble--4 {
+    width: 140px; height: 140px;
+    top: 60%; left: 10%;
+    background: radial-gradient(circle, var(--kid-sun-soft) 0%, transparent 70%);
 }
 
 /* ── Contenedor ── */
 .kid-container {
-    max-width: 1180px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
 }
 
-.kid-header { padding: 24px 0 12px; }
-.kid-main   { padding-bottom: 64px; }
+/* ── Header ── */
+.kid-header {
+    background: var(--kid-surface);
+    border-bottom: 2px solid var(--kid-sky-line);
+}
+.kid-header > .kid-container {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.kid-main { padding: 32px 0 64px; }
 
 /* ── Logo ── */
 .kid-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background-color: var(--kid-sky);
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--kid-sky) 0%, var(--kid-indigo) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(14,165,233,0.35);
 }
 
 /* ── Botón de volver ── */
@@ -50,61 +110,123 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 9px 18px;
     border-radius: 999px;
-    background: white;
-    border: 2px solid var(--kid-border);
+    background: var(--kid-surface);
+    border: 2px solid var(--kid-sky-line);
     color: var(--kid-ink);
-    font-weight: 700;
-    transition: border-color 0.2s ease, transform 0.15s ease;
+    font-size: 0.875rem;
+    font-weight: 800;
+    transition: all 0.2s ease;
 }
 .kid-btn:hover {
+    background: var(--kid-sky-soft);
     border-color: var(--kid-sky);
     transform: translateY(-1px);
 }
 
-/* ── Tarjeta base ── */
-.kid-card {
-    background: white;
-    border-radius: 24px;
-    border: 2px solid var(--kid-border);
-    padding: 24px;
-    animation: kidFadeUp 0.35s ease;
-}
-
-/* ── Hero card (perfil del dependiente) ── */
+/* ── Hero ── */
 .kid-hero {
-    margin-bottom: 24px;
-    border-color: var(--kid-sky);
-    background-color: #f0f9ff;
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #ddd6fe 100%);
+    border: 2px solid var(--kid-sky-line);
+    padding: 28px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(14,165,233,0.08);
+    animation: kidFadeUp 0.4s ease;
+}
+.kid-hero-pattern {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+.kid-hero-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.kid-hero-title {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--kid-ink);
+    line-height: 1.1;
+    margin-top: 4px;
+}
+.kid-hero-subtitle {
+    font-size: 0.9rem;
+    color: var(--kid-ink-soft);
+    font-weight: 600;
+    margin-top: 2px;
+}
+.kid-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--kid-sky);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    box-shadow: 0 2px 8px rgba(14,165,233,0.3);
 }
 
 /* ── Avatar ── */
+.kid-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
 .kid-avatar {
-    width: 84px;
-    height: 84px;
-    border-radius: 24px;
-    background-color: var(--kid-rose);
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--kid-sky) 0%, var(--kid-violet) 100%);
     color: white;
-    font-size: 28px;
-    font-weight: 800;
+    font-size: 2.1rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid white;
+    box-shadow: 0 8px 20px rgba(14,165,233,0.3);
+}
+.kid-avatar-star {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--kid-sun);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 3px solid white;
-    outline: 3px solid var(--kid-rose);
-    outline-offset: 2px;
+    box-shadow: 0 2px 6px rgba(245,158,11,0.4);
 }
 
 /* ── Chips informativos ── */
 .kid-chip {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     padding: 5px 12px;
     border-radius: 999px;
-    background: #f1f5f9;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
     color: var(--kid-ink-soft);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 700;
     border: 1.5px solid var(--kid-border);
 }
@@ -112,17 +234,51 @@
 /* ── Grid de secciones ── */
 .kid-grid {
     display: grid;
-    gap: 24px;
+    gap: 20px;
 }
 @media (min-width: 1024px) {
     .kid-grid { grid-template-columns: 1.4fr 1fr; }
 }
 
+/* ── Tarjeta base ── */
+.kid-card {
+    background: var(--kid-surface);
+    border-radius: 20px;
+    border: 1.5px solid var(--kid-border);
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+    animation: kidFadeUp 0.3s ease;
+    transition: box-shadow 0.2s ease;
+}
+.kid-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.08); }
+
+/* ── Header de sección dentro de tarjeta ── */
+.kid-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px dashed var(--kid-border);
+}
+.kid-section-title {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--kid-ink);
+    line-height: 1.1;
+}
+.kid-section-subtitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--kid-ink-soft);
+    margin-top: 2px;
+}
+
 /* ── Icono de sección ── */
 .kid-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,37 +287,75 @@
 
 /* ── Métricas (peso, talla, IMC) ── */
 .kid-metric {
-    background: #f8fafc;
-    border: 2px dashed #cbd5e1;
-    border-radius: 16px;
-    padding: 16px;
+    border-radius: 18px;
+    padding: 16px 12px;
     text-align: center;
+    border: 2px solid var(--kid-border);
+    background: var(--kid-surface);
+    transition: transform 0.15s ease;
+    position: relative;
 }
+.kid-metric:hover { transform: translateY(-2px); }
+
+.kid-metric-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.7);
+}
+
+/* Variantes de color para métricas */
+.kid-metric--sky    { background: var(--kid-sky-soft);    border-color: var(--kid-sky-line); }
+.kid-metric--sky    .kid-metric-icon  { color: var(--kid-sky); }
+.kid-metric--mint   { background: var(--kid-mint-soft);   border-color: var(--kid-mint-line); }
+.kid-metric--mint   .kid-metric-icon  { color: var(--kid-mint); }
+.kid-metric--violet { background: var(--kid-violet-soft); border-color: var(--kid-violet-line); }
+.kid-metric--violet .kid-metric-icon  { color: var(--kid-violet); }
+.kid-metric--sun    { background: var(--kid-sun-soft);    border-color: var(--kid-sun-line); }
+.kid-metric--sun    .kid-metric-icon  { color: var(--kid-sun); }
+
 .kid-metric-label {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     color: var(--kid-ink-soft);
-    font-weight: 700;
-    margin-bottom: 6px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.kid-metric-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    line-height: 1;
 }
 .kid-metric-value {
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-size: 1.6rem;
+    font-weight: 900;
     color: var(--kid-ink);
+}
+.kid-metric-unit {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--kid-ink-soft);
 }
 
 /* ── Etiquetas de alergias ── */
 .kid-tag {
     display: inline-flex;
     align-items: center;
-    padding: 5px 12px;
+    gap: 4px;
+    padding: 4px 12px;
     border-radius: 999px;
-    background: #fff1f2;
+    background: var(--kid-rose-soft);
     color: #be123c;
-    font-weight: 700;
-    font-size: 0.85rem;
-    border: 1.5px solid #fecdd3;
+    font-weight: 800;
+    font-size: 0.8rem;
+    border: 1.5px solid var(--kid-rose-line);
 }
 
 /* ── Filas de datos básicos ── */
@@ -170,49 +364,66 @@
     justify-content: space-between;
     align-items: center;
     padding: 11px 14px;
-    border-radius: 14px;
+    border-radius: 12px;
     background: #f8fafc;
     border: 1.5px solid var(--kid-border);
 }
-.kid-info-label { color: var(--kid-ink-soft); font-weight: 700; }
-.kid-info-value { color: var(--kid-ink); font-weight: 800; }
+.kid-info-label { color: var(--kid-ink-soft); font-weight: 700; font-size: 0.85rem; }
+.kid-info-value { color: var(--kid-ink); font-weight: 800; font-size: 0.875rem; }
+
+/* ── Estado vacío ── */
+.kid-empty {
+    text-align: center;
+    padding: 24px 12px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 2px dashed var(--kid-border);
+    font-size: 0.85rem;
+    color: var(--kid-ink-soft);
+    font-style: italic;
+    font-weight: 600;
+}
 
 /* ── Mensaje de error ── */
 .kid-error {
     margin: 16px 0 24px;
     padding: 12px 16px;
-    border-radius: 16px;
-    background: #fff1f2;
+    border-radius: 14px;
+    background: var(--kid-rose-soft);
     color: #b91c1c;
     font-weight: 700;
-    border: 2px solid #fecdd3;
-}
-
-/* ── Decoración de fondo (sin degradados) ── */
-.kid-dot-pattern {
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(circle, #bae6fd 1px, transparent 1px);
-    background-size: 28px 28px;
-    opacity: 0.35;
-    pointer-events: none;
-    z-index: 0;
+    border: 2px solid var(--kid-rose-line);
+    font-size: 0.875rem;
 }
 
 /* ── Animación entrada ── */
 @keyframes kidFadeUp {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Filas de consultas/vacunas en el panel ── */
+/* ── Filas de consultas/vacunas ── */
 .kid-row {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     padding: 12px 14px;
-    border-radius: 16px;
+    border-radius: 14px;
     background: #f8fafc;
     border: 1.5px solid var(--kid-border);
+    transition: all 0.15s ease;
+}
+.kid-row:hover {
+    border-color: var(--kid-sky-line);
+    background: var(--kid-sky-soft);
 }
 .kid-row + .kid-row { margin-top: 8px; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .kid-hero { padding: 20px; }
+    .kid-hero-title { font-size: 1.4rem; }
+    .kid-avatar { width: 76px; height: 76px; font-size: 1.7rem; }
+    .kid-section-header { gap: 10px; }
+    .kid-icon { width: 38px; height: 38px; }
+}

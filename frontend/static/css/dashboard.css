@@ -48,13 +48,13 @@
 }
 
 .sidebar-item:hover {
-    background: linear-gradient(to right, rgba(37, 99, 235, 0.1), transparent);
-    border-left: 3px solid #2563eb;
+    background: transparent;
+    border-left: 3px solid #003366;
 }
 
 .sidebar-item.active {
-    background: linear-gradient(to right, rgba(37, 99, 235, 0.15), transparent);
-    border-left: 3px solid #2563eb;
+    background: rgba(0, 0, 0, 0.02);
+    border-left: 3px solid #003366;
     font-weight: 600;
 }
 
@@ -125,59 +125,463 @@
 /* ========================================
    CHAT PANEL (módulo mensajería médicos)
    ======================================== */
+.tab-content#tab-mensajes {
+    position: relative;
+    isolation: isolate;
+}
+
+.tab-content#tab-mensajes::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #f5f7fa;
+}
+
+/* ================================
+   ENTERPRISE MEDICAL CHAT UI
+   Minimal, flat, monochrome, no gradients/shadows/rounded
+   ================================ */
+
+.tab-content#tab-mensajes>.mb-5 {
+    margin-bottom: 1.25rem;
+}
+
+.tab-content#tab-mensajes h1 {
+    letter-spacing: -0.02em;
+}
+
 .chat-panel-shell {
-    height: min(84vh, 900px);
-    max-height: min(84vh, 900px);
+    height: clamp(560px, 72vh, 760px);
+    max-height: clamp(560px, 72vh, 760px);
+    min-height: 560px;
     overflow: hidden;
-    background: #0d1b2e;
-    border: 1px solid #1e3a5f;
-    border-radius: 1.25rem;
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .chat-split-layout {
     display: grid;
-    grid-template-columns: 300px minmax(0, 1fr);
+    grid-template-columns: 260px minmax(0, 1fr);
     height: 100%;
     min-height: 0;
-    gap: 0;
 }
 
-.chat-split-layout > aside,
-.chat-split-layout > article {
-    min-height: 0;
-}
-
-.chat-split-layout > article {
+.chat-split-layout>aside {
+    background: #f9fafb;
+    border-right: 1px solid #e5e7eb;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
+.chat-split-layout>article {
+    background: #FFFFFF;
+    position: relative;
+}
+
+/* search */
+#chatSearchInput {
+    background: transparent !important;
+    border: 0 !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+#chatSearchInput::placeholder {
+    color: #9ca3af !important;
+}
+
+#chatContactList {
+    padding: 0.75rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: #c5ccd6 #fafafa;
+}
+
+#chatContactList::-webkit-scrollbar {
+    width: 12px;
+}
+
+#chatContactList::-webkit-scrollbar-track {
+    background: #fafafa;
+}
+
+#chatContactList::-webkit-scrollbar-thumb {
+    background: #c5ccd6;
+    border: 3px solid #fafafa;
+}
+
+/* contact rows */
+.chat-contact-card {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0.85rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+
+.chat-contact-card:hover {
+    background: #f0f2f5;
+}
+
+.chat-contact-card--active {
+    background: #eff6ff;
+    border-left: 3px solid #0f3460;
+    padding-left: calc(0.85rem - 2px);
+}
+
+/* avatar circular */
+.chat-contact-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #FFFFFF;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: #94a3b8;
+}
+
+.chat-contact-card--active .chat-contact-avatar {
+    background: #0f3460;
+}
+
+.chat-contact-name {
+    color: #111827;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-contact-meta {
+    color: #6b7280;
+    font-size: 0.75rem;
+    margin-top: 0.1rem;
+}
+
+.chat-contact-preview {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.2rem;
+}
+
+.chat-contact-time {
+    color: #9ca3af;
+    font-size: 0.7rem;
+}
+
+.chat-contact-badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f3460;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+/* main panel header */
+#chatAvatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #94a3b8;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 0.82rem;
+}
+
+#chatActiveTitle {
+    color: #111827;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+#chatActiveSubtitle {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+/* messages */
 #chatMessages {
-    min-height: 0;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
+    padding: 1.25rem 1.5rem;
+    background: #f8fafc;
 }
 
-@media (max-width: 1024px) {
-    .chat-panel-shell {
-        height: min(86vh, 920px);
-    }
-    .chat-split-layout {
-        grid-template-columns: 260px minmax(0, 1fr);
-    }
+.chat-message-empty {
+    max-width: 32rem;
+    margin: 4rem auto 0;
+    text-align: center;
+    color: #9ca3af;
 }
 
-/* Fuerza el tema oscuro en los inputs del chat */
+.chat-message-empty .icon {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid #e5e7eb;
+    color: #9ca3af;
+    line-height: 1;
+}
+
+.chat-day-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.chat-day-divider::before,
+.chat-day-divider::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid #e5e7eb;
+}
+
+.chat-day-divider span {
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    background: #e5e7eb;
+    color: #6b7280;
+    font-size: 0.68rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* message rows */
+.chat-message-row {
+    display: flex;
+    width: 100%;
+    margin: 0.4rem 0;
+}
+
+.chat-message-row--self {
+    justify-content: flex-end;
+}
+
+.chat-message-row--other {
+    justify-content: flex-start;
+}
+
+.chat-message-bubble {
+    max-width: 68%;
+    padding: 0.6rem 0.9rem;
+    background: transparent;
+    border: 0;
+}
+
+.chat-message-bubble--self {
+    color: #FFFFFF;
+    background: #0f3460;
+    border-radius: 1.1rem 1.1rem 0.2rem 1.1rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+.chat-message-bubble--other {
+    color: #111827;
+    background: #FFFFFF;
+    border-radius: 1.1rem 1.1rem 1.1rem 0.2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.chat-message-author {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #0f3460;
+    margin-bottom: 0.25rem;
+}
+
+.chat-message-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: inherit;
+}
+
+.chat-message-meta {
+    margin-top: 0.3rem;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.65);
+    text-align: right;
+}
+
+.chat-message-bubble--other .chat-message-meta {
+    color: #9ca3af;
+    text-align: left;
+}
+
+/* file attachments minimal style */
+.chat-file-card {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+}
+
+.chat-file-card img {
+    border-radius: 0;
+}
+
+/* input area */
+.chat-input-card {
+    border: 0;
+    padding: 0;
+}
+
+#chatForm {
+    border-top: 1px solid #e5e7eb;
+    background: #FFFFFF;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 0.75rem 1rem;
+}
+
 #chatInput {
-    background: transparent !important;
-    color: #e2e8f0 !important;
-    caret-color: #60a5fa !important;
+    width: 100%;
+    min-height: 2.75rem;
+    max-height: 8rem;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.65rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #111827;
+    resize: none;
+    border-radius: 1.5rem;
+    background: #f9fafb;
+    transition: border-color 0.15s, background 0.15s;
 }
 
-#chatInput::placeholder { color: #64748b !important; }
+#chatInput:focus {
+    outline: none;
+    border-color: #0f3460;
+    background: #fff;
+}
 
-#chatForm textarea,
-#chatForm input {
-    background: transparent !important;
+#chatInput::placeholder {
+    color: #9ca3af;
+}
+
+.chat-compose-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 36px 36px;
+    align-items: end;
+    gap: 0.5rem;
+}
+
+#chatAttachmentPreview {
+    display: none;
+}
+
+/* attach button */
+#chatAttachBtn {
+    background: transparent;
+    border: 1.5px solid #e5e7eb;
+    color: #9ca3af;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+#chatAttachBtn:hover {
+    border-color: #0f3460;
+    color: #0f3460;
+}
+
+#chatAttachBtn i {
+    width: 16px;
+    height: 16px;
+}
+
+/* send button: circular */
+#chatSendBtn {
+    width: 36px;
+    height: 36px;
+    background: #0f3460;
+    color: #FFFFFF;
+    border: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    transition: background 0.15s, transform 0.1s;
+}
+
+#chatSendBtn:hover {
+    background: #1a4a7a;
+}
+
+#chatSendBtn:active {
+    transform: scale(0.92);
+}
+
+#chatSendBtn i {
+    width: 15px;
+    height: 15px;
+}
+
+#chatMessageStatus {
+    display: none;
+}
+
+@media (max-width:1024px) {
+    .chat-split-layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+    }
+}
+
+@media (max-width:768px) {
+    .chat-panel-shell {
+        height: clamp(480px, 78vh, 680px);
+        max-height: clamp(480px, 78vh, 680px);
+        min-height: 480px;
+        border-radius: 0.75rem;
+    }
+
+    .chat-split-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-contact-card {
+        padding: 0.6rem 0.75rem;
+    }
 }
 
 /* ========================================
@@ -188,17 +592,18 @@
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transform: none;
+    box-shadow: none;
 }
 
 /* ========================================
    CHART PLACEHOLDER
    ======================================== */
 .chart-placeholder {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #ffffff;
     min-height: 200px;
-    border-radius: 12px;
+    border-radius: 0;
+    border: 1px solid #f0f0f0;
 }
 
 /* ========================================
@@ -243,7 +648,7 @@
    PEDIATRIC MODE STYLES
    ======================================== */
 .pediatric-mode {
-    background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%);
+    background: #ffffff;
 }
 
 .pediatric-card {
@@ -263,6 +668,38 @@
     animation: fadeIn 0.4s ease;
 }
 
+#healthProfileView {
+    padding: 0.5rem 1rem 1.5rem;
+    box-sizing: border-box;
+}
+
+#healthProfileView>.grid {
+    margin-bottom: 1.5rem;
+}
+
+#healthProfileView #saludPacienteForm>*+* {
+    margin-top: 1.5rem;
+}
+
+#saludPacienteForm input,
+#saludPacienteForm textarea,
+#saludPacienteForm select {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    box-sizing: border-box;
+}
+
+#saludPacienteForm input,
+#saludPacienteForm textarea {
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+}
+
+#saludPacienteForm select {
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+}
+
 /* Specific override for nested divs inside main containers */
 #adultView.view-section.active {
     display: block;
@@ -277,8 +714,239 @@
 }
 
 .family-profile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ========================================
+   MEDICAL DETAIL / HEALTH PROFILE
+   ======================================== */
+#detallePaciente {
+    background: #ffffff;
+    border: 1px solid #F5F5F5 !important;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.patient-empty-state {
+    background: #ffffff;
+    border-radius: 0;
+    border: 1px solid #F5F5F5;
+}
+
+.patient-summary-header {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+#avatarPaciente {
+    background: #1d4ed8 !important;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.patient-health-overview,
+.patient-antecedents-panel {
+    border-radius: 0;
+    padding: 1rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+
+.health-metric-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.health-metric-card p:last-child {
+    letter-spacing: -0.02em;
+}
+
+/* Métricas mini con icono coloreado (médico Mis Pacientes) */
+.health-metric-mini {
+    border-radius: 0.875rem;
+    padding: 0.85rem 0.75rem;
+    transition: transform 0.15s ease;
+}
+
+.health-metric-mini:hover {
+    transform: translateY(-1px);
+}
+
+.health-metric-mini p:nth-child(3) {
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.allergy-panel {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.patient-actions {
+    border-top: 1px solid #e5e7eb;
+}
+
+.patient-btn-primary {
+    background: #0f172a !important;
+    color: #fff !important;
+    border: 1px solid #0f172a !important;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.patient-btn-primary:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.patient-btn-secondary {
+    background: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none;
+    border-radius: 0.625rem;
+    transition: background 0.15s;
+}
+
+.patient-btn-secondary:hover {
+    transform: none;
+    background: #e5e7eb !important;
+}
+
+.patient-btn-primary {
+    border-radius: 0.625rem !important;
+}
+
+.health-modal-shell {
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.13);
+    background: #ffffff;
+    border-radius: 1.25rem;
+}
+
+.health-modal-header {
+    background: #ffffff;
+}
+
+.health-modal-body {
+    background: #ffffff;
+}
+
+.health-modal-body form label {
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.health-modal-body input,
+.health-modal-body textarea,
+.health-modal-body select {
+    background: #ffffff;
+    border-color: #e5e7eb !important;
+    box-shadow: none;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+}
+
+.health-modal-body input:focus,
+.health-modal-body textarea:focus,
+.health-modal-body select:focus {
+    border-color: #0f3460 !important;
+    box-shadow: none;
+}
+
+.health-modal-body #saludMessageMedico {
+    color: #64748b;
+}
+
+.health-modal-body #saludCargarBtnMedico {
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 0.625rem;
+}
+
+.health-modal-body #saludCargarBtnMedico:hover {
+    background: #e5e7eb;
+}
+
+#saludImcCardMedico {
+    min-width: 148px;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.patient-antecedents-panel #antecedentesResumen {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.patient-antecedent-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 0;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.patient-antecedent-item-title {
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.81rem;
+    line-height: 1.25;
+}
+
+.patient-antecedent-item-meta {
+    color: #64748b;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.patient-antecedent-empty {
+    padding: 0.9rem 1rem;
+    border-radius: 0;
+    border: 1px dashed #d1d5db;
+    color: #64748b;
+    background: #ffffff;
+    font-size: 0.76rem;
+}
+
+@media (max-width: 1024px) {
+    .health-modal-shell {
+        max-width: calc(100vw - 2rem);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .patient-summary-header,
+    .patient-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .patient-btn-primary,
+    .patient-btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #saludImcCardMedico {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .patient-antecedent-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 /* ========================================
@@ -326,13 +994,7 @@
 }
 
 .health-profile-glow {
-    position: absolute;
-    inset: -6px;
-    background: radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.35), transparent 55%),
-        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.3), transparent 60%);
-    filter: blur(16px);
-    z-index: 0;
-    opacity: 0.9;
+    display: none;
     pointer-events: none;
 }
 
@@ -340,15 +1002,13 @@
     position: relative;
     z-index: 1;
     overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .health-profile-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, rgba(255, 255, 255, 0.65), rgba(240, 253, 250, 0.4));
-    pointer-events: none;
+    content: none;
 }
 
 .health-profile-card>* {
@@ -356,25 +1016,165 @@
 }
 
 .health-profile-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+    transform: none;
+    box-shadow: none;
 }
 
 .health-btn-primary {
-    background: linear-gradient(95deg, #0284c7, #0ea5e9);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-    box-shadow: 0 8px 16px rgba(2, 132, 199, 0.22);
+    background: #0f3460;
+    transition: background 0.15s;
+    box-shadow: none;
+    border-radius: 0.625rem;
 }
 
 .health-btn-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.04);
-    box-shadow: 0 12px 22px rgba(2, 132, 199, 0.3);
+    background: #1a4a7a;
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
+/* ========================================
+   BOTONES REUTILIZABLES
+   ======================================== */
+.btn-primary-md {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.1rem;
+    background: #0f3460;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.625rem;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary-md:hover {
+    background: #1a4a7a;
+}
+
+.btn-primary-md:active {
+    transform: scale(0.98);
+}
+
+.btn-primary-md:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary-md {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: #fff;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.625rem;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-secondary-md:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+/* ========================================
+   SELECTS GLOBALES — chevron personalizado
+   ======================================== */
+select.form-select,
+.health-modal-body select,
+#saludMedicoForm select,
+#saludPacienteForm select,
+#consultaForm select,
+#recordatorioForm select,
+#antecedentesForm select,
+#citaForm select,
+#dependentForm select,
+#chatForm select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    background-size: 1.05em 1.05em;
+    padding-right: 2.25rem !important;
+    cursor: pointer;
+}
+
+/* ========================================
+   ACCIONES TABLA CONSULTAS (médico)
+   ======================================== */
+.consulta-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.consulta-action span {
+    line-height: 1;
+}
+
+.consulta-action--edit {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #dbeafe;
+}
+
+.consulta-action--edit:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.consulta-action--reminder {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.consulta-action--reminder:hover {
+    background: #fef3c7;
+    border-color: #fcd34d;
+}
+
+.consulta-action--view {
+    background: #f0fdf4;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.consulta-action--view:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+.consulta-action--delete {
+    background: #fff1f2;
+    color: #dc2626;
+    border-color: #fecaca;
+    padding: 0.35rem 0.55rem;
+}
+
+.consulta-action--delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
 }
 
 .imc-badge {
     min-width: 136px;
-    border-radius: 1rem;
+    border-radius: 0.625rem;
     padding: 0.7rem 1rem;
     display: inline-flex;
     flex-direction: column;
@@ -386,9 +1186,9 @@
 }
 
 .imc-value {
-    font-size: 1.45rem;
+    font-size: 0.95rem;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .imc-label {
@@ -398,28 +1198,76 @@
     letter-spacing: 0.03em;
 }
 
+/* Variante grande para mostrar IMC como tarjeta destacada */
+.imc-badge.imc-large {
+    width: 100%;
+    min-width: 0;
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+    gap: 0.4rem;
+}
+
+.imc-badge.imc-large .imc-value {
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.imc-badge.imc-large .imc-label {
+    font-size: 0.85rem;
+}
+
+/* Variante "profesional" — tipografía grande y minimalista, sin tarjeta */
+.imc-badge.imc-pro {
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    padding: 0;
+    background: transparent !important;
+    border: 0 !important;
+    gap: 0.6rem;
+}
+
+.imc-badge.imc-pro .imc-value {
+    font-size: 1.2rem;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.imc-badge.imc-pro .imc-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+}
+
 .imc-neutral {
-    background: #f3f4f6;
-    color: #374151;
-    border-color: #d1d5db;
+    background: #f8fafc;
+    color: #334155;
+    border-color: #cbd5e1;
 }
 
 .imc-low {
-    background: #fef3c7;
+    background: #f8fafc;
     color: #92400e;
-    border-color: #f59e0b;
+    border-color: #d1d5db;
 }
 
 .imc-normal {
-    background: #dcfce7;
+    background: #f8fafc;
     color: #166534;
-    border-color: #22c55e;
+    border-color: #d1d5db;
 }
 
 .imc-high {
-    background: #fee2e2;
+    background: #f8fafc;
     color: #991b1b;
-    border-color: #ef4444;
+    border-color: #d1d5db;
 }
 
 /* ========================================

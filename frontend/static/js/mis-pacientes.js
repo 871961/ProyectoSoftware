@@ -232,19 +232,26 @@ class MisPacientesManager {
         const data = window.antecedentesManager?.antecedentesActuales || [];
 
         if (data.length === 0) {
-            container.innerHTML = '<p class="text-xs text-gray-400">Sin antecedentes registrados</p>';
+            container.innerHTML = '<div class="patient-antecedent-empty">Sin antecedentes registrados</div>';
             return;
         }
 
         container.innerHTML = data.slice(0, 4).map(ant => {
             const pat = ant.nombre_patologia || ant.nombre_enfermedad || 'Desconocida';
-            const par = (ant.parentesco || '').replace(/_/g,' ');
-            return `<div class="flex items-center justify-between py-1.5" style="border-bottom:1px solid #f0f4f8">
-                <span class="text-xs font-medium text-gray-800">${pat}</span>
-                <span class="text-xs text-gray-400 ml-3">${par}</span>
-            </div>`;
+            const par = (ant.parentesco || '').replace(/_/g, ' ');
+            const lado = ant.lado_familiar ? ant.lado_familiar.replace(/_/g, ' ') : '';
+            const detalle = [par, lado].filter(Boolean).join(' · ');
+
+            return `
+                <div class="patient-antecedent-item">
+                    <div class="min-w-0">
+                        <p class="patient-antecedent-item-title truncate">${pat}</p>
+                        <p class="patient-antecedent-item-meta truncate">${detalle || 'Sin detalle familiar'}</p>
+                    </div>
+                    <span class="text-[11px] text-slate-400 shrink-0">${ant.edad_diagnostico || ant.edad_diagnóstico ? `${ant.edad_diagnostico || ant.edad_diagnóstico} años` : ''}</span>
+                </div>`;
         }).join('') +
-        (data.length > 4 ? `<p class="text-xs text-gray-400 pt-1.5">+${data.length-4} más</p>` : '');
+        (data.length > 4 ? `<p class="text-[11px] text-slate-400 pt-1 pl-1">+${data.length - 4} más</p>` : '');
     }
 
     abrirModalPerfilSalud() {

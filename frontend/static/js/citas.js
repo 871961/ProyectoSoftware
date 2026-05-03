@@ -25,9 +25,14 @@ class CitasModule {
     }
 
     // ── Carga médicos para el selector del formulario ─────────────────────────
+    // Si this.dni corresponde a un dependiente, el backend devolverá solo el pediatra.
+    // Si es un paciente normal, devolverá su médico general + todos los especialistas.
     async cargarMedicos() {
         try {
-            const res  = await fetch(`${API}?accion=obtener_medicos`);
+            const url = this.dni
+                ? `${API}?accion=obtener_medicos&id_paciente=${encodeURIComponent(this.dni)}`
+                : `${API}?accion=obtener_medicos`;
+            const res  = await fetch(url);
             const data = await res.json();
             if (data.success) {
                 this.medicos = data.data || [];
@@ -41,14 +46,37 @@ class CitasModule {
     _rellenarSelectMedicos() {
         const sel = document.getElementById('citaMedicoSelect');
         if (!sel) return;
+        if (!this.medicos.length) {
+            sel.innerHTML = '<option value="">No hay médicos disponibles</option>';
+            return;
+        }
         sel.innerHTML = '<option value="">Selecciona un médico...</option>';
-        this.medicos.forEach(m => {
+        // Agrupar: primero el general/pediatra del paciente, luego especialistas
+        const generales = this.medicos.filter(m => m.tipo_medico === 'general');
+        const especialistas = this.medicos.filter(m => m.tipo_medico !== 'general');
+
+        const buildOption = (m, prefix = '') => {
             const opt = document.createElement('option');
             opt.value = m.id_medico;
-            const esp = m.especialidad ? ` — ${m.especialidad}` : (m.tipo_medico === 'general' ? ' — Médico General' : '');
-            opt.textContent = `Dr./Dra. ${m.nombre} ${m.apellidos}${esp}`;
-            sel.appendChild(opt);
-        });
+            const esp = m.especialidad ? ` · ${m.especialidad}` : '';
+            opt.textContent = `${prefix}Dr./Dra. ${m.nombre} ${m.apellidos}${esp}`;
+            return opt;
+        };
+
+        if (generales.length) {
+            const gGen = document.createElement('optgroup');
+            gGen.label = generales.length === 1 && generales[0].tipo_medico === 'general'
+                ? 'Tu médico de cabecera'
+                : 'Tu pediatra';
+            generales.forEach(m => gGen.appendChild(buildOption(m)));
+            sel.appendChild(gGen);
+        }
+        if (especialistas.length) {
+            const gEsp = document.createElement('optgroup');
+            gEsp.label = 'Especialistas';
+            especialistas.forEach(m => gEsp.appendChild(buildOption(m)));
+            sel.appendChild(gEsp);
+        }
     }
 
     // ── Carga y renderiza la lista de citas del paciente ──────────────────────
@@ -262,7 +290,10 @@ class CitasModule {
     }
 
     // ── Modal ─────────────────────────────────────────────────────────────────
-    abrirModal() {
+    async abrirModal() {
+        // Recargar médicos por si cambió el contexto (paciente <-> dependiente)
+        await this.cargarMedicos();
+
         const m = document.getElementById('citaModal');
         if (m) m.classList.remove('hidden');
         if (m) m.classList.add('flex');

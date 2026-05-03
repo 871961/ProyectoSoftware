@@ -5,193 +5,242 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta | MedHistory</title>
-    <!-- Tailwind CSS (local if available, otherwise CDN fallback) -->
-    <script>
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = { theme: { extend: { colors: { 'medical-blue': '#2563eb', 'clinical-gray': '#f8fafc' } } } };
-        (async function () {
-            try {
-                const res = await fetch('css/tailwind.css', { method: 'HEAD' });
-                if (res.ok) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l); return; }
-            } catch (e) { }
-            // Use local compiled Tailwind CSS
-            const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/tailwind.css'; document.head.appendChild(l);
-        })();
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='18'>🏥</text></svg>">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'medical-blue': '#2563EB',
-                        'clinical-gray': '#F9FAFB',
-                    },
-                    fontFamily: {
-                        'inter': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/tailwind.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; background: #f5f7fa; }
+        .auth-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
         }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
+        @media (min-width: 1024px) {
+            .auth-shell { grid-template-columns: 1.1fr 1fr; }
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .auth-aside {
+            background: #0a1628;
+            color: #f0f6ff;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
-
+        .auth-aside::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 360px; height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%);
+        }
+        .auth-aside::after {
+            content: '';
+            position: absolute;
+            bottom: -100px; left: -80px;
+            width: 280px; height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+        }
+        @media (max-width: 1023px) { .auth-aside { display: none; } }
+        .auth-form-wrap {
+            background: #ffffff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
+            overflow-y: auto;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.7rem 0.95rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 0.625rem;
+            font-size: 0.875rem;
+            color: #111827;
+            background: #fff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #0f3460;
+            box-shadow: 0 0 0 3px rgba(15,52,96,0.1);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 0.4rem;
+        }
+        .form-label-req::after { content: ' *'; color: #f87171; }
+        .auth-btn-primary {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.25rem;
+            background: #0f3460;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: background 0.15s ease;
+        }
+        .auth-btn-primary:hover { background: #1a4a7a; }
+        .auth-info-card {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 0.875rem;
+            padding: 1rem 1.1rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
         .password-strength-bar {
             height: 4px;
             border-radius: 2px;
             transition: all 0.3s ease;
+            background: #e5e7eb;
+        }
+        .auth-feature {
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+            padding: 0.85rem 0;
+        }
+        .auth-feature-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: rgba(59,130,246,0.15);
+            color: #93c5fd;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-clinical-gray via-white to-blue-50 min-h-screen">
+<body>
+    <div class="auth-shell">
 
-    <!-- Header -->
-    <header class="backdrop-blur-sm bg-white/90 shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-medical-blue rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                clip-rule="evenodd"></path>
-                        </svg>
+        <!-- ASIDE -->
+        <aside class="auth-aside">
+            <div class="relative z-10">
+                <a href="index.html" class="inline-flex items-center gap-3 mb-12">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="stethoscope" class="w-5 h-5 text-white"></i>
                     </div>
-                    <span class="text-xl font-semibold text-gray-900 tracking-tight">MedHistory</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="text-gray-600 hover:text-medical-blue transition-colors font-medium">
-                        Inicio
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
+                    <span class="text-xl font-semibold tracking-tight">MedHistory</span>
+                </a>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-        <div class="max-w-2xl w-full">
+                <h2 class="text-3xl font-bold leading-tight mb-3" style="letter-spacing:-0.02em">
+                    Empieza tu historial<br>clínico digital.
+                </h2>
+                <p class="text-sm text-gray-400 leading-relaxed mb-10" style="max-width:420px">
+                    Regístrate como paciente para acceder a tu historial médico,
+                    solicitar citas y mantener el contacto con tu médico de cabecera.
+                </p>
 
-            <!-- Registration Card -->
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-8">
-
-                <!-- Header -->
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Crear Nueva Cuenta</h1>
-                    <p class="text-gray-600">Únete a MedHistory para gestionar tu historial clínico de forma segura</p>
-                </div>
-
-                <!-- Info Banner -->
-                <div class="mb-8">
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                        <div class="flex items-center justify-center mb-3">
-                            <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
+                <div style="border-top:1px solid #1e2d45;padding-top:1.5rem">
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon"><i data-lucide="file-heart" class="w-4 h-4"></i></div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Historial unificado</p>
+                            <p class="text-xs text-gray-400 mt-0.5">Consultas, antecedentes y perfil de salud en un solo lugar.</p>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Registro de Pacientes</h3>
-                        <p class="text-sm text-gray-600">
-                            Crea tu cuenta para acceder a tu historial médico de forma segura.
-                        </p>
-                        <p class="text-xs text-gray-500 mt-3">
-                            <strong>Nota:</strong> Los médicos son registrados por administradores del sistema.
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon"><i data-lucide="calendar-check" class="w-4 h-4"></i></div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Solicitud de citas</p>
+                            <p class="text-xs text-gray-400 mt-0.5">Pide cita con tu médico general o con especialistas.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon"><i data-lucide="bell-ring" class="w-4 h-4"></i></div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Recordatorios</p>
+                            <p class="text-xs text-gray-400 mt-0.5">Tu médico te asigna recordatorios de medicación y revisiones.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-500 relative z-10">© MedHistory · Sistema sanitario digital</p>
+        </aside>
+
+        <!-- FORM -->
+        <main class="auth-form-wrap">
+            <div class="w-full" style="max-width:520px">
+
+                <div class="flex items-center gap-3 mb-8 lg:hidden">
+                    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="stethoscope" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <span class="text-lg font-semibold text-gray-900">MedHistory</span>
+                </div>
+
+                <h1 class="text-2xl font-bold text-gray-900 mb-1">Crear cuenta</h1>
+                <p class="text-sm text-gray-500 mb-7">Únete a MedHistory para gestionar tu salud de forma segura</p>
+
+                <!-- Info banner -->
+                <div class="auth-info-card mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-700"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Registro de pacientes</p>
+                        <p class="text-xs text-gray-600 mt-0.5 leading-relaxed">
+                            Solo los pacientes pueden auto-registrarse. Los médicos son dados de alta por administradores del sistema.
                         </p>
                     </div>
                 </div>
 
-                <!-- Registration Form -->
-                <form id="registrationForm" class="hidden fade-in">
-                    <div id="formFields" class="space-y-6">
-                        <!-- Los campos se generarán dinámicamente aquí -->
+                <form id="registrationForm" class="hidden space-y-5">
+                    <div id="formFields" class="space-y-4">
+                        <!-- Campos generados dinámicamente por register.js -->
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="mt-8">
-                        <button type="submit"
-                            class="w-full bg-medical-blue hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl">
-                            <span id="register-text" class="inline-flex items-center justify-center space-x-2">
-                                <span>Crear Cuenta</span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                </svg>
-                            </span>
-                            <div id="register-spinner" class="hidden">
-                                <svg class="animate-spin w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="auth-btn-primary mt-2">
+                        <span id="register-text" class="inline-flex items-center justify-center gap-2">
+                            Crear cuenta
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </span>
+                        <span id="register-spinner" class="hidden">
+                            <i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>
+                        </span>
+                    </button>
 
-                    <!-- Login Link -->
-                    <div class="text-center mt-6">
-                        <p class="text-gray-600">
-                            ¿Ya tienes cuenta?
-                            <a href="login.html"
-                                class="text-medical-blue hover:text-blue-700 font-semibold transition-colors">
-                                Inicia sesión aquí
-                            </a>
-                        </p>
-                    </div>
+                    <p class="text-center text-sm text-gray-600 mt-1">
+                        ¿Ya tienes cuenta?
+                        <a href="login.html" class="font-semibold transition-colors hover:underline" style="color:#0f3460">
+                            Inicia sesión
+                        </a>
+                    </p>
 
-                    <!-- Status Messages -->
-                    <div id="success-message"
-                        class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-center font-medium">
-                    </div>
-                    <div id="error-message"
-                        class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center font-medium">
-                    </div>
+                    <div id="success-message" class="hidden mt-3 p-3.5 rounded-xl text-sm text-green-700 font-medium text-center"
+                        style="background:#f0fdf4;border:1px solid #bbf7d0"></div>
+                    <div id="error-message" class="hidden mt-3 p-3.5 rounded-xl text-sm text-red-700 font-medium text-center"
+                        style="background:#fef2f2;border:1px solid #fecaca"></div>
                 </form>
-            </div>
 
-            <!-- Legal Footer -->
-            <div class="text-center mt-8">
-                <p class="text-sm text-gray-500">
-                    Al registrarte, aceptas nuestros
-                    <a href="#" class="text-medical-blue hover:text-blue-700 font-medium">Términos de Uso</a>
-                    y
-                    <a href="#" class="text-medical-blue hover:text-blue-700 font-medium">Política de Privacidad</a>
-                </p>
-                <p class="text-xs text-gray-400 mt-2">
-                    Sistema conforme a GDPR/LOPD para protección de datos médicos
+                <p class="text-center text-[11px] text-gray-400 mt-8">
+                    Al registrarte aceptas nuestros
+                    <a href="#" class="hover:text-gray-600 underline">Términos</a> y
+                    <a href="#" class="hover:text-gray-600 underline">Política de Privacidad</a>.
                 </p>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script src="js/register.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
 </body>
 
 </html>

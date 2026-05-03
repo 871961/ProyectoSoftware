@@ -15,7 +15,21 @@ class CitaDAO {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    private function tablaExiste($tabla) {
+        $sql = "SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = :tabla";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tabla' => $tabla]);
+        return ((int)$stmt->fetchColumn() > 0);
+    }
+
     public function insertar(CitaVO $cita) {
+        if (!$this->tablaExiste('citas')) {
+            throw new Exception('La tabla citas no existe. Ejecuta database/add_citas.sql');
+        }
+
         $errores = $cita->validar();
         if (!empty($errores)) {
             throw new Exception("Datos inválidos: " . implode(", ", $errores));
@@ -41,6 +55,10 @@ class CitaDAO {
     }
 
     public function obtenerPorPaciente($id_paciente, $solo_activas = false) {
+        if (!$this->tablaExiste('citas')) {
+            return [];
+        }
+
         $cond = $solo_activas
             ? "AND c.activo = true AND c.estado IN ('Pendiente', 'Confirmada')"
             : "AND c.activo = true";
@@ -64,6 +82,10 @@ class CitaDAO {
     }
 
     public function obtenerPorMedico($id_medico, $solo_pendientes = false, $fecha = null) {
+        if (!$this->tablaExiste('citas')) {
+            return [];
+        }
+
         $cond = "AND c.activo = true";
         if ($solo_pendientes) {
             $cond .= " AND c.estado = 'Pendiente'";
@@ -89,6 +111,10 @@ class CitaDAO {
     }
 
     public function obtenerPorId($id_cita) {
+        if (!$this->tablaExiste('citas')) {
+            return null;
+        }
+
         $sql = "SELECT c.*,
                        m.nombre AS medico_nombre, m.apellidos AS medico_apellidos,
                        p.nombre AS paciente_nombre, p.apellidos AS paciente_apellidos
@@ -103,6 +129,10 @@ class CitaDAO {
     }
 
     public function actualizarEstado($id_cita, $nuevo_estado, $cancelada_por = null, $notas = null) {
+        if (!$this->tablaExiste('citas')) {
+            throw new Exception('La tabla citas no existe. Ejecuta database/add_citas.sql');
+        }
+
         $sql = "UPDATE citas SET estado = :estado, fecha_actualizacion = NOW()";
         $params = [':estado' => $nuevo_estado, ':id_cita' => $id_cita];
 
@@ -121,6 +151,10 @@ class CitaDAO {
     }
 
     public function contarPorMedico($id_medico, $estado = null) {
+        if (!$this->tablaExiste('citas')) {
+            return 0;
+        }
+
         $cond = $estado ? "AND estado = :estado" : "";
         $sql  = "SELECT COUNT(*) FROM citas WHERE id_medico = :id_medico AND activo = true $cond";
         $stmt = $this->db->prepare($sql);

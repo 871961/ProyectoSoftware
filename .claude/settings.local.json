@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout *)",
+      "Bash(php -l /c/web/medHistory/backend/src/vo/CitaVO.php)",
+      "Bash(php -l /c/web/medHistory/backend/src/dao/CitaDAO.php)",
+      "Bash(php -l /c/web/medHistory/backend/src/controllers/CitasController.php)",
+      "Bash(where php *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git fetch *)",
+      "Bash(Get-ChildItem -Path C:\\\\web\\\\medHistory -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

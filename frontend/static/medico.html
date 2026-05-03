@@ -80,7 +80,8 @@
             </a>
 
             <div class="pt-4 mt-4 sidebar-section-border" style="border-top:1px solid #1e2d45">
-                <button id="btnAbrirConfig" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-left">
+                <button id="btnAbrirConfig"
+                    class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-left">
                     <i data-lucide="settings" class="w-4 h-4 flex-shrink-0"></i>
                     <span>Configuración</span>
                 </button>
@@ -174,10 +175,10 @@
                 </div>
 
                 <!-- Buscador global -->
-                <div class="mb-8 flex items-center gap-3 bg-white rounded-xl px-4 py-3" style="border:1px solid #e8edf2">
+                <div class="mb-8 flex items-center gap-3 bg-white rounded-xl px-4 py-3"
+                    style="border:1px solid #e8edf2">
                     <i data-lucide="search" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
-                    <input id="buscarInicio" type="text"
-                        placeholder="Buscar paciente por nombre o DNI..."
+                    <input id="buscarInicio" type="text" placeholder="Buscar paciente por nombre o DNI..."
                         class="flex-1 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-400">
                     <button id="btnBuscarInicio"
                         class="px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-colors"
@@ -192,7 +193,8 @@
                     <!-- Citas de hoy — dinámico -->
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-xl" style="border:1px solid #e8edf2">
-                            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #e8edf2">
+                            <div class="px-5 py-4 flex items-center justify-between"
+                                style="border-bottom:1px solid #e8edf2">
                                 <div>
                                     <h3 class="text-sm font-semibold text-gray-900 tracking-tight">Citas de hoy</h3>
                                     <p id="citasHoyFecha" class="text-xs text-gray-400 mt-0.5"></p>
@@ -207,11 +209,21 @@
                                 <table class="w-full text-sm">
                                     <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
                                         <tr>
-                                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Paciente</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Hora</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Motivo</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Estado</th>
-                                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Acción</th>
+                                            <th
+                                                class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                                Paciente</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                                Hora</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">
+                                                Motivo</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                                Estado</th>
+                                            <th
+                                                class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                                Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody id="citasHoyBody" class="divide-y" style="border-color:#f0f4f8">
@@ -229,44 +241,10 @@
                     <!-- Panel derecho -->
                     <div class="space-y-5">
 
-                        <!-- Acciones rápidas -->
-                        <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
-                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Acciones rápidas</h3>
-                            <div class="space-y-1.5">
-                                <button data-goto="consultas" id="accionNuevaConsulta"
-                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="file-plus" class="w-3.5 h-3.5 text-blue-700"></i>
-                                    </div>
-                                    Nueva consulta
-                                </button>
-                                <button data-goto="agenda" id="accionVerAgenda"
-                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
-                                    <div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-700"></i>
-                                    </div>
-                                    Ver agenda
-                                </button>
-                                <button data-goto="mis-pacientes" id="accionPacientes"
-                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
-                                    <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="users" class="w-3.5 h-3.5 text-emerald-700"></i>
-                                    </div>
-                                    Mis pacientes
-                                </button>
-                                <button data-goto="mensajes" id="accionMensajes"
-                                    class="accion-rapida w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-left">
-                                    <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="message-circle" class="w-3.5 h-3.5 text-violet-700"></i>
-                                    </div>
-                                    Mensajes
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- Citas pendientes de confirmar -->
                         <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
-                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendientes de confirmar</h3>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendientes de
+                                confirmar</h3>
                             <div id="citasPendientesResumen" class="space-y-2">
                                 <p class="text-xs text-gray-400">Cargando...</p>
                             </div>
@@ -274,7 +252,8 @@
 
                         <!-- Esta semana -->
                         <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
-                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Esta semana</h3>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Esta semana
+                            </h3>
                             <div id="resumenSemana" class="space-y-1.5">
                                 <p class="text-xs text-gray-400">Cargando...</p>
                             </div>
@@ -292,10 +271,10 @@
                 </div>
 
                 <!-- Buscador -->
-                <div class="mb-5 flex items-center gap-3 bg-white rounded-xl px-4 py-3" style="border:1px solid #e8edf2">
+                <div class="mb-5 flex items-center gap-3 bg-white rounded-xl px-4 py-3"
+                    style="border:1px solid #e8edf2">
                     <i data-lucide="search" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
-                    <input type="text" id="buscarPaciente"
-                        placeholder="Buscar por DNI, nombre o apellidos..."
+                    <input type="text" id="buscarPaciente" placeholder="Buscar por DNI, nombre o apellidos..."
                         class="flex-1 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-400">
                 </div>
 
@@ -305,7 +284,8 @@
                     <!-- Columna izquierda: Lista de pacientes -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-xl p-4" style="border:1px solid #e8edf2">
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pacientes asignados</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pacientes
+                                asignados</p>
                             <div id="listaPacientes" class="space-y-1 max-h-[600px] overflow-y-auto">
                                 <div class="text-center py-8 text-gray-400 text-sm">
                                     <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
@@ -317,9 +297,9 @@
 
                     <!-- Columna derecha: Detalles del paciente seleccionado -->
                     <div class="lg:col-span-2">
-                        <div id="detallePaciente" class="bg-white rounded-xl p-6" style="border:1px solid #e8edf2">
+                        <div id="detallePaciente" class="bg-white rounded-2xl p-6" style="border:1px solid #e8edf2">
                             <!-- Estado inicial: sin selección -->
-                            <div id="sinSeleccion" class="text-center py-16">
+                            <div id="sinSeleccion" class="text-center py-16 patient-empty-state">
                                 <i data-lucide="user-circle" class="w-16 h-16 mx-auto mb-3 text-gray-200"></i>
                                 <p class="text-sm font-medium text-gray-500">Selecciona un paciente</p>
                                 <p class="text-xs text-gray-400 mt-1">Haz clic en la lista para ver su historial</p>
@@ -328,11 +308,10 @@
                             <!-- Información del paciente (oculta inicialmente) -->
                             <div id="infoPaciente" class="hidden">
                                 <!-- Header -->
-                                <div class="flex items-start justify-between mb-5 pb-5" style="border-bottom:1px solid #e8edf2">
+                                <div class="patient-summary-header flex items-start justify-between mb-5 pb-5">
                                     <div class="flex items-center gap-4">
                                         <div id="avatarPaciente"
-                                            class="w-14 h-14 rounded-xl flex items-center justify-center text-white font-semibold text-lg flex-shrink-0"
-                                            style="background:#1d4ed8">
+                                            class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
                                         </div>
                                         <div>
                                             <h2 id="nombrePaciente" class="text-lg font-semibold text-gray-900"></h2>
@@ -341,8 +320,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <span id="estadoPaciente"
-                                            class="px-2.5 py-1 text-xs font-semibold rounded-full"
+                                        <span id="estadoPaciente" class="px-2.5 py-1 text-xs font-semibold rounded-full"
                                             style="background:#f0fdf4;color:#166534">
                                             Activo
                                         </span>
@@ -351,50 +329,90 @@
 
                                 <!-- Perfil de Salud -->
                                 <div class="mb-5">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Perfil de salud</p>
-                                    <div class="grid grid-cols-4 gap-2 mb-3">
-                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
-                                            <p class="text-xs text-gray-400 mb-1">Altura</p>
-                                            <p id="alturaDisplay" class="text-base font-semibold text-gray-900">--</p>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Perfil
+                                            de salud</p>
+                                        <span class="text-[11px] text-gray-400">Datos clínicos básicos</span>
+                                    </div>
+                                    <!-- Métricas: 4 tarjetas en una rejilla -->
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-3">
+                                        <div class="health-metric-mini"
+                                            style="background:#eff6ff;border:1px solid #dbeafe">
+                                            <div class="h-8 w-8 rounded-lg flex items-center justify-center mb-2"
+                                                style="background:#dbeafe;color:#1d4ed8">
+                                                <i data-lucide="ruler" class="w-3.5 h-3.5"></i>
+                                            </div>
+                                            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                                                Altura</p>
+                                            <p id="alturaDisplay" class="text-base font-bold text-gray-900 mt-0.5">--
+                                            </p>
                                         </div>
-                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
-                                            <p class="text-xs text-gray-400 mb-1">Peso</p>
-                                            <p id="pesoDisplay" class="text-base font-semibold text-gray-900">--</p>
+                                        <div class="health-metric-mini"
+                                            style="background:#f0fdf4;border:1px solid #bbf7d0">
+                                            <div class="h-8 w-8 rounded-lg flex items-center justify-center mb-2"
+                                                style="background:#dcfce7;color:#15803d">
+                                                <i data-lucide="weight" class="w-3.5 h-3.5"></i>
+                                            </div>
+                                            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                                                Peso</p>
+                                            <p id="pesoDisplay" class="text-base font-bold text-gray-900 mt-0.5">--</p>
                                         </div>
-                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
-                                            <p class="text-xs text-gray-400 mb-1">IMC</p>
-                                            <p id="imcDisplay" class="text-base font-semibold text-gray-900">--</p>
+                                        <div class="health-metric-mini"
+                                            style="background:#faf5ff;border:1px solid #ddd6fe">
+                                            <div class="h-8 w-8 rounded-lg flex items-center justify-center mb-2"
+                                                style="background:#ede9fe;color:#6d28d9">
+                                                <i data-lucide="gauge" class="w-3.5 h-3.5"></i>
+                                            </div>
+                                            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                                                IMC</p>
+                                            <p id="imcDisplay" class="text-base font-bold text-gray-900 mt-0.5">--</p>
                                         </div>
-                                        <div class="rounded-lg p-3 text-center" style="background:#f5f7fa;border:1px solid #e8edf2">
-                                            <p class="text-xs text-gray-400 mb-1">Actividad</p>
-                                            <p id="actividadDisplay" class="text-xs font-semibold text-gray-900">--</p>
+                                        <div class="health-metric-mini"
+                                            style="background:#fffbeb;border:1px solid #fde68a">
+                                            <div class="h-8 w-8 rounded-lg flex items-center justify-center mb-2"
+                                                style="background:#fef3c7;color:#b45309">
+                                                <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                                            </div>
+                                            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                                                Actividad</p>
+                                            <p id="actividadDisplay"
+                                                class="text-xs font-bold text-gray-900 mt-0.5 truncate">--</p>
                                         </div>
                                     </div>
-                                    <div id="alergiaDisplay" class="px-3 py-2.5 rounded-lg hidden" style="background:#fff5f5;border:1px solid #fecaca">
-                                        <p class="text-xs font-semibold text-red-700 mb-0.5">Alergias conocidas</p>
-                                        <p class="text-xs text-red-800"></p>
+                                    <div id="alergiaDisplay" class="px-4 py-3 rounded-xl hidden flex items-start gap-3"
+                                        style="background:#fef2f2;border:1px solid #fecaca">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                            style="background:#fee2e2;color:#dc2626">
+                                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-semibold text-red-700 mb-0.5">Alergias conocidas</p>
+                                            <p class="text-sm text-red-800"></p>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Antecedentes Familiares -->
-                                <div class="mb-5">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Antecedentes familiares</p>
+                                <div class="patient-antecedents-panel mb-5">
+                                    <div class="flex items-center justify-between gap-3 mb-3">
+                                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                            Antecedentes familiares</p>
+                                        <span class="text-[11px] text-gray-400">Historial heredofamiliar</span>
+                                    </div>
                                     <div id="antecedentesResumen">
                                         <p class="text-xs text-gray-400">Sin antecedentes registrados</p>
                                     </div>
                                 </div>
 
                                 <!-- Botones de acción -->
-                                <div class="flex flex-wrap gap-2 pt-2" style="border-top:1px solid #e8edf2">
+                                <div class="patient-actions flex flex-wrap gap-2 pt-2">
                                     <button id="btnEditarPerfilSalud"
-                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors"
-                                        style="background:#f0f4ff;color:#1d4ed8;border:1px solid #dbeafe">
+                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl transition-colors patient-btn-primary">
                                         <i data-lucide="heart-pulse" class="w-3.5 h-3.5"></i>
                                         Perfil de salud
                                     </button>
                                     <button id="btnAñadirAntecedentes"
-                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors"
-                                        style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe">
+                                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl transition-colors patient-btn-secondary">
                                         <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
                                         Antecedentes
                                     </button>
@@ -405,138 +423,195 @@
                 </div>
 
                 <!-- Modal: Perfil de Salud -->
-                <div id="modalPerfilSalud"
-                    class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+                <div id="modalPerfilSalud" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
                     style="display: none;">
-                    <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-                        <div
-                            class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">Gestión del Perfil de Salud</h2>
-                                <p class="text-sm text-gray-600">Registra y actualiza estado general, hábitos, alergias
-                                    y enfermedades</p>
-                            </div>
-                            <button id="cerrarModalSalud" class="text-gray-400 hover:text-gray-600">
-                                <i data-lucide="x" class="w-6 h-6"></i>
-                            </button>
-                        </div>
-                        <div class="p-6">
-                            <div class="mb-4 flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-600">Paciente:</p>
-                                    <p id="modalSaludPacienteNombre" class="text-lg font-semibold text-gray-900"></p>
+                    <div class="health-modal-shell bg-white w-full mx-auto max-h-[90vh] overflow-y-auto"
+                        style="max-width:640px;border-radius:1.25rem;border:1px solid #e5e7eb;box-shadow:0 20px 40px rgba(0,0,0,0.14)">
+                        <!-- Header -->
+                        <div class="health-modal-header sticky top-0 px-6 py-4 flex items-center justify-between"
+                            style="background:#fff;border-bottom:1px solid #f0f4f8;border-radius:1.25rem 1.25rem 0 0">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="heart-pulse" class="w-4 h-4 text-blue-700"></i>
                                 </div>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Perfil de Salud</h2>
+                                    <p id="modalSaludPacienteNombre" class="text-xs text-gray-500 mt-0.5"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
                                 <div id="saludImcCardMedico" class="imc-badge imc-neutral">
                                     <span class="imc-value" id="saludImcValueMedico">--</span>
                                     <span class="imc-label" id="saludImcLabelMedico">Sin datos</span>
                                 </div>
+                                <button id="cerrarModalSalud" class="text-gray-400 hover:text-gray-600 ml-1">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
                             </div>
-
-                            <form id="saludMedicoForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                        <!-- Body -->
+                        <div class="health-modal-body p-6">
+                            <form id="saludMedicoForm" class="space-y-5">
                                 <input type="hidden" id="saludPacienteSelect" name="id_paciente">
 
+                                <!-- Medidas físicas -->
                                 <div>
-                                    <label for="saludAlturaMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Altura (cm)</label>
-                                    <input id="saludAlturaMedico" name="altura_cm" type="number" min="30" max="260"
-                                        step="0.1"
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Medidas
+                                        físicas</p>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label for="saludAlturaMedico"
+                                                class="block text-xs font-medium text-gray-500 mb-1.5">Altura
+                                                (cm)</label>
+                                            <input id="saludAlturaMedico" name="altura_cm" type="number" min="30"
+                                                max="260" step="0.1" placeholder="Ej: 175"
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
+                                        </div>
+                                        <div>
+                                            <label for="saludPesoMedico"
+                                                class="block text-xs font-medium text-gray-500 mb-1.5">Peso (kg)</label>
+                                            <input id="saludPesoMedico" name="peso_kg" type="number" min="1" max="400"
+                                                step="0.1" placeholder="Ej: 70"
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Hábitos -->
                                 <div>
-                                    <label for="saludPesoMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
-                                    <input id="saludPesoMedico" name="peso_kg" type="number" min="1" max="400"
-                                        step="0.1"
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Hábitos
+                                    </p>
+                                    <div class="grid grid-cols-1 gap-3">
+                                        <div>
+                                            <label for="saludActividadFisicaMedico"
+                                                class="block text-xs font-medium text-gray-500 mb-1.5">Actividad
+                                                física</label>
+                                            <input id="saludActividadFisicaMedico" name="actividad_fisica" type="text"
+                                                placeholder="Ej: Sedentario / 3 días por semana"
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label for="saludConsumoTabacoMedico"
+                                                    class="block text-xs font-medium text-gray-500 mb-1.5">Tabaco</label>
+                                                <input id="saludConsumoTabacoMedico" name="consumo_tabaco" type="text"
+                                                    placeholder="Ej: No fumador"
+                                                    class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    style="border-color:#e5e7eb;border-radius:0.625rem">
+                                            </div>
+                                            <div>
+                                                <label for="saludConsumoAlcoholMedico"
+                                                    class="block text-xs font-medium text-gray-500 mb-1.5">Alcohol</label>
+                                                <input id="saludConsumoAlcoholMedico" name="consumo_alcohol" type="text"
+                                                    placeholder="Ej: Ocasional"
+                                                    class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    style="border-color:#e5e7eb;border-radius:0.625rem">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Condiciones -->
                                 <div>
-                                    <label for="saludActividadFisicaMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Actividad física</label>
-                                    <input id="saludActividadFisicaMedico" name="actividad_fisica" type="text"
-                                        placeholder="Ej: 3 días/semana"
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                                        Condiciones clínicas</p>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label for="saludAlergiasMedico"
+                                                class="block text-xs font-medium text-gray-500 mb-1.5">Alergias
+                                                conocidas</label>
+                                            <textarea id="saludAlergiasMedico" name="alergias" rows="2"
+                                                placeholder="Ej: Penicilina, mariscos, látex..."
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                        </div>
+                                        <div>
+                                            <label for="saludEnfermedadesMedico"
+                                                class="block text-xs font-medium text-gray-500 mb-1.5">Enfermedades
+                                                diagnosticadas</label>
+                                            <textarea id="saludEnfermedadesMedico" name="enfermedades" rows="2"
+                                                placeholder="Ej: Hipertensión arterial, diabetes tipo 2..."
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="saludConsumoTabacoMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Consumo de tabaco</label>
-                                    <input id="saludConsumoTabacoMedico" name="consumo_tabaco" type="text"
-                                        placeholder="Ej: No fumador"
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                </div>
-                                <div>
-                                    <label for="saludConsumoAlcoholMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Consumo de alcohol</label>
-                                    <input id="saludConsumoAlcoholMedico" name="consumo_alcohol" type="text"
-                                        placeholder="Ej: Ocasional"
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="saludAlergiasMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Alergias conocidas</label>
-                                    <textarea id="saludAlergiasMedico" name="alergias" rows="2"
-                                        placeholder="Ej: Penicilina, mariscos..."
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="saludEnfermedadesMedico"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Enfermedades
-                                        diagnosticadas</label>
-                                    <textarea id="saludEnfermedadesMedico" name="enfermedades" rows="2"
-                                        placeholder="Ej: Hipertensión, asma..."
-                                        class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
-                                </div>
-                                <div class="md:col-span-2 flex flex-wrap gap-2">
+
+                                <!-- Acciones -->
+                                <div class="flex items-center gap-2 pt-1"
+                                    style="border-top:1px solid #f0f4f8;padding-top:1.25rem">
                                     <button type="submit"
-                                        class="health-btn-primary px-4 py-2.5 text-white rounded-xl font-medium">
-                                        Guardar perfil de salud
+                                        class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white transition-colors"
+                                        style="background:#0f3460;border-radius:0.625rem">
+                                        <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                        Guardar cambios
                                     </button>
                                     <button id="saludCargarBtnMedico" type="button"
-                                        class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium">
-                                        Cargar perfil existente
+                                        class="px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors"
+                                        style="background:#f3f4f6;border-radius:0.625rem">
+                                        Cargar existente
                                     </button>
+                                    <p id="saludMessageMedico" class="ml-auto text-xs text-gray-500"></p>
                                 </div>
                             </form>
-                            <p id="saludMessageMedico" class="mt-3 text-sm"></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal: Antecedentes Familiares -->
                 <div id="modalAntecedentes"
-                    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
-                    style="display:none">
-                    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col">
+                    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" style="display:none">
+                    <div class="bg-white w-full max-h-[72vh] overflow-hidden flex flex-col"
+                        style="max-width:540px;border-radius:1.1rem;border:1px solid #e5e7eb;box-shadow:0 20px 40px rgba(0,0,0,0.14)">
                         <!-- Header -->
-                        <div class="px-5 py-4 flex items-center justify-between flex-shrink-0" style="border-bottom:1px solid #e8edf2">
-                            <div>
-                                <h2 class="text-base font-semibold text-gray-900">Antecedentes Familiares</h2>
-                                <p id="modalAntPacienteNombre" class="text-xs text-gray-400 mt-0.5"></p>
+                        <div class="px-5 py-3.5 flex items-center justify-between flex-shrink-0"
+                            style="border-bottom:1px solid #f0f4f8;border-radius:1.1rem 1.1rem 0 0">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="git-branch" class="w-4 h-4 text-blue-700"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Antecedentes
+                                        familiares</h2>
+                                    <p id="modalAntPacienteNombre" class="text-xs text-gray-500 mt-0.5"></p>
+                                </div>
                             </div>
-                            <button id="cerrarModalAntecedentes" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <button id="cerrarModalAntecedentes"
+                                class="text-gray-400 hover:text-gray-600 transition-colors">
                                 <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
                         </div>
 
                         <div class="flex-1 overflow-y-auto p-5">
                             <!-- Formulario compacto -->
-                            <div class="rounded-xl p-4 mb-5" style="background:#fafbfc;border:1px solid #e8edf2">
-                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Añadir antecedente</p>
-                                <form id="antecedentesForm" class="space-y-3">
+                            <div class="rounded-xl p-4" style="background:#fafbfc;border:1px solid #e8edf2">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Registrar
+                                    antecedente</p>
+                                <form id="antecedentesForm" class="space-y-2.5">
                                     <input type="hidden" id="antPacienteSelect" name="id_paciente">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="col-span-2">
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Enfermedad</label>
-                                            <select id="antEnfermedadSelect" name="id_enfermedad" required
-                                                class="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                style="border-color:#e8edf2">
-                                                <option value="">Selecciona una enfermedad...</option>
-                                            </select>
-                                        </div>
+
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Enfermedad <span
+                                                class="text-red-400">*</span></label>
+                                        <select id="antEnfermedadSelect" name="id_enfermedad" required
+                                            class="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem;background:#fff">
+                                            <option value="">Selecciona una enfermedad...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2.5">
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Parentesco</label>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Parentesco <span
+                                                    class="text-red-400">*</span></label>
                                             <select id="antParentesco" name="parentesco" required
-                                                class="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                style="border-color:#e8edf2">
+                                                class="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem;background:#fff">
                                                 <option value="">Selecciona...</option>
                                                 <option value="padre">Padre</option>
                                                 <option value="madre">Madre</option>
@@ -551,46 +626,47 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Lado familiar</label>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Lado
+                                                familiar</label>
                                             <select id="antLadoFamiliar" name="lado_familiar"
-                                                class="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                style="border-color:#e8edf2">
+                                                class="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem;background:#fff">
                                                 <option value="">No especificado</option>
                                                 <option value="paterno">Paterno</option>
                                                 <option value="materno">Materno</option>
                                                 <option value="ambos">Ambos</option>
                                             </select>
                                         </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2.5">
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Edad al diagnóstico</label>
-                                            <input id="antEdadDiagnostico" name="edad_diagnostico" type="number" min="0" max="120"
-                                                placeholder="Años"
-                                                class="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                style="border-color:#e8edf2">
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Edad al
+                                                diagnóstico</label>
+                                            <input id="antEdadDiagnostico" name="edad_diagnostico" type="number" min="0"
+                                                max="120" placeholder="Años"
+                                                class="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Notas</label>
                                             <input id="antNotas" name="notas_adicionales" type="text"
                                                 placeholder="Observaciones breves..."
-                                                class="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                style="border-color:#e8edf2">
+                                                class="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2 pt-1">
+
+                                    <div class="flex items-center gap-2 pt-0.5">
                                         <button type="submit"
-                                            class="px-4 py-2 text-sm font-medium text-white rounded-xl transition-colors"
-                                            style="background:#0f3460">Registrar</button>
-                                        <p id="antecedentesMessage" class="text-xs text-gray-400"></p>
+                                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white"
+                                            style="background:#0f3460;border-radius:0.625rem">
+                                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                            Registrar
+                                        </button>
+                                        <p id="antecedentesMessage" class="text-xs text-gray-400 ml-auto"></p>
                                     </div>
                                 </form>
-                            </div>
-
-                            <!-- Lista registrada -->
-                            <div>
-                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Registrados</p>
-                                <div id="antecedentesLista">
-                                    <p class="text-xs text-gray-400">Sin antecedentes registrados</p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -604,188 +680,299 @@
                 <div class="mb-6 flex items-center justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-semibold text-gray-900 mb-1">Consultas</h1>
-                        <p class="text-sm text-gray-400">Registro de consultas médicas</p>
+                        <p class="text-sm text-gray-400">Historial clínico y registro de atención</p>
                     </div>
                     <button id="toggleConsultaModule" type="button"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                         style="background:#0f3460;color:white">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span id="toggleConsultaLabel">Nueva consulta</span>
                     </button>
                 </div>
 
-                <!-- Formulario nueva consulta (colapsable) -->
-                <div id="consultaModulePanel" class="hidden mb-6 bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
-                    <h2 class="text-sm font-semibold text-gray-700 mb-4 tracking-tight">Nueva consulta</h2>
-                    <form id="consultaForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="hidden" id="id_consulta" name="id_consulta">
-                        <div>
-                            <label for="id_paciente" class="block text-xs font-medium text-gray-500 mb-1.5">Paciente</label>
-                            <select id="id_paciente" name="id_paciente" required
-                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                style="border-color:#e8edf2">
-                                <option value="">Selecciona un paciente...</option>
-                            </select>
+                <!-- Formulario nueva consulta (modal overlay) -->
+                <div id="consultaModulePanel"
+                    class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4" style="display:none">
+                    <div class="bg-white w-full mx-auto max-h-[90vh] overflow-y-auto"
+                        style="max-width:680px;border-radius:1.25rem;border:1px solid #e5e7eb;box-shadow:0 20px 40px rgba(0,0,0,0.14)">
+                        <!-- Form header -->
+                        <div class="sticky top-0 px-6 py-4 flex items-center justify-between"
+                            style="background:#fff;border-bottom:1px solid #f0f4f8;border-radius:1.25rem 1.25rem 0 0">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="file-plus" class="w-4 h-4 text-blue-700"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h2 id="consultaModalTitle"
+                                        class="text-sm font-semibold text-gray-900 tracking-tight">Registrar consulta
+                                    </h2>
+                                    <p id="consultaModalSubtitle" class="text-xs text-gray-500 mt-0.5 truncate">Completa
+                                        los datos clínicos de la atención</p>
+                                </div>
+                            </div>
+                            <button id="cerrarConsultaModal" type="button"
+                                class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
                         </div>
-                        <div>
-                            <label for="fecha_consulta" class="block text-xs font-medium text-gray-500 mb-1.5">Fecha y hora</label>
-                            <input id="fecha_consulta" name="fecha" type="datetime-local"
-                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                style="border-color:#e8edf2">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="diagnostico" class="block text-xs font-medium text-gray-500 mb-1.5">Diagnóstico</label>
-                            <textarea id="diagnostico" name="diagnostico" rows="2" required
-                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                style="border-color:#e8edf2"></textarea>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="tratamiento" class="block text-xs font-medium text-gray-500 mb-1.5">Tratamiento</label>
-                            <textarea id="tratamiento" name="tratamiento" rows="2"
-                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                style="border-color:#e8edf2"></textarea>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="observaciones" class="block text-xs font-medium text-gray-500 mb-1.5">Observaciones</label>
-                            <textarea id="observaciones" name="observaciones" rows="2"
-                                class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                style="border-color:#e8edf2"></textarea>
-                        </div>
-                        <div class="md:col-span-2 flex items-center gap-2">
-                            <button id="submitConsultaBtn" type="submit"
-                                class="px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-colors"
-                                style="background:#0f3460">Guardar consulta</button>
-                            <button id="cancelEditBtn" type="button"
-                                class="px-4 py-2.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 hidden">Cancelar</button>
-                        </div>
-                    </form>
-                    <p id="consultaMessage" class="mt-3 text-xs"></p>
+
+                        <form id="consultaForm" class="p-6">
+                            <input type="hidden" id="id_consulta" name="id_consulta">
+
+                            <!-- Sección: Paciente y fecha -->
+                            <div class="mb-5">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Información
+                                    general</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="id_paciente"
+                                            class="block text-xs font-medium text-gray-500 mb-1.5">Paciente <span
+                                                class="text-red-400">*</span></label>
+                                        <select id="id_paciente" name="id_paciente" required
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem">
+                                            <option value="">Selecciona un paciente...</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="fecha_consulta"
+                                            class="block text-xs font-medium text-gray-500 mb-1.5">Fecha y hora</label>
+                                        <input id="fecha_consulta" name="fecha" type="datetime-local"
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sección: Datos clínicos -->
+                            <div class="mb-5">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Datos
+                                    clínicos</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="diagnostico"
+                                            class="block text-xs font-medium text-gray-500 mb-1.5">Diagnóstico <span
+                                                class="text-red-400">*</span></label>
+                                        <textarea id="diagnostico" name="diagnostico" rows="2" required
+                                            placeholder="Describe el diagnóstico principal..."
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="tratamiento"
+                                            class="block text-xs font-medium text-gray-500 mb-1.5">Tratamiento</label>
+                                        <textarea id="tratamiento" name="tratamiento" rows="2"
+                                            placeholder="Medicación, pautas, derivaciones..."
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="observaciones"
+                                            class="block text-xs font-medium text-gray-500 mb-1.5">Observaciones</label>
+                                        <textarea id="observaciones" name="observaciones" rows="2"
+                                            placeholder="Notas clínicas adicionales, próximas revisiones..."
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="flex items-center gap-2 pt-1"
+                                style="border-top:1px solid #f0f4f8;padding-top:1.25rem">
+                                <button id="submitConsultaBtn" type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white"
+                                    style="background:#0f3460;border-radius:0.625rem">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    Guardar consulta
+                                </button>
+                                <button id="cancelEditBtn" type="button" class="px-4 py-2.5 text-sm font-medium hidden"
+                                    style="background:#f3f4f6;color:#374151;border-radius:0.625rem">Cancelar
+                                    edición</button>
+                                <p id="consultaMessage" class="ml-auto text-xs text-gray-400"></p>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
-                <section class="bg-white rounded-xl mb-8" style="border:1px solid #e8edf2">
-                    <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3" style="border-bottom:1px solid #e8edf2">
-                        <h2 class="text-sm font-semibold text-gray-700 tracking-tight">Mis consultas registradas</h2>
+                <!-- Tabla de consultas -->
+                <div class="bg-white rounded-xl mb-8 overflow-hidden" style="border:1px solid #e8edf2">
+                    <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3"
+                        style="border-bottom:1px solid #e8edf2">
+                        <div>
+                            <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Consultas registradas</h2>
+                            <p class="text-xs text-gray-400 mt-0.5">Historial completo de atenciones</p>
+                        </div>
                         <div class="sm:ml-auto flex items-center gap-2 flex-wrap">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1.5">
                                 <label for="filtroDesdeMedico" class="text-xs text-gray-400">Desde</label>
                                 <input id="filtroDesdeMedico" type="date"
                                     class="px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     style="border-color:#e8edf2">
                             </div>
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1.5">
                                 <label for="filtroHastaMedico" class="text-xs text-gray-400">Hasta</label>
                                 <input id="filtroHastaMedico" type="date"
                                     class="px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     style="border-color:#e8edf2">
                             </div>
                             <button id="aplicarFiltroMedico" type="button"
-                                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-                                style="background:#0f3460;color:white">Filtrar</button>
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg"
+                                style="background:#0f3460;color:white">
+                                <i data-lucide="filter" class="w-3 h-3"></i>
+                                Filtrar
+                            </button>
                             <button id="limpiarFiltroMedico" type="button"
-                                class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-200">Limpiar</button>
+                                class="px-3 py-1.5 bg-gray-100 text-gray-500 text-xs font-medium rounded-lg hover:bg-gray-200">Limpiar</button>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
                                 <tr>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Fecha</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Paciente</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Diagnóstico</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden xl:table-cell">Tratamiento</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Acciones</th>
+                                    <th
+                                        class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                        Fecha</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                        Paciente</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">
+                                        Diagnóstico</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden xl:table-cell">
+                                        Tratamiento</th>
+                                    <th
+                                        class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                        Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="consultasMedicoBody" class="divide-y" style="border-color:#f0f4f8"></tbody>
                         </table>
                     </div>
-                </section>
+                </div>
 
-                <!-- Recordatorios (ahora dentro de Consultas) -->
-                <section id="recordatorioSection"
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8 hidden">
-                    <div class="flex items-center justify-between gap-4 mb-4">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
-                                <i data-lucide="bell" class="w-5 h-5"></i>
+                <!-- Recordatorios (modal overlay) -->
+                <div id="recordatorioSection" class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+                    style="background:rgba(15,23,42,0.55)">
+                    <div class="bg-white w-full max-h-[90vh] overflow-y-auto"
+                        style="max-width:640px;border-radius:1.25rem;box-shadow:0 25px 50px rgba(0,0,0,0.18)">
+                        <!-- Header -->
+                        <div class="sticky top-0 px-6 py-4 flex items-center justify-between"
+                            style="background:#fff;border-bottom:1px solid #f0f4f8;border-radius:1.25rem 1.25rem 0 0">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style="background:#fef3c7;color:#b45309">
+                                    <i data-lucide="bell-plus" class="w-4 h-4"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Crear recordatorio
+                                    </h2>
+                                    <p class="text-xs text-gray-500 mt-0.5">Asigna un recordatorio al paciente vinculado
+                                        a una consulta.</p>
+                                </div>
                             </div>
+                            <button id="cerrarRecordatorioModal" type="button"
+                                class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="recordatorioForm" class="p-6 space-y-5">
+                            <input type="hidden" id="recordatorioId">
+
+                            <!-- Vinculación con consulta -->
+                            <div class="mb-10">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Vinculación
+                                </p>
+                                <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                    for="recordatorioConsulta">Consulta asociada <span
+                                        class="text-red-400">*</span></label>
+                                <select id="recordatorioConsulta" required
+                                    class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    style="border-color:#e5e7eb;border-radius:0.625rem">
+                                    <option value="">Selecciona una consulta...</option>
+                                </select>
+                            </div>
+
+                            <!-- Detalles -->
                             <div>
-                                <h2 class="text-lg font-semibold text-gray-900">Recordatorios para pacientes</h2>
-                                <p class="text-sm text-gray-600">Pulsa “Crear recordatorio” en una consulta para abrir
-                                    este formulario.</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                            for="recordatorioTitulo">Título <span class="text-red-400">*</span></label>
+                                        <input id="recordatorioTitulo" type="text" required
+                                            placeholder="Ej: Tomar Amoxicilina 500mg cada 8h"
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                                for="recordatorioTipo">Tipo</label>
+                                            <select id="recordatorioTipo"
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
+                                                <option value="medicamento">Medicación</option>
+                                                <option value="seguimiento">Control / seguimiento</option>
+                                                <option value="cita">Cita</option>
+                                                <option value="examen">Prueba o analítica</option>
+                                                <option value="dieta">Dieta</option>
+                                                <option value="ejercicio">Ejercicio</option>
+                                                <option value="otro" selected>Otro</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                                for="recordatorioFecha">Fecha <span
+                                                    class="text-red-400">*</span></label>
+                                            <input id="recordatorioFecha" type="date" required
+                                                class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                style="border-color:#e5e7eb;border-radius:0.625rem">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                            for="recordatorioHora">Hora <span
+                                                class="text-gray-300">(opcional)</span></label>
+                                        <input id="recordatorioHora" type="time"
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1.5"
+                                            for="recordatorioDescripcion">Indicaciones</label>
+                                        <textarea id="recordatorioDescripcion" rows="3"
+                                            placeholder="Posología, frecuencia, notas de seguimiento..."
+                                            class="w-full px-3 py-2.5 text-sm border focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                                            style="border-color:#e5e7eb;border-radius:0.625rem"></textarea>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Acciones -->
+                            <div class="flex items-center gap-2 pt-1"
+                                style="border-top:1px solid #f0f4f8;padding-top:1.25rem">
+                                <button type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white"
+                                    style="background:#0f3460;border-radius:0.625rem">
+                                    <i data-lucide="bell-plus" class="w-3.5 h-3.5"></i>
+                                    Crear recordatorio
+                                </button>
+                                <p id="recordatorioMessage" class="ml-auto text-xs text-gray-500"></p>
+                            </div>
+                        </form>
+
+                        <!-- Lista de próximos -->
+                        <div class="px-6 pb-6">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Próximos
+                                recordatorios</p>
+                            <div id="recordatoriosDoctorList" class="space-y-2"></div>
                         </div>
                     </div>
-
-                    <form id="recordatorioForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="hidden" id="recordatorioId">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1"
-                                for="recordatorioConsulta">Consulta</label>
-                            <select id="recordatorioConsulta"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required>
-                                <option value="">Selecciona una consulta...</option>
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">Solo puedes crear recordatorios ligados a una consulta
-                                previa.</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1"
-                                for="recordatorioTitulo">Título</label>
-                            <input id="recordatorioTitulo" type="text"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Ej: Tomar Amoxicilina 500mg" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1"
-                                for="recordatorioFecha">Fecha</label>
-                            <input id="recordatorioFecha" type="date"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1" for="recordatorioHora">Hora
-                                (opcional)</label>
-                            <input id="recordatorioHora" type="time"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1"
-                                for="recordatorioTipo">Tipo</label>
-                            <select id="recordatorioTipo"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="medicamento">Medicación</option>
-                                <option value="seguimiento">Control / seguimiento</option>
-                                <option value="cita">Cita</option>
-                                <option value="examen">Prueba o analítica</option>
-                                <option value="dieta">Dieta</option>
-                                <option value="ejercicio">Ejercicio</option>
-                                <option value="otro" selected>Otro</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-1"
-                                for="recordatorioDescripcion">Indicaciones</label>
-                            <textarea id="recordatorioDescripcion" rows="2"
-                                class="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Posología, frecuencia, notas de seguimiento..."></textarea>
-                        </div>
-                        <div class="md:col-span-2 flex items-center gap-2">
-                            <button type="submit"
-                                class="px-4 py-2.5 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors">Crear
-                                recordatorio</button>
-                            <p id="recordatorioMessage" class="text-sm text-gray-600"></p>
-                        </div>
-                    </form>
-
-                    <div class="mt-6">
-                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Próximos recordatorios</h3>
-                        <div id="recordatoriosDoctorList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                        </div>
-                    </div>
-                </section>
+                </div>
                 <!-- FIN TAB: CONSULTAS -->
             </div>
 
@@ -797,7 +984,8 @@
                 </div>
 
                 <!-- Filtros -->
-                <div class="bg-white rounded-xl p-4 mb-5 flex flex-wrap items-center gap-3" style="border:1px solid #e8edf2">
+                <div class="bg-white rounded-xl p-4 mb-5 flex flex-wrap items-center gap-3"
+                    style="border:1px solid #e8edf2">
                     <div class="flex items-center gap-2">
                         <label class="text-xs text-gray-400 font-medium">Fecha</label>
                         <input id="agendaFiltroFecha" type="date"
@@ -808,8 +996,7 @@
                         <input id="agendaFiltroPendientes" type="checkbox" class="rounded">
                         Solo pendientes de confirmar
                     </label>
-                    <button id="agendaBtnHoy"
-                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                    <button id="agendaBtnHoy" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
                         style="background:#0f3460;color:white">
                         Hoy
                     </button>
@@ -821,7 +1008,8 @@
 
                 <!-- Lista de citas del médico -->
                 <div id="agendaList"></div>
-                <p id="agendaEmpty" class="hidden text-center text-gray-500 py-16 bg-white rounded-xl border border-gray-200">
+                <p id="agendaEmpty"
+                    class="hidden text-center text-gray-500 py-16 bg-white rounded-xl border border-gray-200">
                     No hay citas que coincidan con los filtros seleccionados.
                 </p>
             </div>
@@ -837,78 +1025,69 @@
                     <div class="chat-split-layout h-full min-h-0">
 
                         <!-- Lista de contactos -->
-                        <aside class="min-h-0 flex flex-col border-r" style="background:#0d1b2e;border-color:#1e3a5f">
-                            <div class="p-4 space-y-3" style="border-bottom:1px solid #1e3a5f">
+                        <aside class="min-h-0 flex flex-col">
+                            <!-- Header contactos -->
+                            <div class="px-4 pt-5 pb-3 space-y-3"
+                                style="border-bottom:1px solid #e5e7eb;background:#f9fafb">
                                 <div class="flex items-center justify-between gap-2">
-                                    <h2 class="text-sm font-semibold text-slate-200">Conversaciones</h2>
+                                    <h2 class="text-sm font-semibold text-gray-800">Médicos</h2>
                                     <button id="chatRefreshBtn" type="button"
-                                        class="px-3 py-1 text-xs font-medium rounded-full text-slate-300 hover:text-white transition-colors"
-                                        style="background:rgba(255,255,255,0.07)">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full text-gray-500 hover:text-gray-800 transition-colors"
+                                        style="background:#eff0f1;border:0">
+                                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
                                         Actualizar
                                     </button>
                                 </div>
-                                <div class="relative">
-                                    <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                <div class="flex items-center gap-2 px-3 py-2 rounded-full"
+                                    style="background:#fff;border:1.5px solid #e5e7eb">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
                                     <input id="chatSearchInput" type="text"
-                                        class="w-full rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                        style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e2e8f0"
-                                        placeholder="Buscar médico...">
+                                        class="flex-1 text-sm bg-transparent border-0 focus:outline-none"
+                                        style="color:#111827" placeholder="Buscar médico...">
                                 </div>
                             </div>
-                            <div id="chatContactList" class="flex-1 min-h-0 overflow-y-auto p-2 space-y-1">
-                                <p class="text-xs text-slate-500 p-2">Cargando conversaciones...</p>
+                            <div id="chatContactList" class="flex-1 min-h-0 overflow-y-auto p-2">
+                                <p class="text-xs text-gray-400 p-3">Cargando conversaciones...</p>
                             </div>
                         </aside>
 
                         <!-- Panel de mensajes -->
-                        <article class="min-w-0 min-h-0 flex flex-col" style="background:#0a1525">
+                        <article class="min-w-0 min-h-0 flex flex-col" style="background:#f8fafc">
                             <!-- Header del chat -->
                             <div class="px-5 py-3.5 flex items-center gap-3 sticky top-0 z-10"
-                                style="background:#0d1b2e;border-bottom:1px solid #1e3a5f">
-                                <div id="chatAvatar"
-                                    class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0"
-                                    style="background:#1e3a5f;color:#7dd3fc">--</div>
-                                <div>
-                                    <h2 id="chatActiveTitle" class="text-sm font-semibold text-slate-200">Selecciona una conversación</h2>
-                                    <p id="chatActiveSubtitle" class="text-xs text-slate-500">Mensajería cifrada</p>
+                                style="background:#ffffff;border-bottom:1px solid #e5e7eb">
+                                <div id="chatAvatar" class="flex-shrink-0">--</div>
+                                <div class="flex-1 min-w-0">
+                                    <h2 id="chatActiveTitle" class="truncate">Selecciona una conversación</h2>
+                                    <p id="chatActiveSubtitle" class="truncate">Mensajería cifrada · AES-256-GCM</p>
                                 </div>
                             </div>
 
                             <!-- Mensajes -->
-                            <div id="chatMessages"
-                                class="flex-1 min-h-0 px-4 py-4 space-y-2 overflow-y-scroll overscroll-contain">
-                                <p class="text-sm text-slate-500 text-center pt-8">Elige un médico para empezar a conversar.</p>
+                            <div id="chatMessages" class="flex-1 min-h-0 overflow-y-scroll overscroll-contain">
+                                <div class="chat-message-empty">
+                                    <p class="text-sm font-medium text-gray-500 mb-1">Elige un médico para conversar</p>
+                                    <p class="text-xs text-gray-400">Los mensajes están cifrados en reposo</p>
+                                </div>
                             </div>
 
                             <!-- Input -->
-                            <form id="chatForm" class="p-3" style="background:#0d1b2e;border-top:1px solid #1e3a5f">
-                                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05)">
-                                    <textarea id="chatInput" rows="2" maxlength="2000"
-                                        class="w-full px-3 py-2.5 text-sm bg-transparent border-0 focus:outline-none resize-none"
-                                        style="color:#e2e8f0;caret-color:#60a5fa"
-                                        placeholder="Escribe un mensaje..."></textarea>
-                                    <div id="chatAttachmentPreview" class="hidden mx-2 mb-1 rounded-lg px-2 py-1 text-xs"
-                                        style="background:rgba(59,130,246,0.1);color:#93c5fd;border:1px solid rgba(59,130,246,0.2)"></div>
-                                    <div class="flex items-center justify-between gap-2 px-2 py-2">
-                                        <div class="flex items-center gap-2">
-                                            <input id="chatFileInput" type="file" class="hidden"
-                                                title="Adjuntar archivo" aria-label="Adjuntar archivo"
-                                                accept=".png,.jpg,.jpeg,.pdf,.doc,.docx">
-                                            <button id="chatAttachBtn" type="button"
-                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                                                style="background:rgba(255,255,255,0.07);color:#94a3b8;border:1px solid rgba(255,255,255,0.1)">
-                                                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                                                Adjuntar
-                                            </button>
-                                            <p id="chatMessageStatus" class="text-xs text-slate-500"></p>
-                                        </div>
-                                        <button type="submit" id="chatSendBtn"
-                                            class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-50"
-                                            style="background:#1d4ed8;color:white"
-                                            title="Enviar">
+                            <form id="chatForm" style="flex-shrink:0;display:block">
+                                <div class="chat-input-card">
+                                    <div id="chatAttachmentPreview" class="hidden mb-2 px-1"></div>
+                                    <div class="chat-compose-row">
+                                        <textarea id="chatInput" rows="1" maxlength="2000"
+                                            placeholder="Escribe un mensaje..."></textarea>
+                                        <button id="chatAttachBtn" type="button" title="Adjuntar archivo">
+                                            <i data-lucide="paperclip" class="w-4 h-4"></i>
+                                        </button>
+                                        <button type="submit" id="chatSendBtn" title="Enviar">
                                             <i data-lucide="send" class="w-4 h-4"></i>
                                         </button>
                                     </div>
+                                    <input id="chatFileInput" type="file" class="hidden" title="Adjuntar archivo"
+                                        aria-label="Adjuntar archivo" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx">
+                                    <p id="chatMessageStatus" class="text-xs text-gray-500 mt-1 px-1 truncate"></p>
                                 </div>
                             </form>
                         </article>
@@ -917,6 +1096,34 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- Modal: Confirmación genérica (eliminar, etc.) -->
+    <div id="confirmModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+        style="background:rgba(15,23,42,0.55)">
+        <div class="bg-white w-full"
+            style="max-width:420px;border-radius:1.25rem;box-shadow:0 25px 50px rgba(0,0,0,0.25)">
+            <div class="p-6 text-center">
+                <div id="confirmModalIcon" class="w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-4"
+                    style="background:#fee2e2;color:#dc2626">
+                    <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+                </div>
+                <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-900 mb-2">¿Confirmar acción?</h3>
+                <p id="confirmModalMsg" class="text-sm text-gray-600 leading-relaxed">¿Estás seguro de continuar?</p>
+            </div>
+            <div class="flex gap-2 p-4"
+                style="border-top:1px solid #f0f4f8;background:#fafbfc;border-radius:0 0 1.25rem 1.25rem">
+                <button id="confirmModalCancel" type="button"
+                    class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors"
+                    style="background:#fff;border:1px solid #e5e7eb;border-radius:0.625rem">Cancelar</button>
+                <button id="confirmModalOk" type="button"
+                    class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white transition-colors"
+                    style="background:#dc2626;border-radius:0.625rem">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span id="confirmModalOkLabel">Eliminar</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Modal de Configuración -->
@@ -958,16 +1165,13 @@
                     <div class="space-y-2.5">
                         <input id="configPassActual" type="password"
                             class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            style="border-color:#e8edf2"
-                            placeholder="Contraseña actual">
+                            style="border-color:#e8edf2" placeholder="Contraseña actual">
                         <input id="configPassNueva" type="password"
                             class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            style="border-color:#e8edf2"
-                            placeholder="Nueva contraseña (mín. 8 caracteres)">
+                            style="border-color:#e8edf2" placeholder="Nueva contraseña (mín. 8 caracteres)">
                         <input id="configPassConfirm" type="password"
                             class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            style="border-color:#e8edf2"
-                            placeholder="Confirmar nueva contraseña">
+                            style="border-color:#e8edf2" placeholder="Confirmar nueva contraseña">
                         <p id="configPassMsg" class="text-xs hidden"></p>
                         <button id="btnGuardarPass"
                             class="w-full py-2.5 text-sm font-medium text-white rounded-xl transition-colors"
@@ -987,7 +1191,9 @@
                                 <input id="prefNotifCitas" type="checkbox" class="sr-only peer" checked>
                                 <div class="w-10 h-5 rounded-full peer-checked:bg-blue-700 bg-gray-200 transition-colors"
                                     style="background-color:inherit"></div>
-                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                                <div
+                                    class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5">
+                                </div>
                             </div>
                         </label>
                     </div>
@@ -1006,80 +1212,80 @@
 
     <!-- Inicio dinámico + Configuración -->
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // dashboard-medico.js ya maneja la navegación por tabs y expone window.goToTab
-        window.citasMedicoModule.init();
+        document.addEventListener('DOMContentLoaded', () => {
+            // dashboard-medico.js ya maneja la navegación por tabs y expone window.goToTab
+            window.citasMedicoModule.init();
 
-        // ── Acciones rápidas → navegación ────────────────────────────────────
-        document.querySelectorAll('.accion-rapida[data-goto]').forEach(btn => {
-            btn.addEventListener('click', () => goToTab(btn.dataset.goto));
-        });
-        document.getElementById('btnVerAgenda')?.addEventListener('click', () => goToTab('agenda'));
+            // ── Acciones rápidas → navegación ────────────────────────────────────
+            document.querySelectorAll('.accion-rapida[data-goto]').forEach(btn => {
+                btn.addEventListener('click', () => goToTab(btn.dataset.goto));
+            });
+            document.getElementById('btnVerAgenda')?.addEventListener('click', () => goToTab('agenda'));
 
-        // ── Búsqueda en Inicio → ir a Mis Pacientes ───────────────────────────
-        const btnBuscar = document.getElementById('btnBuscarInicio');
-        const inputBuscar = document.getElementById('buscarInicio');
-        function ejecutarBusqueda() {
-            const q = inputBuscar?.value.trim();
-            if (!q) return;
-            goToTab('mis-pacientes');
-            const buscador = document.getElementById('buscarPaciente');
-            if (buscador) { buscador.value = q; buscador.dispatchEvent(new Event('input')); }
-        }
-        btnBuscar?.addEventListener('click', ejecutarBusqueda);
-        inputBuscar?.addEventListener('keydown', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
+            // ── Búsqueda en Inicio → ir a Mis Pacientes ───────────────────────────
+            const btnBuscar = document.getElementById('btnBuscarInicio');
+            const inputBuscar = document.getElementById('buscarInicio');
+            function ejecutarBusqueda() {
+                const q = inputBuscar?.value.trim();
+                if (!q) return;
+                goToTab('mis-pacientes');
+                const buscador = document.getElementById('buscarPaciente');
+                if (buscador) { buscador.value = q; buscador.dispatchEvent(new Event('input')); }
+            }
+            btnBuscar?.addEventListener('click', ejecutarBusqueda);
+            inputBuscar?.addEventListener('keydown', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
 
-        // ── Cargar citas de hoy en tab-inicio ────────────────────────────────
-        window.cargarCitasHoy = async function cargarCitasHoy() {
-            const hoy = new Date();
-            const hoyStr = hoy.toISOString().split('T')[0];
+            // ── Cargar citas de hoy en tab-inicio ────────────────────────────────
+            window.cargarCitasHoy = async function cargarCitasHoy() {
+                const hoy = new Date();
+                const hoyStr = hoy.toISOString().split('T')[0];
 
-            const fechaEl = document.getElementById('citasHoyFecha');
-            if (fechaEl) fechaEl.textContent = hoy.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+                const fechaEl = document.getElementById('citasHoyFecha');
+                if (fechaEl) fechaEl.textContent = hoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 
-            try {
-                const res  = await fetch(`/backend/src/controllers/CitasController.php?accion=listar_medico&fecha=${hoyStr}`);
-                const data = await res.json();
-                const citas = data.success ? data.data : [];
+                try {
+                    const res = await fetch(`/backend/src/controllers/CitasController.php?accion=listar_medico&fecha=${hoyStr}`);
+                    const data = await res.json();
+                    const citas = data.success ? data.data : [];
 
-                const tbody = document.getElementById('citasHoyBody');
-                if (!tbody) return;
+                    const tbody = document.getElementById('citasHoyBody');
+                    if (!tbody) return;
 
-                // Resumen de la semana
-                cargarResumenSemana();
+                    // Resumen de la semana
+                    cargarResumenSemana();
 
-                // Pendientes para el panel lateral
-                const pendientes = citas.filter(c => c.estado === 'Pendiente');
-                const elPend = document.getElementById('citasPendientesResumen');
-                if (elPend) {
-                    if (pendientes.length === 0) {
-                        elPend.innerHTML = '<p class="text-xs text-gray-400">No hay solicitudes pendientes.</p>';
-                    } else {
-                        elPend.innerHTML = pendientes.slice(0,3).map(c => `
+                    // Pendientes para el panel lateral
+                    const pendientes = citas.filter(c => c.estado === 'Pendiente');
+                    const elPend = document.getElementById('citasPendientesResumen');
+                    if (elPend) {
+                        if (pendientes.length === 0) {
+                            elPend.innerHTML = '<p class="text-xs text-gray-400">No hay solicitudes pendientes.</p>';
+                        } else {
+                            elPend.innerHTML = pendientes.slice(0, 3).map(c => `
                             <div class="flex items-center gap-2 py-1.5" style="border-bottom:1px solid #f0f4f8">
                                 <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-xs font-semibold text-blue-700 flex-shrink-0">
-                                    ${(c.paciente_nombre[0]||'')+(c.paciente_apellidos[0]||'')}
+                                    ${(c.paciente_nombre[0] || '') + (c.paciente_apellidos[0] || '')}
                                 </div>
                                 <div class="min-w-0">
                                     <p class="text-xs font-medium text-gray-800 truncate">${c.paciente_nombre} ${c.paciente_apellidos}</p>
-                                    <p class="text-xs text-gray-400">${c.fecha_hora.substring(11,16)} · ${c.motivo.substring(0,25)}</p>
+                                    <p class="text-xs text-gray-400">${c.fecha_hora.substring(11, 16)} · ${c.motivo.substring(0, 25)}</p>
                                 </div>
                             </div>`).join('') +
-                            (pendientes.length > 3 ? `<p class="text-xs text-gray-400 pt-1">+${pendientes.length-3} más</p>` : '');
+                                (pendientes.length > 3 ? `<p class="text-xs text-gray-400 pt-1">+${pendientes.length - 3} más</p>` : '');
+                        }
                     }
-                }
 
-                if (citas.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No hay citas programadas para hoy.</td></tr>';
-                    return;
-                }
+                    if (citas.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No hay citas programadas para hoy.</td></tr>';
+                        return;
+                    }
 
-                const estadoBadge = { Pendiente:'background:#fef3c7;color:#92400e', Confirmada:'background:#d1fae5;color:#065f46', Cancelada:'background:#fee2e2;color:#991b1b', Completada:'background:#f3f4f6;color:#374151' };
-                tbody.innerHTML = citas.map(c => {
-                    const ini = (c.paciente_nombre[0]||'')+(c.paciente_apellidos[0]||'');
-                    const hora = c.fecha_hora.substring(11,16);
-                    const est = estadoBadge[c.estado] || estadoBadge.Pendiente;
-                    return `<tr class="hover:bg-gray-50 transition-colors">
+                    const estadoBadge = { Pendiente: 'background:#fef3c7;color:#92400e', Confirmada: 'background:#d1fae5;color:#065f46', Cancelada: 'background:#fee2e2;color:#991b1b', Completada: 'background:#f3f4f6;color:#374151' };
+                    tbody.innerHTML = citas.map(c => {
+                        const ini = (c.paciente_nombre[0] || '') + (c.paciente_apellidos[0] || '');
+                        const hora = c.fecha_hora.substring(11, 16);
+                        const est = estadoBadge[c.estado] || estadoBadge.Pendiente;
+                        return `<tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-5 py-3.5 whitespace-nowrap">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">${ini}</div>
@@ -1094,100 +1300,149 @@
                         </td>
                         <td class="px-4 py-3.5 whitespace-nowrap text-right">
                             <div class="flex items-center justify-end gap-2">
-                                ${c.estado==='Pendiente'?`<button data-id="${c.id_cita}" data-accion="confirmar" class="btn-accion-cita text-xs font-medium px-2.5 py-1 rounded-lg" style="background:#e0f2fe;color:#0369a1">Confirmar</button>`:''}
+                                ${c.estado === 'Pendiente' ? `<button data-id="${c.id_cita}" data-accion="confirmar" class="btn-accion-cita text-xs font-medium px-2.5 py-1 rounded-lg" style="background:#e0f2fe;color:#0369a1">Confirmar</button>` : ''}
                                 <button data-id="${c.id_cita}" data-accion="cancelar" class="btn-accion-cita text-xs font-medium px-2.5 py-1 rounded-lg text-gray-500 hover:bg-gray-100">✕</button>
                             </div>
                         </td>
                     </tr>`;
-                }).join('');
-            } catch (e) {
-                const tbody = document.getElementById('citasHoyBody');
-                if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-5 text-center text-xs text-gray-400">No se pudieron cargar las citas.</td></tr>';
+                    }).join('');
+                } catch (e) {
+                    const tbody = document.getElementById('citasHoyBody');
+                    if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-5 text-center text-xs text-gray-400">No se pudieron cargar las citas.</td></tr>';
+                }
             }
-        }
 
-        async function cargarResumenSemana() {
-            try {
-                const res  = await fetch('/backend/src/controllers/CitasController.php?accion=listar_medico');
-                const data = await res.json();
-                const citas = data.success ? data.data : [];
+            async function cargarResumenSemana() {
+                try {
+                    const res = await fetch('/backend/src/controllers/CitasController.php?accion=listar_medico');
+                    const data = await res.json();
+                    const citas = data.success ? data.data : [];
 
-                const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-                const hoy = new Date().getDay();
-                const counts = {};
-                citas.forEach(c => {
-                    const d = new Date(c.fecha_hora.replace(' ','T'));
-                    counts[d.getDay()] = (counts[d.getDay()]||0) + 1;
-                });
+                    const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                    const hoy = new Date().getDay();
+                    const counts = {};
+                    citas.forEach(c => {
+                        const d = new Date(c.fecha_hora.replace(' ', 'T'));
+                        counts[d.getDay()] = (counts[d.getDay()] || 0) + 1;
+                    });
 
-                const el = document.getElementById('resumenSemana');
-                if (!el) return;
-                el.innerHTML = [1,2,3,4,5].map(d => {
-                    const n = counts[d] || 0;
-                    const esHoy = d === hoy;
-                    return `<div class="flex items-center justify-between py-1.5" style="${d<5?'border-bottom:1px solid #f0f4f8':''}">
-                        <span class="text-xs ${esHoy?'font-semibold text-blue-700':'text-gray-500'}">${dias[d]}${esHoy?' (hoy)':''}</span>
-                        <span class="text-xs font-semibold ${esHoy?'text-blue-700':'text-gray-700'}">${n} cita${n!==1?'s':''}</span>
+                    const el = document.getElementById('resumenSemana');
+                    if (!el) return;
+                    el.innerHTML = [1, 2, 3, 4, 5].map(d => {
+                        const n = counts[d] || 0;
+                        const esHoy = d === hoy;
+                        return `<div class="flex items-center justify-between py-1.5" style="${d < 5 ? 'border-bottom:1px solid #f0f4f8' : ''}">
+                        <span class="text-xs ${esHoy ? 'font-semibold text-blue-700' : 'text-gray-500'}">${dias[d]}${esHoy ? ' (hoy)' : ''}</span>
+                        <span class="text-xs font-semibold ${esHoy ? 'text-blue-700' : 'text-gray-700'}">${n} cita${n !== 1 ? 's' : ''}</span>
                     </div>`;
-                }).join('');
-            } catch(e) {}
-        }
-
-        cargarCitasHoy();
-
-        // ── Fecha en header del inicio ────────────────────────────────────────
-        const welcomeSub = document.getElementById('welcomeSubtitle');
-        if (welcomeSub) {
-            const hoy = new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-            welcomeSub.textContent = hoy.charAt(0).toUpperCase() + hoy.slice(1);
-        }
-
-        // ── Modal Configuración ───────────────────────────────────────────────
-        const configModal   = document.getElementById('configModal');
-        const btnAbrirConf  = document.getElementById('btnAbrirConfig');
-        const btnCerrarConf = document.getElementById('cerrarConfig');
-
-        btnAbrirConf?.addEventListener('click', () => {
-            const nombre = document.getElementById('profileName')?.textContent || '--';
-            const role   = document.getElementById('profileRole')?.textContent || '--';
-            const email  = document.getElementById('profileName')?.dataset.email || '--';
-            const n = document.getElementById('configNombre'); if (n) n.textContent = nombre;
-            const t = document.getElementById('configTipo');   if (t) t.textContent = role;
-            const e = document.getElementById('configEmail');  if (e) e.textContent = email;
-            configModal?.classList.remove('hidden');
-            configModal?.classList.add('flex');
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        });
-
-        btnCerrarConf?.addEventListener('click', () => {
-            configModal?.classList.add('hidden');
-            configModal?.classList.remove('flex');
-        });
-
-        configModal?.addEventListener('click', (e) => {
-            if (e.target === configModal) { configModal.classList.add('hidden'); configModal.classList.remove('flex'); }
-        });
-
-        document.getElementById('btnGuardarPass')?.addEventListener('click', () => {
-            const actual   = document.getElementById('configPassActual')?.value;
-            const nueva    = document.getElementById('configPassNueva')?.value;
-            const confirma = document.getElementById('configPassConfirm')?.value;
-            const msg      = document.getElementById('configPassMsg');
-            if (!actual || !nueva) {
-                if (msg) { msg.textContent = 'Rellena todos los campos.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
-                return;
+                    }).join('');
+                } catch (e) { }
             }
-            if (nueva !== confirma) {
-                if (msg) { msg.textContent = 'Las contraseñas no coinciden.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
-                return;
+
+            cargarCitasHoy();
+
+            // ── Fecha en header del inicio ────────────────────────────────────────
+            const welcomeSub = document.getElementById('welcomeSubtitle');
+            if (welcomeSub) {
+                const hoy = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                welcomeSub.textContent = hoy.charAt(0).toUpperCase() + hoy.slice(1);
             }
-            if (nueva.length < 8) {
-                if (msg) { msg.textContent = 'La contraseña debe tener al menos 8 caracteres.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
-                return;
+
+            // ── Modal de confirmación reutilizable ───────────────────────────────
+            const confirmModal = document.getElementById('confirmModal');
+            const confirmModalIcon = document.getElementById('confirmModalIcon');
+            const confirmModalTitle = document.getElementById('confirmModalTitle');
+            const confirmModalMsg = document.getElementById('confirmModalMsg');
+            const confirmModalOk = document.getElementById('confirmModalOk');
+            const confirmModalOkLabel = document.getElementById('confirmModalOkLabel');
+            const confirmModalCancel = document.getElementById('confirmModalCancel');
+            let _confirmResolver = null;
+
+            function closeConfirmModal(result) {
+                confirmModal?.classList.add('hidden');
+                confirmModal?.classList.remove('flex');
+                if (_confirmResolver) {
+                    const r = _confirmResolver;
+                    _confirmResolver = null;
+                    r(result);
+                }
             }
-            if (msg) { msg.textContent = 'Cambio de contraseña disponible próximamente.'; msg.className = 'text-xs text-amber-600'; msg.classList.remove('hidden'); }
+
+            window.openConfirmModal = function ({ title = '¿Confirmar?', message = '', okLabel = 'Confirmar', tone = 'danger' } = {}) {
+                return new Promise((resolve) => {
+                    _confirmResolver = resolve;
+                    if (confirmModalTitle) confirmModalTitle.textContent = title;
+                    if (confirmModalMsg) confirmModalMsg.textContent = message;
+                    if (confirmModalOkLabel) confirmModalOkLabel.textContent = okLabel;
+                    // Tone: danger (rojo), warning (ámbar), info (azul)
+                    const toneStyles = {
+                        danger: { bg: '#fee2e2', fg: '#dc2626', btn: '#dc2626', icon: 'alert-triangle' },
+                        warning: { bg: '#fef3c7', fg: '#b45309', btn: '#b45309', icon: 'alert-circle' },
+                        info: { bg: '#dbeafe', fg: '#1d4ed8', btn: '#0f3460', icon: 'info' }
+                    };
+                    const t = toneStyles[tone] || toneStyles.danger;
+                    if (confirmModalIcon) {
+                        confirmModalIcon.style.background = t.bg;
+                        confirmModalIcon.style.color = t.fg;
+                        confirmModalIcon.innerHTML = `<i data-lucide="${t.icon}" class="w-7 h-7"></i>`;
+                    }
+                    if (confirmModalOk) confirmModalOk.style.background = t.btn;
+                    confirmModal?.classList.remove('hidden');
+                    confirmModal?.classList.add('flex');
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                });
+            };
+
+            confirmModalOk?.addEventListener('click', () => closeConfirmModal(true));
+            confirmModalCancel?.addEventListener('click', () => closeConfirmModal(false));
+            confirmModal?.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(false); });
+
+            // ── Modal Configuración ───────────────────────────────────────────────
+            const configModal = document.getElementById('configModal');
+            const btnAbrirConf = document.getElementById('btnAbrirConfig');
+            const btnCerrarConf = document.getElementById('cerrarConfig');
+
+            btnAbrirConf?.addEventListener('click', () => {
+                const nombre = document.getElementById('profileName')?.textContent || '--';
+                const role = document.getElementById('profileRole')?.textContent || '--';
+                const email = document.getElementById('profileName')?.dataset.email || '--';
+                const n = document.getElementById('configNombre'); if (n) n.textContent = nombre;
+                const t = document.getElementById('configTipo'); if (t) t.textContent = role;
+                const e = document.getElementById('configEmail'); if (e) e.textContent = email;
+                configModal?.classList.remove('hidden');
+                configModal?.classList.add('flex');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+
+            btnCerrarConf?.addEventListener('click', () => {
+                configModal?.classList.add('hidden');
+                configModal?.classList.remove('flex');
+            });
+
+            configModal?.addEventListener('click', (e) => {
+                if (e.target === configModal) { configModal.classList.add('hidden'); configModal.classList.remove('flex'); }
+            });
+
+            document.getElementById('btnGuardarPass')?.addEventListener('click', () => {
+                const actual = document.getElementById('configPassActual')?.value;
+                const nueva = document.getElementById('configPassNueva')?.value;
+                const confirma = document.getElementById('configPassConfirm')?.value;
+                const msg = document.getElementById('configPassMsg');
+                if (!actual || !nueva) {
+                    if (msg) { msg.textContent = 'Rellena todos los campos.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                    return;
+                }
+                if (nueva !== confirma) {
+                    if (msg) { msg.textContent = 'Las contraseñas no coinciden.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                    return;
+                }
+                if (nueva.length < 8) {
+                    if (msg) { msg.textContent = 'La contraseña debe tener al menos 8 caracteres.'; msg.className = 'text-xs text-red-600'; msg.classList.remove('hidden'); }
+                    return;
+                }
+                if (msg) { msg.textContent = 'Cambio de contraseña disponible próximamente.'; msg.className = 'text-xs text-amber-600'; msg.classList.remove('hidden'); }
+            });
         });
-    });
     </script>
 
     <!-- Verificación de elementos del DOM -->
