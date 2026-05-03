@@ -34,10 +34,14 @@ try {
     // Validar datos requeridos
     $email = $input['email'] ?? '';
     $password = $input['password'] ?? '';
-    $role = $input['role'] ?? 'paciente'; // Default a paciente
+    $role = $input['role'] ?? '';
     
     if (empty($email) || empty($password)) {
         throw new Exception('Email y contraseña son requeridos');
+    }
+
+    if (!in_array($role, ['paciente', 'medico', 'admin'], true)) {
+        throw new Exception('Rol de inicio de sesión inválido');
     }
     
     // Validar formato de email
@@ -48,57 +52,62 @@ try {
     $usuario = null;
     $tipoUsuario = '';
     
+    $campoError = '';
+
     // Intentar autenticar según el rol
     if ($role === 'paciente') {
         $pacienteDAO = new PacienteDAO();
         $paciente = $pacienteDAO->buscarPorEmail($email);
         
-        if ($paciente && $paciente->getActivo()) {
-            // Verificar contraseña
-            if (password_verify($password, $paciente->getContrasenaHash())) {
-                $usuario = $paciente;
-                $tipoUsuario = 'paciente';
-                
-                $_SESSION['user_id'] = $paciente->getIdPaciente();
-                $_SESSION['user_tipo'] = 'paciente';
-                $_SESSION['user_nombre'] = $paciente->getNombre() . ' ' . $paciente->getApellidos();
-                $_SESSION['user_email'] = $paciente->getEmail();
-            }
+        if (!$paciente || !$paciente->getActivo()) {
+            $campoError = 'email';
+        } elseif (password_verify($password, $paciente->getContrasenaHash())) {
+            $usuario = $paciente;
+            $tipoUsuario = 'paciente';
+            
+            $_SESSION['user_id'] = $paciente->getIdPaciente();
+            $_SESSION['user_tipo'] = 'paciente';
+            $_SESSION['user_nombre'] = $paciente->getNombre() . ' ' . $paciente->getApellidos();
+            $_SESSION['user_email'] = $paciente->getEmail();
+        } else {
+            $campoError = 'password';
         }
     } elseif ($role === 'medico') {
         $medicoDAO = new MedicoDAO();
         $medico = $medicoDAO->buscarPorEmail($email);
         
-        if ($medico && $medico->getActivo()) {
-            // Verificar contraseña
-            if (password_verify($password, $medico->getContrasenaHash())) {
-                $usuario = $medico;
-                $tipoUsuario = 'medico';
-                
-                $_SESSION['user_id'] = $medico->getIdMedico();
-                $_SESSION['user_tipo'] = 'medico';
-                $_SESSION['user_nombre'] = $medico->getNombre() . ' ' . $medico->getApellidos();
-                $_SESSION['user_email'] = $medico->getEmail();
-                $_SESSION['user_especialidad'] = $medico->getEspecialidad();
-                $_SESSION['user_tipo_medico'] = $medico->getTipoMedico();
-            }
+        if (!$medico || !$medico->getActivo()) {
+            $campoError = 'email';
+        } elseif (password_verify($password, $medico->getContrasenaHash())) {
+            $usuario = $medico;
+            $tipoUsuario = 'medico';
+            
+            $_SESSION['user_id'] = $medico->getIdMedico();
+            $_SESSION['user_tipo'] = 'medico';
+            $_SESSION['user_nombre'] = $medico->getNombre() . ' ' . $medico->getApellidos();
+            $_SESSION['user_email'] = $medico->getEmail();
+            $_SESSION['user_especialidad'] = $medico->getEspecialidad();
+            $_SESSION['user_tipo_medico'] = $medico->getTipoMedico();
+        } else {
+            $campoError = 'password';
         }
     } elseif ($role === 'admin') {
         // Los administradores también pueden iniciar sesión aquí
         $adminDAO = new AdministradorDAO();
         $admin = $adminDAO->buscarPorEmail($email);
         
-        if ($admin && $admin->getActivo()) {
-            // Verificar contraseña
-            if (password_verify($password, $admin->getContrasenaHash())) {
-                $usuario = $admin;
-                $tipoUsuario = 'admin';
-                
-                $_SESSION['user_id'] = $admin->getIdAdmin();
-                $_SESSION['user_tipo'] = 'admin';
-                $_SESSION['user_nombre'] = $admin->getNombreCompleto();
-                $_SESSION['user_email'] = $admin->getEmail();
-            }
+        if (!$admin || !$admin->getActivo()) {
+            $campoError = 'email';
+        } elseif (password_verify($password, $admin->getContrasenaHash())) {
+            $usuario = $admin;
+            $tipoUsuario = 'admin';
+            
+            $_SESSION['user_id'] = $admin->getIdAdmin();
+            $_SESSION['user_tipo'] = 'admin';
+            $_SESSION['user_nombre'] = $admin->getNombreCompleto();
+            $_SESSION['user_email'] = $admin->getEmail();
+        } else {
+            $campoError = 'password';
         }
     }
     
@@ -120,7 +129,10 @@ try {
         http_response_code(401);
         echo json_encode([
             'success' => false,
-            'mensaje' => 'Credenciales inválidas o usuario inactivo'
+            'mensaje' => $campoError === 'email'
+                ? 'No existe una cuenta activa con ese correo para el rol seleccionado'
+                : 'La contraseña es incorrecta',
+            'campo' => $campoError
         ]);
     }
     

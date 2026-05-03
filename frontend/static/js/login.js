@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const submitBtn = loginForm.querySelector('button[type="submit"]');
         const loginText = document.getElementById('login-text');
         const loginSpinner = document.getElementById('login-spinner');
+        const selectedRoleRadio = document.querySelector('input[name="role"]:checked');
+        const selectedRoleActual = selectedRoleRadio ? selectedRoleRadio.value : 'paciente';
 
         // Show loading state
         submitBtn.disabled = true;
@@ -166,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const loginData = {
             email: emailInput.value.trim(),
             password: passwordInput.value,
-            role: selectedRole,
+            role: selectedRoleActual,
             remember: rememberCheckbox.checked
         };
 
@@ -185,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (result.success) {
                 handleLoginSuccess(result, loginData.remember);
             } else {
-                handleLoginError(result.mensaje || 'Credenciales incorrectas');
+                handleLoginError(result.mensaje || 'Credenciales incorrectas', result.campo || '');
             }
         } catch (error) {
             console.error('Error de conexión:', error);
@@ -216,7 +218,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1500);
     }
 
-    function handleLoginError(message) {
+    function handleLoginError(message, campo) {
+        if (campo === 'email') {
+            showFieldError(emailInput, emailError, message);
+            resetSubmitButton();
+            return;
+        }
+
+        if (campo === 'password') {
+            showFieldError(passwordInput, passwordError, message);
+            resetSubmitButton();
+            return;
+        }
+
         showErrorMessage(message);
         resetSubmitButton();
     }
@@ -226,31 +240,31 @@ document.addEventListener('DOMContentLoaded', function () {
         input.classList.add('border-red-500', 'bg-red-50');
         input.classList.remove('border-gray-300');
         errorDiv.textContent = message;
-        errorDiv.classList.remove('hidden');
+        errorDiv.style.display = 'block';
     }
 
     function clearFieldError(input, errorDiv) {
         input.classList.remove('border-red-500', 'bg-red-50');
         input.classList.add('border-gray-300');
         errorDiv.textContent = '';
-        errorDiv.classList.add('hidden');
+        errorDiv.style.display = 'none';
     }
 
     function showSuccessMessage(message) {
         successMessage.textContent = message;
-        successMessage.classList.remove('hidden');
+        successMessage.style.display = 'block';
         successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function showErrorMessage(message) {
         errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
+        errorMessage.style.display = 'block';
         errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function clearAllMessages() {
-        successMessage.classList.add('hidden');
-        errorMessage.classList.add('hidden');
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
     }
 
     function resetSubmitButton() {
