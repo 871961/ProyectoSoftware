@@ -742,32 +742,66 @@ class PacienteDashboard {
             return;
         }
         this.emptyEl?.classList.add('hidden');
+        // Agrupar consultas por día para una visualización cronológica más ordenada
+        const grouped = this.consultas.reduce((acc, c) => {
+            const d = new Date(c.fecha);
+            const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(c);
+            return acc;
+        }, {});
 
-        this.consultas.forEach((consulta) => {
-            const medico = `${consulta.medico_nombre || ''} ${consulta.medico_apellidos || ''}`.trim() || consulta.id_medico;
-            const especialidad = consulta.especialidad || 'Especialidad no indicada';
-            const diagnostico = consulta.diagnostico || 'Sin diagnostico';
-            const fecha = this.formatearFecha(consulta.fecha);
-            const tratamiento = consulta.tratamiento || 'Sin tratamiento';
+        // Ordenar los días de más reciente a más antiguo
+        const days = Object.keys(grouped).sort((a, b) => (a < b ? 1 : -1));
 
-            const card = document.createElement('button');
-            card.type = 'button';
-            card.className = 'text-left group bg-gradient-to-br from-white to-blue-50/60 border border-blue-100 rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all';
-            card.innerHTML = `
-                <div class="flex items-start justify-between gap-3 mb-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-wide text-blue-600 font-semibold">${fecha}</p>
-                        <h3 class="text-lg font-semibold text-gray-900 mt-1">${especialidad}</h3>
+        days.forEach(dayKey => {
+            const dateObj = new Date(dayKey + 'T00:00:00');
+            const dayLabel = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+
+            const section = document.createElement('section');
+            section.className = 'mb-6';
+
+            const header = document.createElement('h4');
+            header.className = 'text-sm font-semibold text-gray-600 mb-3';
+            header.textContent = dayLabel;
+            section.appendChild(header);
+
+            const list = document.createElement('div');
+            list.className = 'space-y-3';
+
+            // Ordenar consultas del día por hora descendente (más reciente arriba)
+            const consultasDia = grouped[dayKey].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+
+            consultasDia.forEach((consulta) => {
+                const medico = `${consulta.medico_nombre || ''} ${consulta.medico_apellidos || ''}`.trim() || consulta.id_medico;
+                const especialidad = consulta.especialidad || 'Especialidad no indicada';
+                const diagnostico = consulta.diagnostico || 'Sin diagnostico';
+                const fecha = this.formatearFecha(consulta.fecha);
+                const tratamiento = consulta.tratamiento || 'Sin tratamiento';
+
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'w-full text-left group bg-white border border-gray-100 rounded-lg p-4 shadow-sm hover:shadow-md transition-all';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-blue-600 font-medium">${fecha}</p>
+                            <h3 class="text-sm font-semibold text-gray-900 mt-1">${especialidad}</h3>
+                            <p class="text-sm text-gray-600 mt-1">Médico: <span class="text-gray-800 font-medium">${medico}</span></p>
+                        </div>
+                        <div class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">Consulta</div>
                     </div>
-                    <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">Consulta</span>
-                </div>
-                <p class="text-sm text-gray-500 mb-2">Médico: <span class="text-gray-700 font-medium">${medico}</span></p>
-                <p class="text-sm text-gray-600 line-clamp-2"><span class="font-semibold text-gray-800">Diagnóstico:</span> ${diagnostico}</p>
-                <p class="text-sm text-gray-600 mt-2 line-clamp-1"><span class="font-semibold text-gray-800">Tratamiento:</span> ${tratamiento}</p>
-                <div class="mt-4 text-sm text-blue-700 font-medium group-hover:text-blue-800">Ver detalle completo</div>
-            `;
-            card.addEventListener('click', () => this.openDetailModal(consulta));
-            this.cardsContainer.appendChild(card);
+                    <div class="mt-3 text-sm text-gray-700">
+                        <p class="mb-1"><span class="font-semibold text-gray-800">Diagnóstico:</span> ${diagnostico}</p>
+                        <p class="text-sm"><span class="font-semibold text-gray-800">Tratamiento:</span> ${tratamiento}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => this.openDetailModal(consulta));
+                list.appendChild(card);
+            });
+
+            section.appendChild(list);
+            this.cardsContainer.appendChild(section);
         });
     }
 
