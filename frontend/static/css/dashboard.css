@@ -791,34 +791,41 @@
 }
 
 .patient-btn-primary {
-    background: #0f172a !important;
+    background: linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%) !important;
     color: #fff !important;
-    border: 1px solid #0f172a !important;
-    box-shadow: none;
-    border-radius: 0;
+    border: 1px solid #0f3460 !important;
+    box-shadow: 0 2px 8px rgba(15, 52, 96, 0.2) !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.2s ease !important;
 }
 
 .patient-btn-primary:hover {
-    transform: none;
-    box-shadow: none;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(15, 52, 96, 0.3) !important;
+}
+
+.patient-btn-primary:active {
+    transform: translateY(0) !important;
 }
 
 .patient-btn-secondary {
-    background: #f3f4f6 !important;
-    color: #1f2937 !important;
-    border: 1px solid #e5e7eb !important;
-    box-shadow: none;
-    border-radius: 0.625rem;
-    transition: background 0.15s;
+    background: #f8fafc !important;
+    color: #374151 !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.2s ease !important;
 }
 
 .patient-btn-secondary:hover {
-    transform: none;
-    background: #e5e7eb !important;
+    transform: translateY(-1px) !important;
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
 }
 
-.patient-btn-primary {
-    border-radius: 0.625rem !important;
+.patient-btn-secondary:active {
+    transform: translateY(0) !important;
 }
 
 .health-modal-shell {
@@ -1040,47 +1047,58 @@
 .btn-primary-md {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.1rem;
-    background: #0f3460;
+    gap: 0.625rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);
     color: #fff;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-radius: 0.625rem;
-    transition: background 0.15s ease, transform 0.1s ease;
+    font-size: 0.8125rem;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(15, 52, 96, 0.15);
 }
 
 .btn-primary-md:hover {
-    background: #1a4a7a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 52, 96, 0.25);
 }
 
 .btn-primary-md:active {
-    transform: scale(0.98);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(15, 52, 96, 0.15);
 }
 
 .btn-primary-md:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
 }
 
 .btn-secondary-md {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
-    background: #fff;
-    color: #475569;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.625rem;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    gap: 0.625rem;
+    padding: 0.75rem 1.5rem;
+    background: #f8fafc;
+    color: #374151;
+    font-size: 0.8125rem;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .btn-secondary-md:hover {
-    background: #f8fafc;
+    background: #f1f5f9;
     border-color: #cbd5e1;
     color: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* ========================================

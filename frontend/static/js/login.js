@@ -5,7 +5,7 @@ const API_BASE = '/backend/src/controllers';
 document.addEventListener('DOMContentLoaded', function () {
 
     // Elements
-    const roleCards = document.querySelectorAll('.role-card');
+    const roleRadios = document.querySelectorAll('input[name="role"]');
     const loginForm = document.getElementById('loginForm');
     const userRoleInput = document.getElementById('userRole');
     const togglePasswordBtn = document.getElementById('togglePassword');
@@ -37,24 +37,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Role Selection Handler
     function setupRoleSelection() {
-        roleCards.forEach(card => {
-            card.addEventListener('click', function () {
-                const role = this.dataset.role;
-
-                // Toggle active class on role cards (estilos definidos en el HTML)
-                roleCards.forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-
-                // Update selected card icon
-                const selectedIcon = this.querySelector('div:first-child');
-                if (role === 'paciente') {
-                    selectedIcon.className = 'w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2';
-                } else {
-                    selectedIcon.className = 'w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-2';
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.checked) {
+                    selectedRole = this.value;
+                    userRoleInput.value = this.value;
                 }
-                // Update role input
-                selectedRole = role;
-                userRoleInput.value = role;
             });
         });
     }
@@ -305,9 +293,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         selectedRole = data.role;
                         userRoleInput.value = data.role;
 
-                        // Aplica clase active según el rol guardado
-                        roleCards.forEach(card => {
-                            card.classList.toggle('active', card.dataset.role === data.role);
+                        // Check the appropriate radio button
+                        roleRadios.forEach(radio => {
+                            radio.checked = radio.value === data.role;
                         });
                     }
                 } else {
@@ -354,26 +342,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 4000);
     }
 
-    // Focus animations
+    // Focus animations (solo para inputs de formulario, no para radio buttons)
     document.addEventListener('focus', function (e) {
-        if (e.target.matches('input:not([type="checkbox"])')) {
-            e.target.closest('.form-group').classList.add('scale-[1.02]');
+        if (e.target.matches('input:not([type="checkbox"]):not([type="radio"])')) {
+            const formGroup = e.target.closest('.form-group');
+            if (formGroup) {
+                formGroup.classList.add('scale-[1.02]');
+            }
         }
     }, true);
 
     document.addEventListener('blur', function (e) {
-        if (e.target.matches('input:not([type="checkbox"])')) {
-            e.target.closest('.form-group').classList.remove('scale-[1.02]');
+        if (e.target.matches('input:not([type="checkbox"]):not([type="radio"])')) {
+            const formGroup = e.target.closest('.form-group');
+            if (formGroup) {
+                formGroup.classList.remove('scale-[1.02]');
+            }
         }
     }, true);
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function (e) {
-        // Enter key on role cards
-        if (e.key === 'Enter' && e.target.matches('.role-card')) {
-            e.target.click();
-        }
-
         // Escape key to clear messages
         if (e.key === 'Escape') {
             clearAllMessages();

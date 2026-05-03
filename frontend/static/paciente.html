@@ -347,73 +347,53 @@
                         </form>
                     </div>
 
-                    <!-- COLUMNA DERECHA: IMC + Condiciones (1/3) -->
+                    <!-- COLUMNA DERECHA: Métricas de Salud -->
                     <div class="space-y-5">
 
-                        <!-- IMC card destacada -->
-                        <div class="overflow-hidden" style="border:1px solid #e8edf2;border-radius:1rem;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%)">
-                            <div class="px-5 pt-5 pb-3 flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#dbeafe;color:#1d4ed8">
-                                    <i data-lucide="gauge" class="w-4 h-4"></i>
-                                </div>
+                        <!-- IMC — Gauge Visual Premium -->
+                        <div class="bg-white rounded-2xl p-6" style="border:1px solid #f0f4f8;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+                            <div class="flex items-start justify-between mb-5">
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900 leading-tight">Índice de masa corporal</p>
-                                    <p class="text-[11px] text-gray-400 leading-tight">A partir de tu altura y peso</p>
+                                    <p class="text-xs font-semibold text-gray-600 uppercase tracking-tight mb-0.5">IMC</p>
+                                    <p class="text-xs text-gray-500">Índice de masa corporal</p>
                                 </div>
                             </div>
-                            <div class="px-5 pb-5 pt-2">
-                                <div id="saludImcCardPaciente" class="imc-badge imc-neutral imc-pro">
-                                    <span class="imc-value" id="saludImcValuePaciente">--</span>
-                                    <span class="imc-label" id="saludImcLabelPaciente">Sin datos</span>
+
+                            <!-- Valor centrado grande -->
+                            <div class="text-center mb-6 py-2">
+                                <div class="inline-flex flex-col items-center">
+                                    <span id="saludImcValuePaciente" class="text-5xl font-light tracking-tight text-gray-900" style="font-family:'Inter';font-weight:200">--</span>
+                                    <span id="saludImcLabelPaciente" class="text-xs font-semibold text-gray-600 uppercase tracking-widest mt-2">--</span>
                                 </div>
-                                <!-- Escala visual -->
-                                <div class="mt-4 flex items-center gap-1 text-[9px] font-semibold text-gray-400">
-                                    <span class="flex-1 text-center py-1 rounded" style="background:#dbeafe;color:#1d4ed8">&lt; 18.5</span>
-                                    <span class="flex-1 text-center py-1 rounded" style="background:#dcfce7;color:#15803d">18.5–25</span>
-                                    <span class="flex-1 text-center py-1 rounded" style="background:#fef3c7;color:#b45309">25–30</span>
-                                    <span class="flex-1 text-center py-1 rounded" style="background:#fee2e2;color:#dc2626">&gt; 30</span>
+                            </div>
+
+                            <!-- Barra indicadora sutil pero clara -->
+                            <div class="space-y-2">
+                                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div id="imcIndicator" class="h-full w-1/4 bg-gray-400 rounded-full transition-all duration-300" style="width:50%"></div>
                                 </div>
-                                <div class="mt-1 grid grid-cols-4 gap-1 text-[9px] text-gray-400 text-center">
-                                    <span>Bajo peso</span>
-                                    <span>Normal</span>
-                                    <span>Sobrepeso</span>
-                                    <span>Obesidad</span>
+                                <div class="flex justify-between text-xs text-gray-400 font-medium">
+                                    <span>18.5</span>
+                                    <span>25</span>
+                                    <span>30</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Condiciones (solo lectura) -->
-                        <div class="space-y-3">
-                            <!-- Alergias -->
-                            <div class="rounded-xl overflow-hidden" style="border:1px solid #fecaca;background:linear-gradient(135deg,#fff 0%,#fef2f2 100%)">
-                                <div class="px-4 py-3 flex items-start gap-3" style="border-bottom:1px solid #fee2e2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#fee2e2;color:#dc2626">
-                                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-semibold text-gray-900">Alergias conocidas</p>
-                                        <p class="text-[11px] text-gray-500">Información crítica</p>
-                                    </div>
-                                </div>
-                                <div class="px-4 py-3">
-                                    <p id="saludAlergiasPaciente" class="text-sm text-gray-700 leading-relaxed">Cargando...</p>
-                                </div>
+                        <!-- Alergias -->
+                        <div class="bg-white rounded-2xl p-6" style="border:1px solid #f0f4f8;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+                            <div class="mb-4">
+                                <p class="text-xs font-semibold text-gray-600 uppercase tracking-tight">Alergias conocidas</p>
                             </div>
-                            <!-- Enfermedades diagnosticadas -->
-                            <div class="rounded-xl overflow-hidden" style="border:1px solid #e8edf2">
-                                <div class="px-4 py-3 flex items-start gap-3" style="background:#fafbfc;border-bottom:1px solid #e8edf2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#dbeafe;color:#1d4ed8">
-                                        <i data-lucide="stethoscope" class="w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-semibold text-gray-900">Enfermedades diagnosticadas</p>
-                                        <p class="text-[11px] text-gray-500">Gestionadas por tu médico</p>
-                                    </div>
-                                </div>
-                                <div class="px-4 py-3">
-                                    <p id="saludEnfermedadesPaciente" class="text-sm text-gray-700 leading-relaxed">—</p>
-                                </div>
+                            <p id="saludAlergiasPaciente" class="text-sm text-gray-700 leading-relaxed">Cargando...</p>
+                        </div>
+
+                        <!-- Enfermedades -->
+                        <div class="bg-white rounded-2xl p-6" style="border:1px solid #f0f4f8;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+                            <div class="mb-4">
+                                <p class="text-xs font-semibold text-gray-600 uppercase tracking-tight">Diagnósticos</p>
                             </div>
+                            <p id="saludEnfermedadesPaciente" class="text-sm text-gray-700 leading-relaxed">—</p>
                         </div>
                     </div>
                 </div>

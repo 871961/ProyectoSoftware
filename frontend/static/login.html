@@ -6,282 +6,461 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión | MedHistory</title>
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/tailwind.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        * {
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fa;
-        }
-
-        .auth-shell {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr;
         }
 
-        @media (min-width: 1024px) {
-            .auth-shell {
-                grid-template-columns: 1.1fr 1fr;
-            }
-        }
-
-        /* Lateral oscuro de marca */
-        .auth-aside {
-            background: #0a1628;
-            color: #f0f6ff;
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-aside::before {
-            content: '';
-            position: absolute;
-            top: -120px;
-            right: -120px;
-            width: 360px;
-            height: 360px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
-        }
-
-        .auth-aside::after {
-            content: '';
-            position: absolute;
-            bottom: -100px;
-            left: -80px;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
-        }
-
-        @media (max-width: 1023px) {
-            .auth-aside {
-                display: none;
-            }
-        }
-
-        .auth-form-wrap {
-            background: #ffffff;
+        .auth-container {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2.5rem 1.5rem;
+            padding: 2rem 1rem;
         }
 
-        .role-card {
-            cursor: pointer;
-            padding: 0.875rem;
-            border: 2px solid #e5e7eb;
-            background: #fff;
-            border-radius: 0.75rem;
+        .auth-card {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .auth-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .auth-brand-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(15, 52, 96, 0.15);
+        }
+
+        .auth-brand-icon i {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        .auth-brand h1 {
+            font-size: 1.875rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-brand p {
+            font-size: 0.9375rem;
+            color: #64748b;
             text-align: center;
-            transition: all 0.18s ease;
+            line-height: 1.6;
+        }
+
+        .auth-form-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .role-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .role-label {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .role-card:hover {
-            border-color: #0f3460;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
             background: #f8fafc;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
-        .role-card.active {
+        .role-option input:checked + .role-label {
             border-color: #0f3460;
-            background: #eff6ff;
-            box-shadow: 0 0 0 4px rgba(15, 52, 96, 0.08);
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.05) 0%, rgba(15, 52, 96, 0.02) 100%);
+            box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.08);
         }
 
-        .role-card .role-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 0.625rem;
+        .role-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f1f5f9;
-            color: #475569;
-            transition: all 0.18s ease;
+            color: #64748b;
+            transition: all 0.2s ease;
         }
 
-        .role-card.active .role-icon {
+        .role-option input:checked + .role-label .role-icon {
             background: #0f3460;
-            color: #fff;
+            color: white;
+        }
+
+        .role-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            transition: color 0.2s ease;
+        }
+
+        .role-option input:checked + .role-label .role-text {
+            color: #0f3460;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-input {
             width: 100%;
-            padding: 0.75rem 0.95rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 0.625rem;
-            font-size: 0.9rem;
-            color: #111827;
-            background: #fff;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: #0f172a;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
         }
 
         .form-input:focus {
             outline: none;
             border-color: #0f3460;
+            background: white;
             box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
         }
 
-        .auth-btn-primary {
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s ease;
+            padding: 0.5rem;
+        }
+
+        .password-toggle:hover {
+            color: #475569;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .form-group-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 0.8125rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0f3460;
+        }
+
+        .checkbox-wrapper label {
+            cursor: pointer;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .forgot-link {
+            color: #0f3460;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: #1a4a7a;
+        }
+
+        .submit-btn {
             width: 100%;
-            display: inline-flex;
+            padding: 1rem;
+            background: linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            padding: 0.85rem 1.25rem;
-            background: #0f3460;
-            color: #fff;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 8px 20px rgba(15, 52, 96, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.75rem;
+            font-size: 0.9375rem;
+            color: #475569;
+        }
+
+        .register-link a {
+            color: #0f3460;
             font-weight: 600;
-            border-radius: 0.75rem;
-            transition: background 0.15s ease;
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
-        .auth-btn-primary:hover {
-            background: #1a4a7a;
+        .register-link a:hover {
+            color: #1a4a7a;
         }
 
-        .auth-feature {
-            display: flex;
-            gap: 0.85rem;
-            align-items: flex-start;
-            padding: 0.85rem 0;
-        }
-
-        .auth-feature-icon {
-            width: 36px;
-            height: 36px;
+        .alert-box {
+            padding: 1rem;
             border-radius: 10px;
-            background: rgba(59, 130, 246, 0.15);
-            color: #93c5fd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            margin-top: 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .footer-text a {
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-text a:hover {
+            color: #0f172a;
+        }
+
+        .error-message {
+            font-size: 0.75rem;
+            color: #dc2626;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 
 <body>
-    <div class="auth-shell">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Brand -->
+            <div class="auth-brand">
+                <div class="auth-brand-icon">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                <h1>MedHistory</h1>
+                <p>Gestión inteligente de tu historial médico</p>
+            </div>
 
-        <!-- ASIDE: branding -->
-
-
-        <!-- FORM: login -->
-        <main class="auth-form-wrap">
-            <div class="w-full" style="max-width:420px">
-                <!-- Logo en mobile -->
-                <div class="flex items-center gap-3 mb-8 lg:hidden">
-                    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i data-lucide="stethoscope" class="w-4 h-4 text-white"></i>
+            <!-- Form Card -->
+            <div class="auth-form-wrapper">
+                <!-- Role Selector -->
+                <div class="role-selector">
+                    <div class="role-option">
+                        <input type="radio" id="role-patient" name="role" value="paciente" checked>
+                        <label for="role-patient" class="role-label">
+                            <div class="role-icon">
+                                <i data-lucide="user" style="width:20px;height:20px"></i>
+                            </div>
+                            <span class="role-text">Paciente</span>
+                        </label>
                     </div>
-                    <span class="text-lg font-semibold text-gray-900">MedHistory</span>
+                    <div class="role-option">
+                        <input type="radio" id="role-doctor" name="role" value="medico">
+                        <label for="role-doctor" class="role-label">
+                            <div class="role-icon">
+                                <i data-lucide="stethoscope" style="width:20px;height:20px"></i>
+                            </div>
+                            <span class="role-text">Médico</span>
+                        </label>
+                    </div>
                 </div>
 
-                <h1 class="text-2xl font-bold text-gray-900 mb-1">Iniciar sesión</h1>
-                <p class="text-sm text-gray-500 mb-7">Accede a tu cuenta de MedHistory</p>
-
-                <!-- Role selector -->
-                <div class="mb-6">
-                    <br>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <div id="role-patient" class="role-card active" data-role="paciente">
-                            <div class="role-icon"><i data-lucide="user" class="w-4 h-4"></i></div>
-                            <span class="text-sm font-semibold text-gray-900">Paciente</span>
-                        </div>
-                        <div id="role-doctor" class="role-card" data-role="medico">
-                            <div class="role-icon"><i data-lucide="stethoscope" class="w-4 h-4"></i></div>
-                            <span class="text-sm font-semibold text-gray-900">Médico</span>
-                        </div>
-                    </div>
-                </div>
-
-                <form id="loginForm" class="space-y-4">
-                    <div>
-                        <label for="email" class="block text-xs font-medium text-gray-500 mb-1.5">Correo
-                            electrónico</label>
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Correo electrónico</label>
                         <input type="email" id="email" name="email" required class="form-input"
                             placeholder="tu@email.com" autocomplete="email">
-                        <p id="email-error" class="text-xs text-red-500 mt-1.5 hidden"></p>
+                        <p id="email-error" class="error-message"></p>
                     </div>
 
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label for="password" class="text-xs font-medium text-gray-500">Contraseña</label>
-                            <a href="#" class="text-xs font-medium" style="color:#0f3460">¿Olvidaste tu contraseña?</a>
-                        </div>
-                        <div class="relative">
-                            <input type="password" id="password" name="password" required class="form-input pr-11"
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required class="form-input"
                                 placeholder="Tu contraseña" autocomplete="current-password">
-                            <button type="button" id="togglePassword"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors">
-                                <i id="eyeOpen" data-lucide="eye" class="w-4 h-4"></i>
-                                <i id="eyeClosed" data-lucide="eye-off" class="w-4 h-4 hidden"></i>
+                            <button type="button" id="togglePassword" class="password-toggle">
+                                <i id="eyeOpen" data-lucide="eye" style="width:18px;height:18px"></i>
+                                <i id="eyeClosed" data-lucide="eye-off" style="width:18px;height:18px;display:none"></i>
                             </button>
                         </div>
-                        <p id="password-error" class="text-xs text-red-500 mt-1.5 hidden"></p>
+                        <p id="password-error" class="error-message"></p>
                     </div>
 
-                    <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                        <input type="checkbox" id="remember" name="remember" class="w-4 h-4 rounded border-gray-300"
-                            style="accent-color:#0f3460">
-                        Recordarme en este dispositivo
-                    </label>
+                    <div class="form-group-row">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Recordarme en este dispositivo</label>
+                        </div>
+                        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                    </div>
 
-                    <button type="submit" class="auth-btn-primary mt-2">
-                        <span id="login-text" class="inline-flex items-center justify-center gap-2">
-                            Iniciar sesión
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </span>
-                        <span id="login-spinner" class="hidden">
-                            <i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>
+                    <button type="submit" class="submit-btn">
+                        <span id="login-text">Iniciar sesión</span>
+                        <span id="login-spinner" style="display:none">
+                            <i data-lucide="loader-circle" class="loading-spinner"></i>
                         </span>
                     </button>
 
                     <input type="hidden" id="userRole" name="role" value="paciente">
                 </form>
 
-                <p class="text-center text-sm text-gray-600 mt-6">
-                    ¿No tienes cuenta?
-                    <a href="register.html" class="font-semibold transition-colors hover:underline"
-                        style="color:#0f3460">
-                        Regístrate
-                    </a>
+                <!-- Alerts -->
+                <div id="success-message" class="alert-box alert-success"></div>
+                <div id="error-message" class="alert-box alert-error"></div>
+
+                <!-- Register Link -->
+                <p class="register-link">
+                    ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
                 </p>
 
-                <div id="success-message"
-                    class="hidden mt-5 p-3.5 rounded-xl text-sm text-green-700 font-medium text-center"
-                    style="background:#f0fdf4;border:1px solid #bbf7d0"></div>
-                <div id="error-message"
-                    class="hidden mt-5 p-3.5 rounded-xl text-sm text-red-700 font-medium text-center"
-                    style="background:#fef2f2;border:1px solid #fecaca"></div>
-
-                <p class="text-center text-[11px] text-gray-400 mt-8">
-                    Sistema conforme a GDPR/LOPD ·
-                    <a href="#" class="hover:text-gray-600">Privacidad</a> ·
-                    <a href="#" class="hover:text-gray-600">Términos</a>
+                <!-- Footer -->
+                <p class="footer-text">
+                    Cumple con GDPR/LOPD · <a href="#">Privacidad</a> · <a href="#">Términos</a>
                 </p>
             </div>
-        </main>
+        </div>
     </div>
 
     <script src="js/login.js"></script>
     <script>
         if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Role switcher
+        document.querySelectorAll('input[name="role"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('userRole').value = this.value;
+            });
+        });
+
+        // Password toggle
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeOpen = document.getElementById('eyeOpen');
+        const eyeClosed = document.getElementById('eyeClosed');
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            eyeOpen.style.display = isPassword ? 'none' : 'block';
+            eyeClosed.style.display = isPassword ? 'block' : 'none';
+        });
     </script>
 </body>
 
