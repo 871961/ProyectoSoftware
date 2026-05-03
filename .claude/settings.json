@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(curl http://medhistory.local/generate_medico_hash.php)",
-      "Bash(curl -s -X POST http://medhistory.local/backend/src/controllers/AuthController.php -H 'Content-Type: application/json' -d '{\"email\":\"elena.fernandez@clinica.com\",\"password\":\"medico123\",\"role\":\"medico\"}')"
+      "Bash(curl -s -X POST http://medhistory.local/backend/src/controllers/AuthController.php -H 'Content-Type: application/json' -d '{\"email\":\"elena.fernandez@clinica.com\",\"password\":\"medico123\",\"role\":\"medico\"}')",
+      "Read(//c/Program Files/PostgreSQL/**)"
     ]
   }
 }

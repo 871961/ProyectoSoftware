@@ -192,9 +192,8 @@
 
                     <!-- Citas de hoy — dinámico -->
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-xl" style="border:1px solid #e8edf2">
-                            <div class="px-5 py-4 flex items-center justify-between"
-                                style="border-bottom:1px solid #e8edf2">
+                        <div class="bg-white rounded-xl p-5" style="border:1px solid #e8edf2">
+                            <div class="flex items-center justify-between mb-3">
                                 <div>
                                     <h3 class="text-sm font-semibold text-gray-900 tracking-tight">Citas de hoy</h3>
                                     <p id="citasHoyFecha" class="text-xs text-gray-400 mt-0.5"></p>
@@ -205,35 +204,8 @@
                                     Ver agenda completa
                                 </button>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
-                                        <tr>
-                                            <th
-                                                class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                                Paciente</th>
-                                            <th
-                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                                Hora</th>
-                                            <th
-                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">
-                                                Motivo</th>
-                                            <th
-                                                class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                                Estado</th>
-                                            <th
-                                                class="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                                Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="citasHoyBody" class="divide-y" style="border-color:#f0f4f8">
-                                        <tr>
-                                            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">
-                                                Cargando citas de hoy...
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div id="citasHoyBody" class="space-y-2">
+                                <p class="text-xs text-gray-400">Cargando citas de hoy...</p>
                             </div>
                         </div>
                     </div>
@@ -384,6 +356,7 @@
                                     </div>
 
                                     <!-- Alergias (si existen) -->
+                                    <br>
                                     <div id="alergiaDisplay" class="hidden pt-7 border-t border-gray-100">
                                         <p class="text-xs font-light text-gray-500 uppercase tracking-wider mb-3"
                                             style="letter-spacing:0.8px">Alergias Conocidas</p>
@@ -400,6 +373,8 @@
                                 </div>
 
                                 <!-- Antecedentes Familiares -->
+                                <br>
+
                                 <div class="mt-10 mb-10">
                                     <div class="mb-4">
                                         <p class="text-xs font-light text-gray-500 uppercase tracking-wider mb-1"
@@ -507,25 +482,22 @@
                                                 style="border-color:#e5e7eb;border-radius:0.875rem">
                                         </div>
                                         <div>
-                                            <div>
-                                                <label for="saludConsumoTabacoMedico"
-                                                    class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
-                                                    style="letter-spacing:0.3px">Tabaco</label>
-                                                <input id="saludConsumoTabacoMedico" name="consumo_tabaco" type="text"
-                                                    placeholder="Ej: No fumador"
-                                                    class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
-                                                    style="border-color:#e5e7eb;border-radius:0.875rem">
-                                            </div>
-                                            <div>
-                                                <br>
-                                                <label for="saludConsumoAlcoholMedico"
-                                                    class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
-                                                    style="letter-spacing:0.3px">Alcohol</label>
-                                                <input id="saludConsumoAlcoholMedico" name="consumo_alcohol" type="text"
-                                                    placeholder="Ej: Ocasional"
-                                                    class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
-                                                    style="border-color:#e5e7eb;border-radius:0.875rem">
-                                            </div>
+                                            <label for="saludConsumoTabacoMedico"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Tabaco</label>
+                                            <input id="saludConsumoTabacoMedico" name="consumo_tabaco" type="text"
+                                                placeholder="Ej: No fumador"
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                        </div>
+                                        <div>
+                                            <label for="saludConsumoAlcoholMedico"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Alcohol</label>
+                                            <input id="saludConsumoAlcoholMedico" name="consumo_alcohol" type="text"
+                                                placeholder="Ej: Ocasional"
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
                                         </div>
                                     </div>
                                 </div>
@@ -587,121 +559,124 @@
                 <!-- Modal: Antecedentes Familiares -->
                 <div id="modalAntecedentes"
                     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" style="display:none">
-                    <div class="bg-white w-full max-h-[85vh] overflow-hidden flex flex-col"
-                        style="max-width:700px;border-radius:1.5rem;border:1px solid #eff2f5;box-shadow:0 20px 50px rgba(0,0,0,0.12)">
-                        <!-- Header Premium -->
-                        <div class="px-8 py-8 flex items-center justify-between flex-shrink-0"
-                            style="border-bottom:1px solid #f3f4f6;border-radius:1.5rem 1.5rem 0 0;background:linear-gradient(135deg, #fafbfc 0%, #f8f9fb 100%)">
-                            <div class="flex items-center gap-6">
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                    style="background:linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);box-shadow:0 4px 12px rgba(15, 52, 96, 0.15)">
-                                    <i data-lucide="git-branch" class="w-5 h-5 text-white"></i>
+                    <div class="health-modal-shell bg-white w-full mx-auto max-h-[85vh] overflow-y-auto"
+                        style="max-width:1000px;border-radius:1.25rem;border:1px solid #e5e7eb;box-shadow:0 20px 40px rgba(0,0,0,0.14)">
+                        <!-- Header -->
+                        <div class="health-modal-header sticky top-0 px-6 py-4 flex items-center justify-between"
+                            style="background:#fff;border-bottom:1px solid #f0f4f8;border-radius:1.25rem 1.25rem 0 0">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="tree-pine" class="w-4 h-4 text-blue-700"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-lg font-light text-gray-950 tracking-tight"
-                                        style="letter-spacing:-0.5px">Antecedentes familiares</h2>
-                                    <p id="modalAntPacienteNombre" class="text-xs text-gray-400 mt-2 font-light"></p>
+                                    <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Antecedentes
+                                        familiares</h2>
+                                    <p id="modalAntPacienteNombre" class="text-xs text-gray-500 mt-0.5"></p>
                                 </div>
                             </div>
-                            <button id="cerrarModalAntecedentes"
-                                class="text-gray-300 hover:text-gray-500 transition-colors p-2">
+                            <button id="cerrarModalAntecedentes" class="text-gray-400 hover:text-gray-600 ml-1">
                                 <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
                         </div>
-
-                        <div class="flex-1 overflow-y-auto" style="padding:3.5rem">
-                            <!-- Formulario elegante con mucho espaciado -->
-                            <form id="antecedentesForm" class="space-y-12">
+                        <!-- Body -->
+                        <div class="health-modal-body p-6">
+                            <form id="antecedentesForm" class="space-y-6">
                                 <input type="hidden" id="antPacienteSelect" name="id_paciente">
 
-                                <!-- Enfermedad -->
+                                <!-- Enfermedad, Parentesco, Lado Familiar -->
                                 <div>
-                                    <label class="block text-xs font-light text-gray-500 mb-4 uppercase tracking-wide"
-                                        style="letter-spacing:0.75px">Enfermedad <span
-                                            class="text-red-300">*</span></label>
-                                    <select id="antEnfermedadSelect" name="id_enfermedad" required
-                                        class="w-full px-5 py-4 text-sm border border-gray-200 font-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-all duration-200"
-                                        style="border-radius:0.875rem;background:#fff;color:#374151"
-                                        onchange="this.style.borderColor = this.value ? '#1a4a7a' : '#e5e7eb'; this.style.boxShadow = this.value ? '0 0 0 3px rgba(15, 52, 96, 0.05)' : 'none';">
-                                        <option value="">Selecciona una enfermedad...</option>
-                                    </select>
-                                </div>
-
-                                <!-- Parentesco y Lado Familiar -->
-                                <div class="grid grid-cols-2 gap-10">
-                                    <div>
-                                        <label
-                                            class="block text-xs font-light text-gray-500 mb-3 uppercase tracking-wide"
-                                            style="letter-spacing:0.75px">Parentesco <span
-                                                class="text-red-300">*</span></label>
-                                        <select id="antParentesco" name="parentesco" required
-                                            class="w-full px-5 py-4 text-sm border border-gray-200 font-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-all duration-200"
-                                            style="border-radius:0.875rem;background:#fff;color:#374151"
-                                            onchange="this.style.borderColor = this.value ? '#1a4a7a' : '#e5e7eb'; this.style.boxShadow = this.value ? '0 0 0 3px rgba(15, 52, 96, 0.05)' : 'none';">
-                                            <option value="">Selecciona...</option>
-                                            <option value="padre">Padre</option>
-                                            <option value="madre">Madre</option>
-                                            <option value="hermano">Hermano/a</option>
-                                            <option value="abuelo_paterno">Abuelo paterno</option>
-                                            <option value="abuela_paterna">Abuela paterna</option>
-                                            <option value="abuelo_materno">Abuelo materno</option>
-                                            <option value="abuela_materna">Abuela materna</option>
-                                            <option value="tio">Tío/a</option>
-                                            <option value="primo">Primo/a</option>
-                                            <option value="otro">Otro</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-xs font-light text-gray-500 mb-3 uppercase tracking-wide"
-                                            style="letter-spacing:0.75px">Lado familiar</label>
-                                        <select id="antLadoFamiliar" name="lado_familiar"
-                                            class="w-full px-5 py-4 text-sm border border-gray-200 font-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-all duration-200"
-                                            style="border-radius:0.875rem;background:#fff;color:#374151"
-                                            onchange="this.style.borderColor = this.value ? '#1a4a7a' : '#e5e7eb'; this.style.boxShadow = this.value ? '0 0 0 3px rgba(15, 52, 96, 0.05)' : 'none';">
-                                            <option value="">No especificado</option>
-                                            <option value="paterno">Paterno</option>
-                                            <option value="materno">Materno</option>
-                                            <option value="ambos">Ambos</option>
-                                        </select>
+                                    <p class="text-xs font-light text-gray-500 uppercase tracking-wider mb-4"
+                                        style="letter-spacing:0.5px">Información general</p>
+                                    <div class="grid grid-cols-3 gap-5">
+                                        <div>
+                                            <label for="antEnfermedadSelect"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Enfermedad <span
+                                                    class="text-red-500">*</span></label>
+                                            <select id="antEnfermedadSelect" name="id_enfermedad" required
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                                <option value="">Selecciona una enfermedad...</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="antParentesco"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Parentesco <span
+                                                    class="text-red-500">*</span></label>
+                                            <select id="antParentesco" name="parentesco" required
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                                <option value="">Selecciona...</option>
+                                                <option value="padre">Padre</option>
+                                                <option value="madre">Madre</option>
+                                                <option value="hermano">Hermano/a</option>
+                                                <option value="abuelo_paterno">Abuelo paterno</option>
+                                                <option value="abuela_paterna">Abuela paterna</option>
+                                                <option value="abuelo_materno">Abuelo materno</option>
+                                                <option value="abuela_materna">Abuela materna</option>
+                                                <option value="tio">Tío/a</option>
+                                                <option value="primo">Primo/a</option>
+                                                <option value="otro">Otro</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="antLadoFamiliar"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Lado familiar</label>
+                                            <select id="antLadoFamiliar" name="lado_familiar"
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                                <option value="">No especificado</option>
+                                                <option value="paterno">Paterno</option>
+                                                <option value="materno">Materno</option>
+                                                <option value="ambos">Ambos</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Edad y Notas -->
-                                <div class="grid grid-cols-2 gap-10">
-                                    <div>
-                                        <label
-                                            class="block text-xs font-light text-gray-500 mb-3 uppercase tracking-wide"
-                                            style="letter-spacing:0.75px">Edad al diagnóstico</label>
-                                        <input id="antEdadDiagnostico" name="edad_diagnostico" type="number" min="0"
-                                            max="120" placeholder="Años"
-                                            class="w-full px-5 py-4 text-sm border border-gray-200 font-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-all duration-200"
-                                            style="border-radius:0.875rem;color:#374151"
-                                            onfocus="this.style.borderColor = '#1a4a7a'; this.style.boxShadow = '0 0 0 3px rgba(15, 52, 96, 0.05)';"
-                                            onblur="this.style.borderColor = '#e5e7eb'; this.style.boxShadow = 'none';">
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-xs font-light text-gray-500 mb-3 uppercase tracking-wide"
-                                            style="letter-spacing:0.75px">Notas</label>
-                                        <input id="antNotas" name="notas_adicionales" type="text"
-                                            placeholder="Observaciones breves..."
-                                            class="w-full px-5 py-4 text-sm border border-gray-200 font-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-all duration-200"
-                                            style="border-radius:0.875rem;color:#374151"
-                                            onfocus="this.style.borderColor = '#1a4a7a'; this.style.boxShadow = '0 0 0 3px rgba(15, 52, 96, 0.05)';"
-                                            onblur="this.style.borderColor = '#e5e7eb'; this.style.boxShadow = 'none';">
+                                <div>
+                                    <p class="text-xs font-light text-gray-500 uppercase tracking-wider mb-4"
+                                        style="letter-spacing:0.5px">Detalles adicionales</p>
+                                    <div class="grid grid-cols-2 gap-5">
+                                        <div>
+                                            <label for="antEdadDiagnostico"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Edad al diagnóstico</label>
+                                            <input id="antEdadDiagnostico" name="edad_diagnostico" type="number" min="0"
+                                                max="120" placeholder="Años"
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                        </div>
+                                        <div>
+                                            <label for="antNotas"
+                                                class="block text-xs font-light text-gray-600 mb-2 uppercase tracking-wide"
+                                                style="letter-spacing:0.3px">Notas</label>
+                                            <input id="antNotas" name="notas_adicionales" type="text"
+                                                placeholder="Observaciones breves..."
+                                                class="w-full px-4 py-2.5 text-sm border font-light focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all"
+                                                style="border-color:#e5e7eb;border-radius:0.875rem">
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Botón de registro -->
-                                <div class="flex items-center gap-5 pt-10">
+                                <!-- Acciones -->
+                                <div class="flex items-center gap-4 pt-4"
+                                    style="border-top:1px solid #e5e7eb;padding-top:1.5rem">
                                     <button type="submit"
-                                        class="inline-flex items-center gap-2.5 px-6 py-3.5 text-xs font-light text-white transition-all duration-200 hover:shadow-lg hover:-translate-y-px active:translate-y-0"
-                                        style="background:linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);border-radius:0.875rem;letter-spacing:0.5px;border:none;cursor:pointer">
+                                        class="inline-flex items-center gap-2.5 px-6 py-3 text-xs font-light text-white transition-all"
+                                        style="background:linear-gradient(135deg, #0f3460 0%, #1a4a7a 100%);border-radius:0.875rem;letter-spacing:0.5px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(15, 52, 96, 0.15)"
+                                        onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(15, 52, 96, 0.25)'"
+                                        onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(15, 52, 96, 0.15)'"
+                                        onmousedown="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(15, 52, 96, 0.15)'"
+                                        onmouseup="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(15, 52, 96, 0.25)'">
                                         <i data-lucide="plus" class="w-4 h-4" style="stroke-width:1.5"></i>
                                         Registrar
                                     </button>
-                                    <p id="antecedentesMessage" class="text-xs text-gray-400 font-light"></p>
+                                    <p id="antecedentesMessage" class="ml-auto text-xs text-gray-400 font-light"></p>
                                 </div>
                             </form>
                         </div>
@@ -834,8 +809,8 @@
 
                 <!-- Tabla de consultas -->
                 <div class="bg-white rounded-xl mb-8 overflow-hidden" style="border:1px solid #e8edf2">
-                    <div class="px-8 py-6 flex flex-col sm:flex-row sm:items-center gap-4"
-                        style="border-bottom:1px solid #e8edf2">
+                    <div class="py-6 flex flex-col sm:flex-row sm:items-center gap-4"
+                        style="border-bottom:1px solid #e8edf2;padding-left:3rem;padding-right:2rem">
                         <div>
                             <h2 class="text-sm font-semibold text-gray-900 tracking-tight">Consultas registradas</h2>
                             <p class="text-xs text-gray-400 mt-0.5">Historial completo de atenciones</p>
@@ -872,8 +847,8 @@
                         <table class="w-full text-sm">
                             <thead style="background:#fafbfc;border-bottom:1px solid #e8edf2">
                                 <tr>
-                                    <th
-                                        class="px-8 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                    <th class="py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                                        style="padding-left:3rem;padding-right:1.5rem">
                                         Fecha</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -884,8 +859,8 @@
                                     <th
                                         class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden xl:table-cell">
                                         Tratamiento</th>
-                                    <th
-                                        class="px-8 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                    <th class="py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                                        style="padding-right:2rem;padding-left:1.5rem">
                                         Acciones</th>
                                 </tr>
                             </thead>
@@ -1095,12 +1070,14 @@
                         <!-- Panel de mensajes -->
                         <article class="min-w-0 min-h-0 flex flex-col" style="background:#f8fafc">
                             <!-- Header del chat -->
-                            <div class="px-5 py-3.5 flex items-center gap-3 sticky top-0 z-10"
-                                style="background:#ffffff;border-bottom:1px solid #e5e7eb">
+                            <div class="flex items-center gap-4 sticky top-0 z-10"
+                                style="background:#ffffff;border-bottom:1px solid #e5e7eb;padding:2rem 1.5rem 2rem 2rem">
                                 <div id="chatAvatar" class="flex-shrink-0">--</div>
                                 <div class="flex-1 min-w-0">
-                                    <h2 id="chatActiveTitle" class="truncate">Selecciona una conversación</h2>
-                                    <p id="chatActiveSubtitle" class="truncate">Mensajería cifrada · AES-256-GCM</p>
+                                    <h2 id="chatActiveTitle" class="truncate text-sm font-semibold text-gray-900"
+                                        style="line-height:1.6">Selecciona una conversación</h2>
+                                    <p id="chatActiveSubtitle" class="truncate text-xs text-gray-500 mt-2"
+                                        style="line-height:1.5">Mensajería cifrada · AES-256-GCM</p>
                                 </div>
                             </div>
 
@@ -1316,10 +1293,6 @@
                         }
                     }
 
-                    if (citas.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No hay citas programadas para hoy.</td></tr>';
-                        return;
-                    }
 
                     const estadoBadge = { Pendiente: 'background:#fef3c7;color:#92400e', Confirmada: 'background:#d1fae5;color:#065f46', Cancelada: 'background:#fee2e2;color:#991b1b', Completada: 'background:#f3f4f6;color:#374151' };
                     tbody.innerHTML = citas.map(c => {
