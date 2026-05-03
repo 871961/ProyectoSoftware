@@ -400,6 +400,37 @@
     justify-content: flex-start;
 }
 
+/* Consultas list styling */
+.consulta-day-header {
+    padding: 0.5rem 0;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #eef2f7;
+    margin-top: 0.75rem;
+}
+
+.consulta-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.consulta-item {
+    background: #ffffff;
+    border: 1px solid #eef2f7;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 4px rgba(2,6,23,0.04);
+}
+
+.kid-day-header {
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-weight: 700;
+    margin: 0.5rem 0 0.25rem 0;
+}
+
 .chat-message-bubble {
     max-width: 68%;
     padding: 0.6rem 0.9rem;

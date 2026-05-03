@@ -133,30 +133,48 @@ class DependienteDashboard {
             container.innerHTML = '<p class="kid-empty">Sin consultas registradas todavía</p>';
             return;
         }
-
-        const ordenadas = consultas
+        // Agrupar por día y mostrar hasta 4 registros más recientes
+        const ordenadas = (consultas || [])
             .filter(c => c.fecha)
-            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-            .slice(0, 4);
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-        container.innerHTML = ordenadas.map((c) => {
-            const fecha = new Date(c.fecha).toLocaleDateString('es-ES');
-            const medico = `${c.medico_nombre || ''} ${c.medico_apellidos || ''}`.trim();
-            const especialidad = c.especialidad ? `· ${c.especialidad}` : '';
-            const diagnostico = c.diagnostico || 'Consulta pediátrica';
-            return `
-                <div class="kid-row">
-                    <div class="kid-icon" style="background:#d1fae5;color:#047857;width:36px;height:36px;border-radius:12px">
-                        <i data-lucide="stethoscope" class="w-4 h-4"></i>
+        const grouped = ordenadas.reduce((acc, c) => {
+            const key = new Date(c.fecha).toISOString().slice(0, 10);
+            if (!acc[key]) acc[key] = [];
+            if (acc._count == null) acc._count = 0;
+            if (acc._count < 4) { acc[key].push(c); acc._count++; }
+            return acc;
+        }, {});
+
+        const days = Object.keys(grouped).sort((a, b) => (a < b ? 1 : -1));
+
+        const parts = [];
+        for (const day of days) {
+            const items = grouped[day];
+            if (!items || items.length === 0) continue;
+            const dateLabel = new Date(day + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+            parts.push(`<div class="kid-day-header">${dateLabel}</div>`);
+            items.forEach((c) => {
+                const fecha = new Date(c.fecha).toLocaleDateString('es-ES');
+                const medico = `${c.medico_nombre || ''} ${c.medico_apellidos || ''}`.trim();
+                const especialidad = c.especialidad ? `· ${c.especialidad}` : '';
+                const diagnostico = c.diagnostico || 'Consulta pediátrica';
+                parts.push(`
+                    <div class="kid-row">
+                        <div class="kid-icon" style="background:#d1fae5;color:#047857;width:36px;height:36px;border-radius:12px">
+                            <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-extrabold text-slate-900 text-sm truncate">${diagnostico}</p>
+                            <p class="text-xs text-slate-600 font-semibold truncate">${medico} ${especialidad}</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">${fecha}</p>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-extrabold text-slate-900 text-sm truncate">${diagnostico}</p>
-                        <p class="text-xs text-slate-600 font-semibold truncate">${medico} ${especialidad}</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">${fecha}</p>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                `);
+            });
+        }
+
+        container.innerHTML = parts.join('');
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 

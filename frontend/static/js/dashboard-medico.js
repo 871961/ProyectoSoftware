@@ -51,47 +51,53 @@ class SidebarManager {
                 navLinks.forEach(l => {
                     l.classList.remove('active');
                 });
+                    // Agrupar consultas por día y mostrar una fila cabecera por día
+                    const grouped = (this.consultas || []).reduce((acc, c) => {
+                        if (!c.fecha) return acc;
+                        const key = new Date(c.fecha).toISOString().slice(0, 10);
+                        if (!acc[key]) acc[key] = [];
+                        acc[key].push(c);
+                        return acc;
+                    }, {});
 
-                // Mostrar el tab seleccionado
-                const selectedTab = document.getElementById(`tab-${targetTab}`);
-                if (selectedTab) {
-                    selectedTab.classList.remove('hidden');
-                    console.log('Tab mostrado:', `tab-${targetTab}`);
-                } else {
-                    console.error('Tab no encontrado:', `tab-${targetTab}`);
-                }
+                    const days = Object.keys(grouped).sort((a, b) => (a < b ? 1 : -1));
 
-                // Activar el link seleccionado
-                link.classList.add('active');
+                    days.forEach(dayKey => {
+                        const dateObj = new Date(dayKey + 'T00:00:00');
+                        const dayLabel = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
 
-                // Cerrar sidebar en móvil
-                this.close();
+                        // Cabecera de día (fila spanning)
+                        const headerRow = document.createElement('tr');
+                        headerRow.className = 'bg-gray-50';
+                        headerRow.innerHTML = `<td colspan="5" class="py-2 text-sm text-gray-600 font-semibold" style="padding-left:3rem">${dayLabel}</td>`;
+                        this.consultasBody.appendChild(headerRow);
 
-                // Llamar a cargadores dinámicos por tab
-                if (targetTab === 'inicio' && typeof window.cargarCitasHoy === 'function') {
-                    window.cargarCitasHoy();
-                }
-                if (targetTab === 'agenda' && window.citasMedicoModule) {
-                    window.citasMedicoModule.cargar();
-                }
-
-                // Reinicializar iconos de Lucide si están disponibles
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            });
-        });
-
-        // Exponer goToTab globalmente para navegación programática
-        window.goToTab = (targetTab) => {
-            const link = document.querySelector(`.nav-link[data-tab="${targetTab}"]`);
-            if (link) link.click();
-        };
-
-        // Mostrar el primer tab por defecto
-        if (tabs.length > 0) {
-            tabs[0].classList.remove('hidden');
-        }
+                        const consultasDia = grouped[dayKey].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+                        consultasDia.forEach((consulta) => {
+                            const fecha = this.formatearFecha(consulta.fecha);
+                            const paciente = `${consulta.paciente_nombre || ''} ${consulta.paciente_apellidos || ''}`.trim() || consulta.id_paciente;
+                            const diagnostico = consulta.diagnostico || '-';
+                            const tratamiento = consulta.tratamiento || '-';
+                            const row = document.createElement('tr');
+                            row.className = 'border-b border-gray-100 hover:bg-gray-50 transition-colors';
+                            row.innerHTML = `
+                                <td class="py-3.5 text-xs text-gray-500 whitespace-nowrap" style="padding-left:3rem;padding-right:1.5rem">${fecha}</td>
+                                <td class="px-4 py-3.5 text-sm font-medium text-gray-900 whitespace-nowrap">${paciente}</td>
+                                <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden lg:table-cell">${diagnostico}</td>
+                                <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden xl:table-cell">${tratamiento}</td>
+                                <td class="py-3.5 text-right whitespace-nowrap" style="padding-right:2rem;padding-left:1.5rem">
+                                    <div class="inline-flex items-center gap-1.5 flex-wrap justify-end">
+                                        <button title="Editar consulta" data-edit-id="${consulta.id_consulta}" class="consulta-action consulta-action--edit">Editar</button>
+                                        <button title="Crear recordatorio" data-reminder-id="${consulta.id_consulta}" class="consulta-action consulta-action--reminder">Recordatorio</button>
+                                        <button title="Ver recordatorios" data-view-recordatorios="${consulta.id_consulta}" class="consulta-action consulta-action--view">Ver</button>
+                                        <button title="Eliminar consulta" data-delete-id="${consulta.id_consulta}" class="consulta-action consulta-action--delete">Eliminar</button>
+                                    </div>
+                                    <div class="mt-2 space-y-1 hidden" data-recordatorios-container="${consulta.id_consulta}"></div>
+                                </td>
+                            `;
+                            this.consultasBody.appendChild(row);
+                        });
+                    });
     }
 
     open() {
