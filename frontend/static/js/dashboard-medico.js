@@ -628,7 +628,7 @@ class MedicoDashboard {
         this.consultasBody.innerHTML = '';
 
         if (this.consultas.length === 0) {
-            this.consultasBody.innerHTML = '<tr><td colspan="5" class="px-4 py-3 text-sm text-gray-500">Aun no hay consultas registradas.</td></tr>';
+            this.consultasBody.innerHTML = '<tr><td colspan="5" class="py-3 text-sm text-gray-500" style="padding-left:3rem">Aun no hay consultas registradas.</td></tr>';
             return;
         }
 
@@ -641,11 +641,11 @@ class MedicoDashboard {
             row.className = 'border-b border-gray-100';
             row.className = 'hover:bg-gray-50 transition-colors';
             row.innerHTML = `
-                <td class="px-5 py-3.5 text-xs text-gray-500 whitespace-nowrap">${fecha}</td>
+                <td class="py-3.5 text-xs text-gray-500 whitespace-nowrap" style="padding-left:3rem;padding-right:1.5rem">${fecha}</td>
                 <td class="px-4 py-3.5 text-sm font-medium text-gray-900 whitespace-nowrap">${paciente}</td>
                 <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden lg:table-cell">${diagnostico}</td>
                 <td class="px-4 py-3.5 text-sm text-gray-600 max-w-xs truncate hidden xl:table-cell">${tratamiento}</td>
-                <td class="px-4 py-3.5 text-right whitespace-nowrap">
+                <td class="py-3.5 text-right whitespace-nowrap" style="padding-right:2rem;padding-left:1.5rem">
                     <div class="inline-flex items-center gap-1.5 flex-wrap justify-end">
                         <button title="Editar consulta" data-edit-id="${consulta.id_consulta}"
                             class="consulta-action consulta-action--edit">

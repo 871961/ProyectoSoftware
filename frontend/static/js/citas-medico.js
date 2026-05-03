@@ -242,3 +242,69 @@ class CitasMedicoModule {
 }
 
 window.citasMedicoModule = new CitasMedicoModule();
+
+// ── Función para cargar citas de hoy en el dashboard ────────────────────────
+window.cargarCitasHoy = async function() {
+    try {
+        const hoy = new Date().toISOString().split('T')[0];
+        const res = await fetch(`${CITAS_API}?accion=listar_medico&fecha=${hoy}`);
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+            throw new Error(data?.mensaje || 'Error al cargar citas');
+        }
+
+        const citas = data.data || [];
+        const container = document.getElementById('citasHoyBody');
+        const fechaEl = document.getElementById('citasHoyFecha');
+
+        if (!container) return;
+
+        // Actualizar fecha
+        if (fechaEl) {
+            const fechaObj = new Date(hoy + 'T00:00:00');
+            fechaEl.textContent = fechaObj.toLocaleDateString('es-ES', {
+                weekday: 'long', day: 'numeric', month: 'long'
+            });
+        }
+
+        // Limpiar contenedor
+        container.innerHTML = '';
+
+        if (citas.length === 0) {
+            container.innerHTML = '<p class="text-xs text-gray-500">No hay citas programadas para hoy.</p>';
+            return;
+        }
+
+        // Renderizar citas como lista
+        citas.forEach(cita => {
+            const hora = new Date(cita.fecha_hora.replace(' ', 'T')).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            const paciente = `${cita.paciente_nombre || ''} ${cita.paciente_apellidos || ''}`.trim();
+            const estado = cita.estado || 'Pendiente';
+
+            const estadoClass = estado === 'Confirmada' ? 'bg-green-50 text-green-700' :
+                               estado === 'Pendiente' ? 'bg-amber-50 text-amber-700' :
+                               'bg-gray-50 text-gray-700';
+
+            const citaDiv = document.createElement('div');
+            citaDiv.className = 'flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-gray-50 transition-colors';
+            citaDiv.style.borderBottom = '1px solid #f0f4f8';
+            citaDiv.innerHTML = `
+                <div>
+                    <p class="text-xs font-medium text-gray-900">${paciente}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">${hora}</p>
+                </div>
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${estadoClass}">
+                    ${estado}
+                </span>
+            `;
+            container.appendChild(citaDiv);
+        });
+    } catch (e) {
+        console.error('Error al cargar citas de hoy:', e);
+        const container = document.getElementById('citasHoyBody');
+        if (container) {
+            container.innerHTML = '<p class="text-xs text-red-500">Error al cargar citas</p>';
+        }
+    }
+};
