@@ -31,7 +31,8 @@
       "Bash(psql -U postgres -d medhistory -f \"database/inserts/07_consultas_masivas.sql\")",
       "PowerShell(psql -U postgres -d medhistory -f \"C:\\\\web\\\\medHistory\\\\database\\\\inserts\\\\07_consultas_masivas.sql\")",
       "Read(//c//**)",
-      "PowerShell(& \"C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe\" -U postgres -d medhistory -f \"C:\\\\web\\\\medHistory\\\\database\\\\inserts\\\\07_consultas_masivas.sql\")"
+      "PowerShell(& \"C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe\" -U postgres -d medhistory -f \"C:\\\\web\\\\medHistory\\\\database\\\\inserts\\\\07_consultas_masivas.sql\")",
+      "PowerShell(& \"C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe\" -U postgres -d medhistory -c \"SELECT 1;\" 2>&1)"
     ]
   }
 }
